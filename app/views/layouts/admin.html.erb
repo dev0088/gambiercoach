@@ -6,8 +6,6 @@
 	<title><%= Setting::NAME %></title>
 	<link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="/assets/stylesheets/williams_print.css" type="text/css" media="print" />
-	<%= stylesheet_link_tag '/assets/stylesheets/ajax_scaffold', :media => 'all' %>
-  <%= javascript_include_tag '/assets/javascripts/rico_corner', '/assets/javascripts/ajax_scaffold' %>
 </head>
 <body>
 	<div id="leftSidebar">
@@ -60,7 +58,7 @@
 		</div>
 		<% end -%>
 		<div id="contentBody">
-			<%= @content_for_layout %>
+			<%= yield %>
 		</div>
 		<div id="footer">
 			Copyright 2006, <%= Setting::NAME %>&nbsp;&nbsp;&nbsp;All rights reserved

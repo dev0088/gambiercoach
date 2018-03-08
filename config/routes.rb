@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   # match ':controller/:action/:id', via: [:get, :post]
 
   resources :admins
-  resources :administrators
+  resources :administrators do
+    collection do
+      get :login
+    end
+  end
   resources :buses
   resources :managers
   resources :reservations
@@ -19,7 +23,11 @@ Rails.application.routes.draw do
       get :login
     end
   end
-
-  get "/", :controller => "admin", :action => "edit_2007_2008_schedule"
+  resources :index do
+    collection do
+      get :schedule_for_2007_2008
+    end
+  end
+  get "/", :controller => "index", :action => "schedule_for_2007_2008"
 
 end

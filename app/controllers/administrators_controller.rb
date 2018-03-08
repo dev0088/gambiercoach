@@ -6,8 +6,10 @@ class AdministratorsController < ApplicationController
   # after_action :clear_flashes
 
   def login
+    puts "=========== params: #{params.inspect}"
     case request.method
     when :get
+      puts "=============="
       render
       return
     when :post
