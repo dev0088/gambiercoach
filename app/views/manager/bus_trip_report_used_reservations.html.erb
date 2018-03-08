@@ -1,0 +1,22 @@
+<h2>
+	Used Reservations for:<br/>
+	<%= @b.readable_route %> (<%= @b.departure.strftime("%A, %B %d") %> at <%= @b.departure.strftime("%I:%M %p") %>)
+</h2>
+<% if @trurs.size > 0 %>
+	<table>
+		<tr>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">num tickets</th>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">user email</th>
+		</tr>
+		<% rc = 1 %>
+		<% @trurs.each do |trur| %>
+			<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 30px;">
+				<td style="width: 150px; text-align: left;"><%= trur.quantity_used %></td>
+				<td style="width: 150px; text-align: left;"><%= trur.user_email %></td>
+			</tr>
+		<% rc += 1 %>
+		<% end %>
+	</table>
+<% else %>
+	<p>(no reservations_used)</p>
+<% end %>

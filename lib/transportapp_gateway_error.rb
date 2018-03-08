@@ -1,0 +1,2 @@
+class TransportappGatewayError < RuntimeError
+end

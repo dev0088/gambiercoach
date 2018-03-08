@@ -1,0 +1,69 @@
+<h3>Editing Reservation #<%= @reservation.id %> for <%= @reservation.user.login_id %></h3>
+
+<h4>
+	This reservation is currently <%= @reservation.readable_payment_status %>.
+</h4>
+
+<br />
+
+<h4>Adjust the number of tickets for this reservation</h4>
+<% if @reservation.payment_status == Reservation::UNPAID %>
+<p>Modifying this reservation will not result in any refunds -- the reservation is unpaid.</p>
+<% elsif @reservation.payment_status == Reservation::PD_CASH %>
+<p>Modifying this reservation will result in you owing the student a cash refund -- the system will not take any action.</p>
+<% elsif @reservation.payment_status ==  Reservation::PD_CREDIT %>
+<p>Modifying this reservation will result in the system attempting to credit the student's credit card -- the payment event will be recorded below for your records.</p>
+<% end %>
+
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<% if @reservation.reservation_tickets.size > 0 %>
+		<form action="/manager/edit_reservation/<%= @reservation.id %>" method="post">
+		<% @reservation.reservation_tickets.each do |art| %>
+		<ul class="activeSession">
+			<li class="route"><%= art.bus.readable_route %></li>
+			<ul class="activeSessionBuses">
+				<li>
+					<select name="rt[<%= art.id %>]">
+						<% for i in 0..(art.quantity) %>
+						<option value="<%= i %>" <% if i == (art.quantity) %>selected="selected"<% end %>><%= i %></option>
+						<% end %>
+					</select>
+					<strong> ticket(s) for </strong> <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %><br />
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="yes" <% if art.conductor_status == 1 %>checked="true"<% end %> name="<%= art.id %>_conductor" /> conductor?
+				</li>
+			</ul>
+		</ul>
+		<% end %>
+		<p style="text-align: center;">
+			<input type="submit" value="Modify Reservation" />
+		</p>
+		</form>
+	<% else %>
+		<p>This reservation no longer has any tickets associated with it.</p>
+	<% end %>
+</div>
+<br />
+
+<h4>Credit card processing history</h4>
+<br />
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<% if @reservation.credit_payment_events.size > 0 %>
+		<table>
+			<tr>
+				<th style="width: 200px; text-align: left; text-decoration: underline;">Date</th>
+				<th style="width: 175px; text-align: left; text-decoration: underline;">Type</th>
+				<th style="width: 75px; text-align: left; text-decoration: underline;">Amount</th>				
+			</tr>
+		<% @reservation.credit_payment_events.each do |cpe| %>
+			<tr>
+				<td><%= cpe.created_at.strftime("%Y-%m-%d %I:%M %p") %></td>
+				<td><%= cpe.transaction_type %></td>
+				<td><%= cpe.transaction_amt %></td>
+			</tr>
+		<% end %>
+		</table>
+	<% else %>
+		<p>No credit card events</p>
+	<% end %>
+</div>
+<br />

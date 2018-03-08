@@ -1,0 +1,14 @@
+Hello <%= @user.login_id %>,
+
+Your reservation is complete for:
+
+<% @reservation.reservation_tickets.each do |art| -%>
+<%= art.bus.readable_route %>: <%= art.quantity %> ticket(s) for <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %>
+<% end -%>
+
+Your credit card was successfully billed: <%= @reservation.total %>
+
+Your reservation ticket number is: <%= @reservation.id %>
+
+
+Thank you.

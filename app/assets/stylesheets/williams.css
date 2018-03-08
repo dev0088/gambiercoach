@@ -1,0 +1,621 @@
+/* begin : primary layout */
+body {
+	margin:10px 10px 0px 10px;
+	padding:0px;
+	font: 11px verdana, lucida, sans-serif;
+}
+
+a:hover {
+	color: #62993E;
+	text-decoration: underline;
+}
+
+/* banner text style */
+h1 {
+	color: #fff;
+	padding-top: 20px;
+	padding-left: 20px;
+}
+
+#banner {
+	background: white url(/images/bannerwilliams.gif) no-repeat top left;
+	height:50px;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	height:49px;
+}
+	
+html>body #banner {
+	height:59px;
+}
+
+#leftSidebar {
+	position: absolute;
+	left:10px;
+	top:50px;
+	width:200px;
+	margin-top: 40px;
+	background: #fff;
+}
+
+#content {
+	width: 700px;
+	margin-left: 199px;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	margin-left: 201px;
+}
+	
+html>body #content {
+	margin-left: 201px;
+}
+
+#messaging {
+	width: 450px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border: 1px solid #660066;
+	text-align: center;
+	background: #FFF8C6;
+}
+
+#messaging .error {
+	color: red;
+}
+
+#messaging .success {
+	color: #660066;	
+}
+
+#messaging h2 {
+	font-size: 120%;
+}
+
+#contentBody {
+	margin-top: 0px;
+	padding-top: 0px;
+	padding-left: 20px;
+}
+
+#contentBody p{
+	color: #383838;	
+}
+
+#footer {
+	margin-top: 50px;
+	clear:both;
+	text-align: center; 
+	font-size: 70%; 
+	color: #737373;
+}
+/* end : primary layout */
+
+
+/* begin : main nav bar styling */
+#navcontainer {
+	margin: 0 0 0 0;
+	padding-top: 20px;
+	padding-left: 290px;
+	height: 20px;
+}
+
+#navcontainer ul {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	text-align: center;
+}
+
+#navcontainer ul li {
+	display: block;
+	float: left;
+	text-align: center;
+}
+
+#navcontainer ul li a {
+	width: 135px;
+	height: 18px;
+	padding: 0;
+	margin: 0 0 10px 0;
+	color: white;
+	display: block;
+	text-decoration: none;
+	text-align: center;
+	font: 12px Verdana;
+}
+
+#navcontainer ul li a:hover {
+	text-decoration: underline;
+}
+/* end : main nav bar styling */
+
+/* begin : side nav bar styling */
+#leftSidebar ul {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border: 1px solid #660066;
+	background: #8299CE;
+	padding-left:30px;
+	margin-left:0;
+}
+
+#leftSidebar li {
+	padding-bottom: 10px;
+	list-style-type: square;
+}
+
+#leftSidebar li a {
+	color: #660066;
+	text-decoration: none;
+}
+#leftSidebar li a:hover {
+	text-decoration: underline;
+}
+/* end : side nav bar styling */
+
+/* begin : body content styling */
+h3 {
+	font-size: 120%;
+	font-weight: bold;
+	border-bottom: 1px dotted black;
+	margin-top: 10px;
+}
+
+h4 {
+	font-size: 120%;
+	font-weight: bold;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.activeSession {
+	padding-left: 10px;
+	list-style-type: none;
+}
+
+.route {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.direction {
+	padding-top: 5px;
+	padding-bottom: 4px;
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+.activeSessionBuses {
+	font-size: 90%;
+	font-weight: normal;
+}
+
+.futureSessionHeader {
+	color: #778899;
+}
+
+.futureSession {
+	padding-left: 10px;
+	list-style-type: none;
+	color: #778899;
+}
+
+.futureSessionRoute {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.futureSessionDirection {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.futureSessionBuses {
+	font-size: 90%;
+	font-weight: normal;
+}
+
+div.row {
+	font-size: 120%;
+  clear: both;
+  padding-top: 10px;
+}
+
+div.row span.label {
+  float: left;
+  width: 200px;
+  text-align: right;
+}
+
+div.row span.formw {
+  float: right;
+  width: 300px;
+  text-align: left;
+}
+
+div.row span.helpText {
+	font-size: 70%;
+	color: #666666;
+}
+
+div.spacer {
+	clear: both;
+}
+
+/* end : body content styling */
+
+/* begin : form styling for top-label forms */
+.tForm .submit {
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.tForm fieldset {
+border: none;
+}
+
+.tForm label.required{
+font-weight: bold;
+}
+
+.tForm label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.tForm h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px;
+}
+
+.tForm p.form-footer a {
+font: bold 14px;
+letter-spacing: 0;
+}
+
+.tForm p {
+clear: both;
+}
+
+.tForm div.row {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+}
+
+.tForm div.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.tForm label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.tForm input.text-input,
+.tForm select {
+font-size: 16px;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.tForm .form-element input {
+padding: 1px;
+}
+
+.tForm textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
+/* end : form styling for top-label forms */
+
+/* - - - - - - - - - - - - - - - - - - - - -
+
+ Title : Wufoo Form CSS
+ Author : Infinity Box Inc.
+ URL : http://wufoo.com
+
+ Last Updated : July 18, 2006
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+
+
+/* ----- IDS ----- */
+
+.wufooFormContainer{
+	padding: 0;
+	margin:0 auto;
+	text-align:left;
+	width:500px;
+	font-size:small;
+	font-family:"Lucida Grande", Arial, "Trebuchet MS", Verdana, sans-serif;
+	background-color: #8299CE;
+	border: 1px dotted #333;
+}
+.wufooFormContainer #stage{
+	margin: 0;
+	padding:20px 20px 0 20px;
+}
+.wufooFormContainer #stage[id]{
+	margin: 0;
+	padding-bottom:7px;
+}
+/* ----- CLASSES ----- */
+
+.wufooFormContainer .inline{
+	display:inline !important;
+}
+.wufooFormContainer .center{
+	text-align:center !important;
+}
+.wufooFormContainer .left{
+	float:left;
+}
+.wufooFormContainer .right{
+	float:right;
+}
+.wufooFormContainer .hide{
+	display:none !important;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - -
+FORM
+- - - - - - - - - - - - - - - - - - - - - */
+
+.wufooFormContainer ul{
+	padding: 0;
+	margin: 0;
+	position:relative;
+	list-style-type:none;
+	width:100%;
+}
+.wufooFormContainer li{
+	line-height:2em;
+	margin:0;
+	padding:1px 4px 6px 9px;
+	display: inline-block;
+}
+.wufooFormContainer li:after{
+	margin: 0;
+	padding: 0;
+	content:"."; 
+	display:block;
+	height:0; 
+	clear:both; 
+	visibility:hidden;
+}
+/* Holly Hack Targets IE Win only \*/
+	* html .wufooFormContainer li {height: 1%;}
+	.wufooFormContainer li {display: block;}
+/* End Holly Hack */
+
+.wufooFormContainer li div{
+	padding: 0;
+	float:left;
+	display:inline;
+	margin-right:5px;
+}
+.wufooFormContainer li.focused{
+	background-color:#fff7c0;
+} 
+.wufooFormContainer li p{
+	margin: 0;
+	padding: 0;
+	clear:both;
+	font-size:9px;
+	line-height:13px;
+	color:#444;
+}
+
+.wufooFormContainer li div.left{
+	width:48%;
+}
+.wufooFormContainer li div.right{
+	width:48%;
+}
+.wufooFormContainer li div.left .medium, .wufooFormContainer li div.right .medium{
+	width:100%;
+}
+
+.wufooFormContainer .clear{
+	clear:both;
+}
+
+.wufooFormContainer li div p{
+	margin-bottom:3px;
+}
+.wufooFormContainer li img.icon{
+	float:left;
+	margin:.35em 5px 0 0;
+}
+
+/* ----- BUTTONS ----- */
+
+.wufooFormContainer .buttons{
+	clear:both;
+	margin:10px 0 20px 7px;
+}
+.wufooFormContainer .buttons .button{
+	font-size:120%;
+	margin:0 5px 0 0;
+}
+.wufooFormContainer .button{
+	cursor:pointer !important;
+}
+
+/* ----- FIELDS AND LABELS ----- */
+
+.wufooFormContainer label.desc{
+	line-height:125%;
+	padding:4px 4px 1px 0;
+	border:none;
+	color:#444;
+	display:block;
+	font-weight:bold;
+	font-size:95%;
+}
+.wufooFormContainer input.text, .wufooFormContainer textarea.textarea, .wufooFormContainer select.select{
+	font-size:100%;
+	border-top:1px solid #7c7c7c;
+	border-left:1px solid #c3c3c3;
+	border-right:1px solid #c3c3c3;
+	border-bottom:1px solid #ddd;
+	color:#333;
+}
+.wufooFormContainer input.text{
+	padding:2px 0 2px 0;
+}
+.wufooFormContainer input.currency{
+	text-align:right;
+}
+
+.wufooFormContainer input.checkbox, .wufooFormContainer input.radio{
+	display:block;
+	line-height:1.4em;
+	margin:8px 0 0 3px;
+	width:13px;
+	height:13px;
+}
+.wufooFormContainer label.choice{
+	font-size:100%;
+	display:block;
+	line-height:1.4em;
+	margin:-19px 0 0 25px;
+	padding:4px 0 5px 0;
+	color:#444;
+	width:90%;
+}
+
+.wufooFormContainer textarea.textarea{
+	margin-top:1px;
+	font-family:"Lucida Grande", Arial, "Trebuchet MS", Verdana, sans-serif;
+}
+.wufooFormContainer select.select{
+	margin:1px 0 1px 0;
+	padding:1px 0 0 0;
+}
+.wufooFormContainer select.select[class]{
+	margin:0;
+	padding:1px 0 1px 0;
+}
+
+/* ----- SIZES ----- */
+
+.wufooFormContainer .third{
+	width:32% !important;
+}
+.wufooFormContainer .half{
+	width:48% !important;
+}
+.wufooFormContainer .full{
+	width:100% !important;
+}
+
+.wufooFormContainer input.small, .wufooFormContainer select.small{
+	width:25%;
+}
+.wufooFormContainer input.medium, .wufooFormContainer select.medium{
+	width:50%;
+}
+.wufooFormContainer input.large, .wufooFormContainer select.large, .wufooFormContainer textarea.textarea{
+	width:99%;
+}
+.wufooFormContainer input.tags{
+	width:315px;
+}
+
+.wufooFormContainer textarea.small{
+	height:5.5em;
+}
+.wufooFormContainer textarea.medium{
+	height:10em;
+}
+.wufooFormContainer textarea.large{
+	height:20em;
+}
+
+/* ----- ERRORS ----- */
+
+.wufooFormContainer li.error{
+	background-color: #FFDFDF;
+	margin:3px 0;
+}
+.wufooFormContainer li.error h3{
+	margin-top:3px;
+	font-size:110%;
+	line-height:130%;
+	color:red;
+}
+.wufooFormContainer #liError{
+	border-bottom:1px solid #EACBCC;
+	border-right:1px solid #EACBCC;
+}
+.wufooFormContainer #liError p{
+	color:#222;
+	font-size:85%;
+}
+.wufooFormContainer input.error, .wufooFormContainer textarea.error{
+	border:1px solid #EF5959;
+	border-left:1px solid #FF8F8F;
+	border-top:1px solid #FF8F8F;
+	background:#fff;
+}
+.wufooFormContainer p.error, .wufooFormContainer li.error label.desc{
+	color:red !important;
+	clear:both;
+}
+
+/* ----- INSTRUCTIONS ----- */
+
+.wufooFormContainer .instruct{
+	display:none;
+	position:absolute;
+	left:100%;
+	width:40%;
+	margin:-1px 0 0 10px;
+	padding:8px 7px 9px 10px;
+	border:1px solid #e6e6e6;
+	background:#f5f5f5;
+	line-height:130%;
+	font-size:80%;
+	color:#444;
+}
+.wufooFormContainer li:hover .instruct, .wufooFormContainer li.focused .instruct{
+	display:block;
+}
+.wufooFormContainer #main ul{
+	width:100%;
+}
+.wufooFormContainer #main li{
+	width:62%;
+}
+.wufooFormContainer .instruct{
+	left:62%;
+	margin-left:20px
+}
+.wufooFormContainer .instruct[class]{
+	width:29%
+}

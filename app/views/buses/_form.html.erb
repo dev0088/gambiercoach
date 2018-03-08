@@ -1,0 +1,23 @@
+<fieldset>
+	<div class="row">
+		<div class="form-element">
+			<label for="bus_route">Route</label>
+			<%= select 'bus', 'route_id', Route.find_all.collect {|r| [r.readable_route, r.id]} %>
+		</div>
+		<div class="form-element">
+			<label for="bus_going_away">Going away?</label>
+			<%= select 'bus', 'going_away', [["true", "true"], ["false", "false"]] %>
+		</div>
+		<div class="form-element">
+			<label for="bus_seats">Seats</label>
+			<%= text_field 'bus', 'seats', {:class=>"text-input"} %>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-element">
+		  <label for="bus_departure">Departure</label>
+		  <%= datetime_select 'bus', 'departure', :start_year => Time.now.year  %>
+		</div>
+	</div>
+</fieldset>

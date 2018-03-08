@@ -1,0 +1,78 @@
+<br /><br />
+
+<h3>Find a Bus</h3>
+<form action="/manager/bus" method="get">
+	<select name="id">
+		<% Bus.find(:all).each do |b| %>
+			<option value="<%= b.id %>"><%= b.readable_route %> (<%= b.departure.strftime("%A, %B %d") %> at <%= b.departure.strftime("%I:%M %p") %>)</option>
+		<% end %>
+	</select>
+	<input type="submit" value="go" />
+</form>
+<br />
+
+<h3>Designate Conductors for a Session</h3>
+<form action="/manager/session_conductors" method="get">
+	<select name="id">
+		<%= options_from_collection_for_select(TransportSession.find(:all), :id, :name) %>
+	</select>
+	<input type="submit" value="go" />
+</form>
+<br />
+
+<h3>Find a User</h3>
+<form action="/manager/find_user" method="get">
+	<label>Username: </label><input name="login_id" type="text" />
+	<input type="submit" value="go" />
+</form>
+<br />
+
+<h3>Conductor Trip Reports (by Session)</h3>
+<form action="/manager/manage_trip_reports" method="get">
+	<select name="id">
+		<%= options_from_collection_for_select(TransportSession.find(:all), :id, :name) %>
+	</select>
+	<input type="submit" value="all" />	
+	<input type="submit" name="only_unrefunded" value="only un-refunded" />	
+</form>
+<br />
+
+<h3>Trip Reports of Reservations Used (by Bus)</h3>
+<form action="/manager/bus_trip_report_used_reservations" method="get">
+	<select name="id">
+		<% Bus.find(:all, :conditions => ["departure < ?", Time.now]).each do |b| %>
+			<option value="<%= b.id %>"><%= b.readable_route %> (<%= b.departure.strftime("%A, %B %d") %> at <%= b.departure.strftime("%I:%M %p") %>)</option>
+		<% end %>
+	</select>
+	<input type="submit" value="go" />
+</form>
+<br />
+
+<h3><a style="color: black;" href="/manager/unpaid_walkons">Manage Unpaid Walk-ons</a></h3>
+<br />
+
+<h3>Walk-ons CSV Retrieval by Session (submit to download)</h3>
+<form action="/manager/walkons_csv" method="post">
+	<select name="id">
+		<%= options_from_collection_for_select(TransportSession.find(:all), :id, :name) %>
+	</select>
+	<input type="submit" value="download" />
+</form>
+<br />
+
+<h3><a style="color: black;" href="/manager/unpaid_reservations">Manage Unpaid Reservations (mark paid, cancel, etc.)</a></h3>
+<br />
+
+<h3><a style="color: black;" href="/manager/all_reservations_csv">Reservations CSV (click to download)</a></h3>
+<br />
+
+<h3>Tickets CSV Retrieval by Session (submit to download)</h3>
+<form action="/manager/session_tickets_csv" method="post">
+	<select name="id">
+		<%= options_from_collection_for_select(TransportSession.find(:all), :id, :name) %>
+	</select>
+	<input type="submit" value="download" />
+</form>
+<br />
+
+<br /><br /><br /><br />

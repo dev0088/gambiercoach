@@ -1,0 +1,35 @@
+<h3>Modifying Your Reservation</h3>
+<% if @reservation.past? %>
+	<p>All buses for this reservation have already departed, you may no longer modify the reservation.</p>
+<% else %>
+	<h4>Adjust the number of tickets that you desire for this reservation</h4>
+	<br />
+	<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+		<form action="/reservations/modify/<%= @reservation.id %>" method="post">
+		<p>Reservation #<%= @reservation.id.to_s %></p>
+		<% @reservation.reservation_tickets.each do |art| %>
+		<% if art.bus.departure > Time.now %>
+		<ul class="activeSession">
+			<li class="route"><%= art.bus.readable_route %></li>
+			<ul class="activeSessionBuses">
+				<li>
+					<select name="rt[<%= art.id %>]">
+						<% for i in 0..(art.quantity) %>
+						<option value="<%= i %>" <% if i == (art.quantity) %>selected="selected"<% end %>><%= i %></option>
+						<% end %>
+					</select>
+					<strong> ticket(s) for </strong> <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %>
+				</li>
+			</ul>
+		</ul>
+		<% end %>
+		<% end %>
+		<p style="text-align: center;">
+				<input type="submit" value="Modify My Reservation" />
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="/reservations/my_reservations">do not modify</a>
+		</p>
+		</form>
+	</div>
+<% end %>
+<br />

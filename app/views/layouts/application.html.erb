@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title><%= Setting::NAME %></title>
+	<link rel="stylesheet" href="/stylesheets/williams.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="/javascripts/niftycube.js"></script>
+</head>
+<body>
+	<div id="leftSidebar">
+		<img src="/images/williams_bus_logo.jpg" height="144px" width="200px">
+		<% if @user.nil? -%>
+		&nbsp;
+		<% else -%>
+		<ul>
+			<li><a href="/">Book Tickets</a></li>
+			<li><a href="/reservations/my_reservations">My Reservations</a></li>
+			<li><a href="/reservations/my_wait_list_reservations">My Waiting Lists</a></li>
+			<li><a href="/user/change_password">Change My Password</a></li>
+			<li><a href="/user/logout">Logout</a></li>
+		</ul>
+		<% end -%>
+	</div>
+	<div id="banner">
+		<div id="navcontainer">
+			<ul id="navlist">
+				<li><a href="/" style="width: 150px;">2007/2008 Schedule</a></li>
+				<li><a href="/index" style="width: 90px;">Book Tickets</a></li>
+				<li><a href="/group_tickets" style="width: 90px;">Group Tickets</a></li>
+				<li><a href="/weekly_shuttle" style="width: 100px;">Weekly Shuttle</a></li>
+				<li><a href="/help" style="width: 40px;">FAQ</a></li>
+				<li><a href="/about" style="width: 80px;">Contact Us</a></li>
+				<% unless !@user.nil? -%>
+				<li><a href="/user/login" style="width: 70px;">Login</a></li>
+				<% end -%>
+			</ul>
+		</div>
+	</div>
+	<div id="content">
+		<% if !flash[:success].nil? || !flash[:error].nil? -%>
+		<div id="messaging">
+			<h2 class="<%= flash[:success].nil? ? "error" : "success" %>">
+				<%= flash[:success].nil? ? flash[:error] : flash[:success] %>
+			</h2>
+		</div>
+		<% end -%>
+		<div id="contentBody">
+			<%= @content_for_layout %>
+		</div>
+		<div id="footer">
+			Copyright 2006, <%= Setting::NAME %>&nbsp;&nbsp;&nbsp;All rights reserved
+			<br /><br /><br /><br />
+		</div>
+	</div>
+</body>
+</html>

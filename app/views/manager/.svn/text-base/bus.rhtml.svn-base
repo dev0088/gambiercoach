@@ -1,0 +1,72 @@
+<h2>
+	<%= @b.readable_route %> (<%= @b.departure.strftime("%A, %B %d") %> at <%= @b.departure.strftime("%I:%M %p") %>)
+</h2>
+<p>
+  <%= @b.seats_remaining %> seats remaining out of <%= @b.seats %> total
+</p>
+
+<h3>Reserved Tickets: </h3>
+<% if @b.reservation_tickets.size > 0 %>
+	<table>
+		<tr>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">login id</th>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">num tickets</th>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">cond. wish?</th>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">cond. status?</th>
+			<th style="width: 130px; text-align: left; text-decoration: underline;">reservation #</th>
+		</tr>
+		<% rc = 1 %>
+		<% @b.reservation_tickets.each do |rt| %>
+			<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 30px;">
+				<td style="width: 150px; text-align: left;"><%= rt.reservation.user.login_id %></td>
+				<td style="width: 150px; text-align: left;"><%= rt.quantity %></td>
+				<td style="width: 150px; text-align: left;"><%= rt.conductor_wish == 1 ? "yes" : "no" %></td>
+				<td style="width: 150px; text-align: left;"><%= rt.conductor_status == 1 ? "yes" : "no" %></td>
+				<td style="width: 150px; text-align: left;"><a href="/manager/edit_reservation/<%= rt.reservation.id %>"><%= rt.reservation.id %></a></td>
+			</tr>
+		<% rc += 1 %>
+		<% end %>
+	</table>
+<% else %>
+	<p>(no reserved tickets)</p>
+<% end %>
+
+<br /><br />
+<h3>Wait List: </h3>
+<% if @b.wait_list_count > 0 %>
+	<table>
+		<tr style="font-size: 16px;">
+			<th style="width: 150px; text-align: left; text-decoration: underline;">login id</th>
+		</tr>
+		<% rc = 1 %>
+		<% @b.wait_list_reservations.find(:all, :order => "created_at ASC").each do |wlr| %>
+			<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 30px;">
+				<td style="width: 150px; text-align: left;"><%= wlr.user.login_id %></td>
+			</tr>
+		<% rc += 1 %>
+		<% end %>
+	</table>
+<% else %>
+	<p>(no wait list reservations)</p>
+<% end %>
+
+<br /><br />
+<h3>Email the roster for this bus: </h3>
+<form action="/manager/email_bus" method="post">
+	<div class="wufooFormContainer">
+		<ul id="formFields">
+			<input type="hidden" name="id" value="<%= @b.id %>" />
+			<li>
+				<label class="desc" for="field0">Email Address</label>
+				<div class="full">
+					<input name="email_address" class="field text medium" type="text" maxlength="255" value=""/> 
+				</div>
+			</li>
+		</ul>
+		<div class="buttons">
+			<input id="submit" name="submit" class="button" type="submit" value="Send" />
+		</div>
+	</div>
+</end>
+
+<br /><br /><br /><br />

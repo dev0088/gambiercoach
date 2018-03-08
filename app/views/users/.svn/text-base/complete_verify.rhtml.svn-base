@@ -1,0 +1,30 @@
+<h3>Complete your account verification</h3>
+<% if @flash[:email_address].nil? %>
+	<p>NO TEXT PROVIDED YET.</p>
+<% else %>
+	<p><strong>Thanks for signing up.</strong> An account verification email was sent to <%= @flash[:email_address] %>. Below, enter the verification code from the email, choose a password, and you're done!</p>
+<% end %>
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<form action="/user/complete_verify" method="post">
+		<div class="row">
+			<span class="label">verification code: </span>
+			<span class="formw">
+				<input type="text" name="token" /><br />
+				<span class="helpText">The code you received by email</span>
+			</span>
+		</div>
+		<div class="row">
+			<span class="label">select a password: </span>
+			<span class="formw"><input type="password" name="password" /></span>
+		</div>
+		<div class="row">
+			<span class="label">repeat password: </span>
+			<span class="formw"><input type="password" name="repeat_password" /></span>
+		</div>
+		<div class="row">
+			<span class="label">&nbsp;</span>
+			<span class="formw"><input type="submit" value="register" /></span>
+		</div>
+		<div class="row"></div>
+	</form>
+</div>

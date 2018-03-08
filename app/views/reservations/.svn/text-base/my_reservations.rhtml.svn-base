@@ -1,0 +1,20 @@
+<h3>My Reservations</h3>
+
+<% @reservations.each do |ar| %>
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<h4 style="margin: 0; padding: 0;">Reservation #<%= ar.id %></h4>
+	<% ar.reservation_tickets.each do |art| %>
+	<ul class="activeSession">
+		<li class="route"><%= art.bus.readable_route %></li>
+		<ul class="activeSessionBuses">
+			<li><strong><%= art.quantity %> ticket(s) for </strong> <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %></li>
+		</ul>
+	</ul>
+	<% unless ar.past? %>
+	<a href="/reservations/modify/<%= ar.id %>">Modify this reservation</a>
+	<% end %>
+	<% end %>
+</div>
+<br />
+<% end %>
+<br /><br />

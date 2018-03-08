@@ -1,0 +1,2 @@
+class TransportappError < RuntimeError
+end

@@ -1,0 +1,3 @@
+Hello,
+
+The user with the email address <%= @user.email %> made a modification to reservation #<%= @r_id %> that resulted in a refund of <%= @refund_amt %> necessary.

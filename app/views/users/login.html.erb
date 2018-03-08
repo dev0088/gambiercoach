@@ -1,0 +1,54 @@
+<h3>Log In</h3>
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto;">
+	<form action="/user/login" method="post">
+		<div class="row">
+			<span class="label">login id: </span>
+			<span class="formw">
+				<input type="text" name="login_id" style="width: 200px;" /><br />
+				<span class="helpText">This is your <%= Setting::SCHOOL %> username, for example: <%= Setting::EXAMPLE_USERNAME %></span>
+			</span>
+		</div>
+		<div class="row">
+			<span class="label">password: </span>
+			<span class="formw"><input type="password" name="password" style="width: 200px;" /></span>
+		</div>
+		<div class="row"></div>
+		<div class="row">
+			<span class="formw" style="font-size: 80%"><input type="checkbox" name="set_remember_me" checked="checked" value="1" />remember me on this computer</span>
+		</div>
+		<div class="row"></div>
+		<div class="row">
+			<span class="label">&nbsp;</span>
+			<span class="formw"><input type="submit" value="log in" /></span>
+		</div>
+		<div class="row">
+		</div>
+		<div class="row">
+			<span class="label">&nbsp;</span>
+			<span class="formw" style="font-size: 80%;"><a href="/user/forgot_password" style="color: black; text-decoration: none;">Forgot your password? Click here</a></span>
+		</div>
+		<div class="row">
+		</div>
+	</form>
+</div>
+
+<br /><br />
+
+<h3>First time using the service? Log in here!</h3>
+<p><strong>To verify that you are a currently at the college,</strong> we ask that you enter your <%= Setting::SCHOOL %> username into the below form. For example, if your email address is <%= Setting::EXAMPLE_USERNAME %><%= Setting::EMAIL %>, you would enter "<%= Setting::EXAMPLE_USERNAME %>."</p>
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<form action="/user/verify" method="post">
+		<div class="row">
+			<span class="label">username: </span>
+			<span class="formw"><input type="text" name="login_id" /></span>
+		</div>
+		<div class="row">
+			<span class="label">&nbsp;</span>
+			<span class="formw"><input type="submit" value="register" /></span>
+		</div>
+		<div class="row"></div>
+	</form>
+	<p>Already used this form,<br /> but don't know where to enter your verification code? <a href="/user/complete_verify">Click Here</a></p>
+</div>
+
+<br /><br /><br /><br />

@@ -1,0 +1,1 @@
+<%= render_component :controller => '/transport_sessions', :action => 'component', :params => params %>

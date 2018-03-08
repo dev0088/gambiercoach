@@ -1,0 +1,9 @@
+Hello <%= @user.login_id %>,
+
+One more thing to do as Student Conductor for the following trip:
+
+<%= @bus.departure.strftime("%A, %B %d") %> departing <%= @bus.starting_point %> for <%= @bus.ending_point %> at <%= @bus.departure.strftime("%I:%M %p") %>
+
+Please visit the following web page and ... ... ...:
+
+<%= TripReport.url(@bus) %>

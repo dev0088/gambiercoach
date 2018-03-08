@@ -1,0 +1,268 @@
+/* begin : primary layout */
+body {
+	margin:10px 10px 0px 10px;
+	padding:0px;
+	font: 14px "Lucida Grande", "Lucida Sans Unicode", verdana, lucida, sans-serif;
+}
+
+a:hover {
+	color: #62993E;
+	border-bottom:1px dotted #330066;
+	background-color:#FAFFCF;
+}
+
+/* banner text style */
+h1 {
+	color: #fff;
+	padding-top: 20px;
+	padding-left: 20px;
+}
+
+#banner {
+	display: none;
+}
+	
+html>body #banner {
+}
+
+#leftSidebar {
+	display: none;
+}
+
+#content {
+	width: 700px;
+	background:#fff;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+}
+	
+html>body #content {
+}
+
+#messaging {
+	display: none;
+}
+
+#messaging .error {
+	color: red;
+}
+
+#messaging .success {
+	color: blue;	
+}
+
+#messaging h2 {
+	font-size: 120%;
+}
+
+#contentBody {
+	padding-left: 20px;
+}
+
+#contentBody p{
+	color: #383838;	
+}
+
+#footer {
+	display: none;
+}
+/* end : primary layout */
+
+
+/* begin : main nav bar styling */
+#navcontainer {
+	display: none;
+}
+/* end : main nav bar styling */
+
+/* begin : side nav bar styling */
+#leftSidebar ul {
+	display: none;
+}
+
+/* end : side nav bar styling */
+
+/* begin : body content styling */
+h3 {
+	font-size: 140%;
+	font-weight: bold;
+	border-bottom: 1px dotted black;
+	padding-left: 5px;
+}
+
+h4 {
+	font-size: 120%;
+	font-weight: bold;
+}
+
+.activeSession {
+	padding-left: 10px;
+	list-style-type: none;
+}
+
+.route {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.direction {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.activeSessionBuses {
+	font-size: 90%;
+}
+
+.futureSessionHeader {
+	color: #778899;
+}
+
+.futureSession {
+	padding-left: 10px;
+	list-style-type: none;
+	color: #778899;
+}
+
+.futureSessionRoute {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.futureSessionDirection {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.futureSessionBuses {
+	font-size: 90%;
+}
+
+div.row {
+	font-size: 120%;
+  clear: both;
+  padding-top: 10px;
+}
+
+div.row span.label {
+  float: left;
+  width: 200px;
+  text-align: right;
+}
+
+div.row span.formw {
+  float: right;
+  width: 300px;
+  text-align: left;
+}
+
+div.row span.helpText {
+	font-size: 70%;
+	color: #666666;
+}
+
+div.spacer {
+	clear: both;
+}
+
+/* end : body content styling */
+
+/* begin : form styling for top-label forms */
+.tForm .submit {
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.tForm fieldset {
+border: none;
+}
+
+.tForm label.required{
+font-weight: bold;
+}
+
+.tForm label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.tForm h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px arial;
+}
+
+.tForm p.form-footer a {
+font: bold 14px arial, sans-serif;
+letter-spacing: 0;
+}
+
+.tForm p {
+clear: both;
+}
+
+.tForm div.row {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+}
+
+.tForm div.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.tForm label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.tForm input.text-input,
+.tForm select {
+font-size: 16px;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.tForm .form-element input {
+padding: 1px;
+}
+
+.tForm textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
+/* end : form styling for top-label forms */
+
+/* - - - - - - - - - - - - - - - - - - - - -
+
+ Title : Wufoo Form CSS
+ Author : Infinity Box Inc.
+ URL : http://wufoo.com
+
+ Last Updated : July 18, 2006
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+
+
+/* ----- IDS ----- */
+
+.wufooFormContainer{
+	display: none;

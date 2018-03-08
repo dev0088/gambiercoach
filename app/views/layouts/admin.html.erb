@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title><%= Setting::NAME %></title>
+	<link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="/assets/stylesheets/williams_print.css" type="text/css" media="print" />
+	<%= stylesheet_link_tag '/assets/stylesheets/ajax_scaffold', :media => 'all' %>
+  <%= javascript_include_tag '/assets/javascripts/rico_corner', '/assets/javascripts/ajax_scaffold' %>
+</head>
+<body>
+	<div id="leftSidebar">
+		<% if session[:admin_id].nil? -%>
+			<% if !(params[:controller] == "administrators" && params[:action] == "login") -%>
+			<ul>
+				<li><a href="/administrators/login">Log In</a></li>
+			</ul>
+			<% end -%>
+		<% else -%>
+		<ul>
+			<li style="list-style-type: none"></li>
+			<li><a href="/admin">Admin Home</a></li>
+			<li style="list-style-type: none"></li>
+			<li><a href="/manager/create_reservation">Create a Reservation</a></li>
+			<li><a href="/manager/create_edit_user">Create a User</a></li>
+			<li style="list-style-type: none"></li>
+			<li><a href="/transport_sessions/list">Sessions</a></li>
+			<li><a href="/routes/list">Routes</a></li>
+			<li><a href="/buses/list">Buses</a></li>
+			<li style="list-style-type: none"></li>
+			<li><a href="/settings/edit_settings">Global Settings</a></li>
+			<li><a href="/manager/system_reset_options">System Reset Options</a></li>
+			<% if @admin.superuser? -%>
+				<li style="list-style-type: none"></li>
+				<li><a href="/administrators/list">Administrators</a></li>
+			<% end -%>
+			<li style="list-style-type: none"></li>
+			<li><a href="/admin/edit_welcome">Welcome Text</a></li>
+			<li><a href="/admin/edit_about">About Text</a></li>
+			<li><a href="/admin/edit_group_tickets">Group Tix Text</a></li>
+			<li><a href="/admin/edit_help">Help Text</a></li>
+			<li><a href="/admin/edit_weekly_shuttle">Weekly Shuttle</a></li>
+                 	<li><a href="/admin/edit_2007_2008_schedule">2007/2008 Schedule</a></li>
+			<li><a href="/admin/email_texts">Email Texts</a></li>
+			<li style="list-style-type: none"></li>
+			<li><a href="/administrators/change_password">Change My Password</a></li>
+			<li><a href="/administrators/logout">Log Out</a></li>
+		</ul>
+		<% end -%>
+	</div>
+	<div id="banner">
+	</div>
+	<div id="content">
+		<% if !flash[:success].nil? || !flash[:error].nil? -%>
+		<div id="messaging">
+			<h2 class="<%= flash[:success].nil? ? "error" : "success" %>">
+				<%= flash[:success].nil? ? flash[:error] : flash[:success] %>
+			</h2>
+		</div>
+		<% end -%>
+		<div id="contentBody">
+			<%= @content_for_layout %>
+		</div>
+		<div id="footer">
+			Copyright 2006, <%= Setting::NAME %>&nbsp;&nbsp;&nbsp;All rights reserved
+		</div>
+	</div>
+</body>
+</html>

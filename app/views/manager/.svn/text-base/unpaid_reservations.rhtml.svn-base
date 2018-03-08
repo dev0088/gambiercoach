@@ -1,0 +1,33 @@
+<h2>
+	Working with Unpaid Reservations
+</h2>
+<div style="text-align: center;">
+<form action="/manager/unpaid_reservations" method="post">
+	<table style="margin: 0 auto;">
+		<tr>
+			<th style="width: 100px; text-align: left; text-decoration: underline;">action</th>
+			<th style="width: 125px; text-align: left; text-decoration: underline;">reservation id</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">login id</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">amount owed</th>
+		</tr>
+		<% rc = 1 %>
+		<% @unpaid_rs.each do |r| %>
+		<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 20px;">
+			<td>
+				<select name="r[<%= r.id %>]">
+					<option value="nothing" selected="selected">--</option>
+					<option value="mark_as_paid">mark paid</option>
+					<option value="cancel">cancel</option>
+				</select>
+			</td>
+			<td style="width: 150px; text-align: left;"><a href="/manager/edit_reservation/<%= r.id %>"><%= r.id %></a></td>
+			<td style="width: 150px; text-align: left;"><%= r.user.login_id %></td>
+			<td style="width: 150px; text-align: left;"><%= r.total %></td>
+		
+		</tr>
+		<% rc += 1 %>
+		<% end %>
+		</table>
+		<br /><br /><br />
+		<input style="margin: 0 auto" type="submit" value="Save reservation changes" />	
+</form>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="1"
+   name=""
+   committed-date="2006-10-04T01:36:58.006125Z"
+   url="file:///opt/svn/trunk/ssl_files"
+   last-author="root"
+   kind="dir"
+   uuid="57798244-f21e-0410-afd0-df27098c147e"
+   revision="24"/>
+<entry
+   name="williams"
+   kind="dir"/>
+<entry
+   name="kenyon"
+   kind="dir"/>
+<entry
+   committed-rev="1"
+   name="._.DS_Store"
+   text-time="2006-10-04T01:39:10.000000Z"
+   committed-date="2006-10-04T01:36:58.006125Z"
+   checksum="96c68b79bc82b883258762468d5a38a3"
+   last-author="root"
+   kind="file"
+   prop-time="2006-10-04T01:39:10.000000Z"/>
+</wc-entries>

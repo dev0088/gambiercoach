@@ -1,0 +1,71 @@
+INSTALLING YOUR WEB SERVER CERTIFICATE
+
+Go Daddy has issued your signed Web Server Certificate. The final step in the certificate-request process is the installation of the certificate on your Web server. The specifics of the installation procedure are determined by your choice of Web server software. Please see below for certificate-installation instructions for Apache and Microsoft IIS 5.x. and 6.x servers, as well as cPanel/WebHost Manager. Go to the following address for certificate-installation instructions for all supported Web servers: https://certificates.godaddy.com/InstallationInstructions.go. 
+
+ABOUT THE INTERMEDIATE CERTIFICATE
+Before you install your Web Server Certificate you must install our intermediate certificate -- the sf_issuing.crt  -- on your Web server. An intermediate certificate is a subordinate certificate issued by the trusted root specifically to issue end-entity server certificates. The result is a chain that begins at the trusted root CA, through the intermediate certificate, and ending with the Web Server SSL certificate issued to you. Such a certificate is called "chained root certificate." The usage of an intermediate certificate thus provides an added level of security as the Certification Authority (CA) does not need to issue certificates directly from its CA root certificate.
+
+You received our intermediate certificate along with your issued certificate. You may also download the intermediate certificate from the repository at https://certificates.godaddy.com/Repository.go.
+
+INSTALLATION INSTRUCTIONS - APACHE 1.3
+
+Installing Your Web Server Certificate and the Intermediate Certificate:
+- Copy your issued certificate, intermediate certificate and key files (generated when you created the - Certificate Signing Request (CSR)) into the directory that you will be using to hold your certificates. 
+- Open the Apache httpd.conf file and add the following directives: 	
+
+	SSLCertificateFile /path to certificate file/your issued certificate 	
+	SSLCertificateKeyFile /path to key file/your key file 	
+	SSLCertificateChainFile/path to intermediate certificate/sf_issuing.crt 
+
+- Save your httpd.conf file and restart Apache. 
+
+INSTALLATION INSTRUCTIONS - APACHE 2.X
+Installing Your Web Server Certificate and the Intermediate Certificate:
+- Copy your issued certificate, intermediate certificate and key file (generated when you created the Certificate Signing Request (CSR)) into the directory that you will be using to hold your certificates. 
+- Open the Apache ssl.conf file and add the following directives:
+
+	SSLCertificateFile /path to certificate file/your issued certificate 	
+	SSLCertificateKeyFile /path to key file/your key file 	
+	SSLCertificateChainFile/path to intermediate certificate/sf_issuing.crt 
+
+- Save your ssl.conf file and restart Apache. 
+
+INSTALLATION INSTRUCTIONS - Microsoft IIS 5.x/6.x
+NOTE: For Windows NT 4.0, you must have at least Service Pack 4.0 or higher or Microsoft Internet Explorer 5.0.
+
+
+Installing Intermediate Certificate:
+Once you have downloaded the intermediate certificate, please follow the instructions below to install it:
+- Select "Run" from the start menu; then type "mmc" to start the Microsoft Management Console (MMC). 
+- In the Management Console, select "File," then "Add/Remove Snap In." 
+- In the Add/Remove Snap-In dialog, select "Add." 
+- In the Add Standalone Snap-in dialog, choose "Certificates"; then click the "Add" button. 
+- Choose "Computer Account"; then click "Next" and "Finish." - Close the Add Standalone Snap-in dialog and click "OK" on the Add/Remove Snap-in dialog to return to the main MMC window. 
+- If necessary, click the "+" icon to expand the "Certificates" folder so that the Intermediate Certification Authorities folder is visible. 
+- Right-click on "Intermediate Certification Authorities" and choose "All Tasks"; then click "Import." 
+- Follow the wizard prompts to complete the installation procedure. 
+
+Installing Your Web Server Certificate
+- Select the Internet Information Service console within the Administrative Tools menu. 
+- Select the Web site (host) for which the certificate was made. 
+- Right mouse-click and select "Properties." 
+- Select the "Directory Security" tab. 
+- Select the "Server Certificate" option. 
+- The Welcome to the Web Server Certificate Wizard windows opens. Click "OK." 
+- Select "Process the pending request and install the certificate." Click "Next." 
+- Enter the location for the certificate file at the Process a Pending Request window. The file extension may be .txt or .crt instead of .cer (search for files of type "all files"). 
+- When the correct certificate file is selected, click "Next." 
+- Verify the Certificate Summary to make sure all information is accurate. Click "Next." 
+- Select "Finish." 
+
+INSTALLATION INSTRUCTIONS - cPanel/WebHost Manager
+About the Certificate Bundle
+As part ofhe installation process for your issued SSL certificate, you must install the certificate bundle, which consists of our Valicert root certificate and the intermediate certificate. You can download the certificate bundle from our repository at https://certificates.godaddy.com/Repository.go. The bundle is located in the Root Bundle section.
+
+Installing Web Server Certificate and Certificate Bundle
+- Open the WebHost Manager and click "Install an SSL Certificate" on the SSL/TLS menu.
+You will see a screen with three boxes on it. Your issued certificate, RSA private key and certificate bundle must be pasted into boxes 1, 2, and 3, respectively. 
+- In the first box, paste in the contents of your issued SSL certificate. If the certificate file is on your server, you may use the Fetch button to copy it from the file. 
+- In the second box, paste in your private key which was generated when you created the CSR. 
+- In the third box, paste in the certificate bundle (ca_bundle.crt).
+At the top of the page click "Do it."  

@@ -1,0 +1,27 @@
+<fieldset>
+	<div class="row">
+		<!--[form:transport_session]-->
+<div class="form-element">
+  <label for="transport_session_name">Name</label>
+  <%= text_field 'transport_session', 'name' , {:class=>"text-input"} %>
+</div>
+
+<div class="form-element">
+  <label for="transport_session_reservations_opening_date">Reservations opening date</label>
+  <%= datetime_select 'transport_session', 'reservations_opening_date', :start_year => Time.now.year  %>
+</div>
+
+<div class="form-element">
+  <label for="transport_session_on_campus_payment_deadline">Cash reservations closing date</label>
+  <%= datetime_select 'transport_session', 'cash_reservations_closing_date', :start_year => Time.now.year  %>
+</div>
+
+<div class="form-element">
+  <label for="transport_session_cash_reservations_information">Cash Reservations Information</label>
+  <%= text_area 'transport_session', 'cash_reservations_information'  %>
+</div>
+
+<!--[eoform:transport_session]-->
+
+	</div>
+</fieldset>

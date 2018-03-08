@@ -1,0 +1,40 @@
+<h2>
+	Designating Conductors for: <%= @s.name %>
+</h2>
+<form action="/manager/session_conductors" method="post">
+<input type="hidden" name="id" value="<%= @s.id %>" />
+
+<% @s.buses.each do |b| %>
+<h3><%= b.readable_route %> (<%= b.departure.strftime("%A, %B %d") %> at <%= b.departure.strftime("%I:%M %p") %>): </h3>
+<% potential_conductors = b.reservation_tickets.find(:all, :conditions => ["conductor_wish = 1"]) %>
+<% if potential_conductors.size > 0 %>
+	<table style="margin: 0 auto;">
+		<tr>
+			<th style="width: 125px; text-align: left; text-decoration: underline;">cond. status?</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">login id</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">num tickets</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">reservation #</th>
+		</tr>
+		<% rc = 1 %>
+		<% potential_conductors.each do |rt| %>
+			<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 20px;">
+				<td>
+					<select name="rt[<%= rt.id %>]">
+						<option value="0" <%= rt.conductor_status == 0 ? "selected='selected'" : "" %>>no</option>
+						<option value="1" <%= rt.conductor_status == 1 ? "selected='selected'" : "" %>>yes</option>
+					</select>
+				</td>
+				<td style="width: 150px; text-align: left;"><%= rt.reservation.user.login_id %></td>
+				<td style="width: 150px; text-align: left;"><%= rt.quantity %></td>
+				<td style="width: 150px; text-align: left;"><a href="/manager/edit_reservation/<%= rt.reservation.id %>"><%= rt.reservation.id %></a></td>
+			</tr>
+		<% rc += 1 %>
+		<% end %>
+	</table>
+<% else %>
+	<p><a href="/manager/bus/<%= b.id %>">(nobody wants to be a conductor)</a></p>
+<% end %>
+<br />
+<% end %>
+<input type="submit" value="Save conductor changes" />
+</form>

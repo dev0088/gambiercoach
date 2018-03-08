@@ -1,0 +1,32 @@
+Hello <%= @user.login_id %>,
+
+<% if @reservation.frozen? %>
+You canceled all tickets for your reservation #<%= @reservation.id %>.
+
+<% else %>
+You modified your reservation successfully. Your new reservation information is:
+
+<% @reservation.reservation_tickets.each do |art| %>
+<%= art.bus.readable_route %>: <%= art.quantity %> ticket(s) for <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %>
+<% end %>
+
+Your reservation ticket number has remained the same. It is: #<%= @reservation.id %>
+<% end %>
+
+
+To modify your reservations, cancel, or book more tickets, visit:
+
+           http://www.williamstransport.org
+
+
+Thanks,
+
+The Motor Coach Team
+
+=========================
+Williams Transport
+Motor Coach Service
+2820 Paresky Center
+Williamstown, MA 01267
+www.williamstransport.org 
+=========================
