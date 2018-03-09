@@ -6,6 +6,12 @@
 	<title><%= Setting::NAME %></title>
 	<link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="/assets/stylesheets/williams_print.css" type="text/css" media="print" />
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
+  <%= stylesheet_link_tag '/assets/stylesheets/ajax_scaffold.css'%>
+  <script type="text/javascript" src="/assets/javascripts/niftycube.js"></script>
+
+  <%= javascript_include_tag '/assets/javascripts/rico_corner'%>
 </head>
 <body>
 	<div id="leftSidebar">
@@ -23,7 +29,7 @@
 			<li><a href="/manager/create_reservation">Create a Reservation</a></li>
 			<li><a href="/manager/create_edit_user">Create a User</a></li>
 			<li style="list-style-type: none"></li>
-			<li><a href="/transport_sessions/list">Sessions</a></li>
+			<li><a href="<%= transport_sessions_path %>">Sessions</a></li>
 			<li><a href="/routes/list">Routes</a></li>
 			<li><a href="/buses/list">Buses</a></li>
 			<li style="list-style-type: none"></li>
@@ -38,8 +44,6 @@
 			<li><a href="/admin/edit_about">About Text</a></li>
 			<li><a href="/admin/edit_group_tickets">Group Tix Text</a></li>
 			<li><a href="/admin/edit_help">Help Text</a></li>
-			<li><a href="/admin/edit_weekly_shuttle">Weekly Shuttle</a></li>
-                 	<li><a href="/admin/edit_2007_2008_schedule">2007/2008 Schedule</a></li>
 			<li><a href="/admin/email_texts">Email Texts</a></li>
 			<li style="list-style-type: none"></li>
 			<li><a href="/administrators/change_password">Change My Password</a></li>

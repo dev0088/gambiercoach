@@ -37,11 +37,11 @@ module UserHelper
   end
 
   def title_helper
-    "#{@controller.controller_class_name} #{@controller.action_name}"
+    "#{params[:controller]} #{params[:action]}"
   end
 
   def start_form_tag_helper(options = {})
-    url = url_for(:action => "#{@controller.action_name}")
+    url = url_for(:action => "#{params[:action]}")
     "#{self.send(:start_form_tag, url, options)}"
   end
 

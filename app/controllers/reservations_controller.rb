@@ -1,7 +1,7 @@
 class ReservationsController < ApplicationController
 
-  before_action:login_required, :except => [:create, :get_on_wait_list]
-  before_action:load_user_if_logged_in, :only => [:create, :get_on_wait_list]
+  before_action :login_required, :except => [:create, :get_on_wait_list]
+  before_action :load_user_if_logged_in, :only => [:create, :get_on_wait_list]
   ssl_required :complete
   ssl_allowed :create
 
@@ -14,11 +14,12 @@ class ReservationsController < ApplicationController
     @reservation_price = nil
     @wait_list_id = nil
     @cash_reservations_allowed = true
-    
+
     # is someone coming from an open wait list spot's "purchase your ticket" jump?
     if !params[:wait_list_id].nil?
-      wlr = WaitListReservation.find(:first,
-                                     :conditions => ["id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?", params[:wait_list_id], Setting.earliest_valid_wait_list_opening])
+      wlr = WaitListReservation.where("id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?",
+                                  params[:wait_list_id], Setting.earliest_valid_wait_list_opening
+                                ).first
       if wlr.nil?
         flash[:error] = "Your request off the wait list was not allowed. Please contact the system administrator."
         redirect_to :action => "my_wait_list_reservations"
@@ -36,7 +37,7 @@ class ReservationsController < ApplicationController
         session[:cash_reservations_allowed] = @cash_reservations_allowed
         session[:wait_list_id] = @wait_list_id
       end
-    
+
     # inbound from the schedule page
     elsif !params[:new_request].nil?
       @reservation_requests, @reservation_price, @cash_reservations_allowed = parse_schedule_selections(params)
@@ -44,7 +45,7 @@ class ReservationsController < ApplicationController
       session[:reservation_price] = @reservation_price
       session[:cash_reservations_allowed] = @cash_reservations_allowed
       session[:wait_list_id] = nil
-      
+
     # someone was reserving a spot off the wait list, then jumped to another page
     # like editing a stored address, and is now back...
     elsif !session[:wait_list_id].nil?
@@ -53,33 +54,34 @@ class ReservationsController < ApplicationController
       @cash_reservations_allowed = session[:cash_reservations_allowed]
       @wait_list_id = session[:wait_list_id]
 
-    # if we're not coming from the schedule page, and we already 
+    # if we're not coming from the schedule page, and we already
     # have reservation request details for the session
     #
-    # in other words, somebody created reservation request details but 
+    # in other words, somebody created reservation request details but
     # then needed to go log in or sign up
     elsif !session[:reservation_details].nil?
       @reservation_requests = session[:reservation_details]
       @reservation_price = session[:reservation_price]
       @cash_reservations_allowed = session[:cash_reservations_allowed]
-      
+
     else
-      
+
       # something went seriously wrong, we have no idea why the user is here! ;)
       raise
     end
-  
+
     if @reservation_requests.empty?
       flash[:error] = "Please select one or more tickets to reserve before continuing"
       redirect_to :controller => "index", :action => "index"
       return
     end
-    
+
     if !request.ssl?
-      redirect_to "https://" + request.host + request.request_uri
-      return
+      url = "https://" + request.host + request.request_uri
+      #redirect_to url
+      #return
     end
-  
+
     if @user.nil?
       flash[:error] = "Please log in or verify your student credentials before continuing with your reservation"
       store_location
@@ -90,7 +92,7 @@ class ReservationsController < ApplicationController
       return
     end
   end
-  
+
   def complete
     # gathering the yay / nay on conductor wishes
     # forcing user back if they checked but did not give phone number
@@ -101,7 +103,7 @@ class ReservationsController < ApplicationController
       if params[:contact_phone].empty?
         @reservation_requests = session[:reservation_details]
         @reservation_price = session[:reservation_price]
-        @wait_list_id = session[:wait_list_id]        
+        @wait_list_id = session[:wait_list_id]
         flash[:error] = "Please both check the box AND provide your contact phone number if you would like to be considered for the conductor position"
         redirect_to :action => "create"
         return
@@ -121,21 +123,6 @@ class ReservationsController < ApplicationController
         flash[:error] = error_msg
         redirect_to :action => "create"
       end
-    elsif !params[:pay_by_student_id].nil? # paying by Student ID
-      if params[:student_id].nil? || (params[:student_id].length < 7 || params[:student_id].length > 8)
-        flash[:error] = "Your Student ID should be 7 characters long.<br/>Please exclude the leading 'W.'"
-        redirect_to :action => "create"
-        return
-      end
-      error_msg, reservation = process_student_id(@user, @conductor_wish, @contact_phone, session[:reservation_details], session[:reservation_price], session[:wait_list_id], params[:student_id])
-      if error_msg.nil?
-        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly.<br />A charge will be placed on your term bill after your trip."
-        redirect_to :action => "my_reservations"
-        return
-      else
-        flash[:error] = error_msg
-        redirect_to :action => "create"
-      end
     elsif !params[:new_cc_submit].nil? # paying with a newly entered cc
       error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone, params[:new_cc], session[:reservation_details], session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
@@ -147,7 +134,7 @@ class ReservationsController < ApplicationController
         redirect_to :action => "create"
       end
     else # paying with a stored set of payment information
-      spa = StoredPaymentAddress.find(:first, :conditions => ["id = ? AND user_id = ?", params[:stored_payment_set], @user.id])
+      spa = StoredPaymentAddress.where("id = ? AND user_id = ?", params[:stored_payment_set], @user.id).first
       if spa.nil?
         flash[:error] = "Please select the stored payment information to use"
         redirect_to :action => "create"
@@ -163,7 +150,7 @@ class ReservationsController < ApplicationController
         cc_info[:state] = spa.state
         cc_info[:zip] = spa.zip
       end
-      
+
       error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone, cc_info, session[:reservation_details], session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
         flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly."
@@ -176,17 +163,13 @@ class ReservationsController < ApplicationController
       end
     end
   end
-  
+
   def my_reservations
-    begin
-	@reservations = @user.reservations
-    rescue
-      puts $!
-    end
+    @reservations = @user.reservations
   end
 
   def my_wait_list_reservations
-    @wlrs = @user.wait_list_reservations.find(:all, :conditions => ["(spot_opened_at IS NULL) OR (spot_opened_at > ?)", Setting.earliest_valid_wait_list_opening])
+    @wlrs = @user.wait_list_reservations.where("(spot_opened_at IS NULL) OR (spot_opened_at > ?)", Setting.earliest_valid_wait_list_opening)
   end
 
   def get_on_wait_list
@@ -197,7 +180,7 @@ class ReservationsController < ApplicationController
       return
     else
       # if user is not already on the wait list for this bus
-      if WaitListReservation.find(:first, :conditions => ["user_id = ? and bus_id = ?", @user.id, params[:id]]).nil?
+      if WaitListReservation.where("user_id = ? and bus_id = ?", @user.id, params[:id]).first.nil?
         b = Bus.find(params[:id])
         if b.has_a_wait_list?
           wlr = WaitListReservation.create(:user => @user, :bus => b)
@@ -210,7 +193,7 @@ class ReservationsController < ApplicationController
         flash[:error] = "You were already on the wait list for the specified bus. No need to get another spot."
       end
       redirect_to :controller => "index", :action => "index"
-    end    
+    end
   end
 
   def cancel_wait_list_reservation
@@ -227,10 +210,10 @@ class ReservationsController < ApplicationController
   def modify
     @reservation = @user.reservations.find(params[:id])
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       refund_amt = "0".to_money
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.find(rt[0])
@@ -246,13 +229,13 @@ class ReservationsController < ApplicationController
       end
       @reservation.reload
 
-      if (@reservation.payment_status == Reservation::UNPAID) || (@reservation.payment_status == Reservation::PD_STUDENT_ID)
-        flash[:success] = "Modified your reservation successfully"        
+      if @reservation.payment_status == Reservation::UNPAID
+        flash[:success] = "Modified your reservation successfully"
       elsif @reservation.payment_status == Reservation::PD_CASH
         unless refund_amt.zero?
           Notifications.deliver_reservation_modified_by_user(@user, @reservation.id, refund_amt.to_s)
         end
-        flash[:success] = "Modified your reservation successfully,<br /> we will refund you #{refund_amt}"        
+        flash[:success] = "Modified your reservation successfully,<br /> we will refund you #{refund_amt}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
         error_message = @reservation.cc_refund(refund_amt)
         if error_message.nil?
@@ -290,10 +273,10 @@ class ReservationsController < ApplicationController
                                          :zip => cc_info[:zip])
           sps.save!
         end
-        
+
         # reserve the tickets
         r = reserve_tickets(Reservation::PD_CREDIT, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
-        
+
         # process the credit card
         tr = Payment::AuthorizeNet.new(:amount => reservation_price.to_s,
                                        :card_number => cc_info[:card_number],
@@ -346,7 +329,7 @@ class ReservationsController < ApplicationController
     end
     return nil, r
   end
-  
+
   def process_cash(user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
     r = nil # the reservation
     begin
@@ -359,24 +342,10 @@ class ReservationsController < ApplicationController
     end
     return nil, r
   end
-  
-  def process_student_id(user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id, student_id)
-    r = nil # the reservation
-    begin
-      User.transaction do
-        r = reserve_tickets(Reservation::PD_STUDENT_ID, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id, student_id)
-        Notifications.deliver_student_id_reservation_create_success(user, r)
-      end
-    rescue TransportappError => error_message
-      return error_message, nil
-    end
-    return nil, r
-  end
-  
-  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id, student_id=nil)
+
+  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
     r = Reservation.new(:user => user,
-                        :payment_status => pay_type,
-                        :student_id => student_id)
+                        :payment_status => pay_type)
     r.save!
 
     if cond_wishes
@@ -389,10 +358,10 @@ class ReservationsController < ApplicationController
       wlr = WaitListReservation.find(wait_list_id)
       if wlr.user != user
         raise TransportappError, "Problem - you were trying to reserve a wait list spot for someone else's account?"
-      end      
+      end
       wlr.destroy
     end
-    
+
     reservation_total = Money.new(0)
     reservation_details.each do |rd|
       bus = rd[0].reload
@@ -415,10 +384,10 @@ class ReservationsController < ApplicationController
     # need to save the total
     r.total = reservation_total.to_s
     r.save!
-    
+
     if !reservation_total.eql?(reservation_price)
       raise "Reservation total as calculated did not match what we had in the server session -- possible hack attempt."
-    end    
+    end
     return r
   end
 end

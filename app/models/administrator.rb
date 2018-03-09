@@ -1,5 +1,5 @@
 require 'digest/sha1'
-# require 'ajax_scaffold'
+# # require 'ajax_scaffold'
 
 class Administrator < ActiveRecord::Base
   attr_accessor :new_password
@@ -20,14 +20,20 @@ class Administrator < ActiveRecord::Base
   # ]
 
   def self.authenticate(username, pass)
-    u = find(:first, :conditions => ["username = ?", username])
+    puts "======== #{__callee__}:#{__LINE__}:#{__FILE__}: #{username}, #{pass}"
+
+    u = where("username = ?", username).first
     return nil if u.nil?
-    find(:first, :conditions => ["username = ? AND salted_password = ?", username, Administrator.salted_password(u.salt, Administrator.hashed(pass))])
+    puts "======== #{__callee__}:#{__LINE__}:#{__FILE__}: #{username}, #{pass}"
+    where("username = ? AND salted_password = ?",
+      username, Administrator.salted_password(u.salt,
+                  Administrator.hashed(pass))
+    ).first
   end
 
   def generate_reset_password_token
     write_attribute('reset_password_token', Administrator.hashed(self.salted_password + Time.now.to_i.to_s + rand.to_s))
-    update_without_callbacks
+    udpate
     return self.reset_password_token
   end
 

@@ -1,0 +1,40 @@
+<h2>
+	Working with Unpaid Walkons
+</h2>
+<div style="text-align: center;">
+<form action="/manager/unpaid_walkons" method="post">
+	<table style="margin: 0 auto;">
+		<tr>
+			<th style="width: 100px; text-align: left; text-decoration: underline;">paid?</th>
+			<th style="width: 250px; text-align: left; text-decoration: underline;">bus</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">amount owed</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">login id</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">name</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">mailbox</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">phone1</th>
+			<th style="width: 150px; text-align: left; text-decoration: underline;">phone2</th>
+		</tr>
+		<% rc = 1 %>
+		<% @unpaid_wos.each do |wo| %>
+		<tr style="background-color: <%= rc%2 == 0 ? "#ffffff" : "#FFE4B5" %>; height: 20px;">
+			<td>
+				<input type="checkbox" name="wo[<%= wo.id %>]" value="mark_as_paid" />
+			</td>
+			<td style="width: 250px; text-align: left;">
+				<%= wo.bus.readable_route %>
+				<br /><%= wo.bus.departure.strftime("%Y_%m_%d") %>
+				<br /><%= wo.bus.departure.strftime("%I:%M %p") %>
+			</td>
+			<td style="width: 150px; text-align: left;"><%= wo.bus.route.price %></td>			
+			<td style="width: 150px; text-align: left;"><%= wo.login_id %></td>
+			<td style="width: 150px; text-align: left;"><%= wo.name %></td>
+			<td style="width: 150px; text-align: left;"><%= wo.mailbox %></td>
+			<td style="width: 150px; text-align: left;"><%= wo.phone1 %></td>
+			<td style="width: 150px; text-align: left;"><%= wo.phone2 %></td>		
+		</tr>
+		<% rc += 1 %>
+		<% end %>
+		</table>
+		<br /><br /><br />
+		<input style="margin: 0 auto" type="submit" value="Save walk-on changes" />	
+</form>

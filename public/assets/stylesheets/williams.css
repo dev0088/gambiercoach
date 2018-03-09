@@ -18,7 +18,7 @@ h1 {
 }
 
 #banner {
-	background: white url(/assets/images/bannerwilliams.gif) no-repeat top left;
+	background: white url(/assets/images/bannerkenyon.gif) no-repeat top left;
 	height:50px;
 	voice-family: "\"}\"";
 	voice-family: inherit;
@@ -98,7 +98,7 @@ html>body #content {
 #navcontainer {
 	margin: 0 0 0 0;
 	padding-top: 20px;
-	padding-left: 290px;
+	padding-left: 300px;
 	height: 20px;
 }
 
@@ -125,7 +125,7 @@ html>body #content {
 	display: block;
 	text-decoration: none;
 	text-align: center;
-	font: 12px Verdana;
+	font: 16px Verdana;
 }
 
 #navcontainer ul li a:hover {

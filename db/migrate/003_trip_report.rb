@@ -25,7 +25,7 @@ class TripReport < ActiveRecord::Migration[5.1]
       t.column "created_at", :datetime, :null => false
       t.column "value", :string, :limit => 20
     end
-
+    
     add_column "buses", "report_token", :string, :limit => 40
   end
 

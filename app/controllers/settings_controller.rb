@@ -38,7 +38,7 @@ class SettingsController < ApplicationController
 
     @sort_sql = Setting.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Setting.table_name}.#{Setting.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
-    @paginator, @settings = paginate(:settings, :order => @sort_by, :per_page => default_per_page)
+    @paginator, @settings = paginate(:settings, :order => @sort_by, :per_page => 25)
 
     render :action => "component", :layout => false
   end
@@ -70,7 +70,7 @@ class SettingsController < ApplicationController
     if @successful
       return_to_main
     else
-      @options = { :scaffold_id => params[:scaffold_id], :action => "create" }
+      @options = { :scaffold_id => params[:controller], :action => "create" }
       render :partial => 'new_edit', :layout => true
     end
   end
@@ -86,7 +86,7 @@ class SettingsController < ApplicationController
     return render :action => 'edit.rjs' if request.xhr?
 
     if @successful
-      @options = { :scaffold_id => params[:scaffold_id], :action => "update", :id => params[:id] }
+      @options = { :scaffold_id => params[:controller], :action => "update", :id => params[:id] }
       render :partial => 'new_edit', :layout => true
     else
       return_to_main
@@ -95,15 +95,15 @@ class SettingsController < ApplicationController
 
   def edit_settings
     case request.method
-    when :get
-      @setting = Setting.find(:first)
+    when 'GET'
+      @setting = Setting.first
       if @setting.nil?
         @setting = Setting.new
       end
       render
       return
-    when :post
-      @setting = Setting.find(:first)
+    when 'POST'
+      @setting = Setting.first
       if @setting.nil?
         @setting = Setting.new
       end

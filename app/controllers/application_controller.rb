@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   include AdminLibrary
   # include SslRequirement
 
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   before_action :force_ssl, :only => [:login]
 
   Rails.application.config.filter_parameters += [:password]
@@ -43,5 +43,4 @@ class ApplicationController < ActionController::Base
     end
     return reservations, price, cash_reservations_allowed
   end
-
 end

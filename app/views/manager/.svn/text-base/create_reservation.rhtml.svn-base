@@ -1,0 +1,175 @@
+<h3>Creating a Reservation</h3>
+
+<form action="/manager/create_reservation" method="post">
+	<div class="wufooFormContainer">
+		<!-- BEGIN : USER INFORMATION -->
+		<div id="stage">
+		<div id="main">
+		<ul id="formFields">
+			<li>User Information</li>
+			<li>
+				<select name="user_id">
+					<option value="--">--</option>
+				<% User.find(:all).each do |u| -%>
+					<option value="<%= u.id %>"><%= u.login_id %></option>
+				<% end -%>
+				</select>
+				 or,
+				<br /> 
+				<label>New user: </label><input type="text" name="new_user_login" style="display: inline;" />
+				<br /><br />
+				<input name="conductor" type="checkbox" value="yes"/>
+				<label>Wishes to be Conductor?</label>
+			</li>			
+		</ul>
+		</div>
+		</div>
+		<!-- END : USER INFORMATION -->
+	</div>
+	<br />	
+	<div class="wufooFormContainer">
+		<!-- BEGIN : SCHEDULE INFORMATION -->
+		<% TransportSession.find(:all).each do |ts| -%>
+		<h4 style="text-decoration: underline;"><%= ts.name %></h4>
+		<ul class="activeSession">
+			<% ts.routes_in_order.each do |r| -%>
+
+				<% if !r.going_away_buses.empty? -%>
+					<li class="direction"><%= r.point_a %> to <%= r.point_b %></li>
+					<ul class="activeSessionBuses">
+						<% r.going_away_buses.each do |b| -%>
+						<li>
+								<select name="<%= b.id %>">
+									<% for i in 0..Setting.max_tickets_purchase %>
+									<option value="<%= i %>"><%= i %></option>
+									<% end %>
+								</select>
+							<%= b.departure.strftime("%A, %B %d") %> departs <%= b.route.point_a %> at <%= b.departure.strftime("%I:%M %p") %>
+							<% if b.seats_remaining < 1 %><span style="font-weight:bold; color:red;"><% end %>[<%= b.seats_remaining %> seat(s) remaining]<% if b.seats_remaining < 1 %></span><% end %>
+						</li>
+						<% end -%>
+					</ul>
+				<% end -%>
+
+			<% end %>
+			<% ts.routes_in_order.each do |r| %>
+
+				<% if !r.coming_home_buses.empty? -%>
+					<li class="direction">
+						<%= r.point_b %> to <%= r.point_a %>
+					</li>
+					<ul class="activeSessionBuses">
+						<% r.coming_home_buses.each do |b| -%>
+						<li>
+							<select name="<%= b.id %>">
+								<% for i in 0..(Setting.max_tickets_purchase < b.seats_remaining ? Setting.max_tickets_purchase : b.seats_remaining) %>
+								<option value="<%= i %>"><%= i %></option>
+								<% end %>
+							</select>
+							<%= b.departure.strftime("%A, %B %d") %> departs <%= b.route.point_b %> at <%= b.departure.strftime("%I:%M %p") %>
+							<% if b.seats_remaining < 1 %><span style="font-weight:bold; color:red;"><% end %>[<%= b.seats_remaining %> seat(s) remaining]<% if b.seats_remaining < 1 %></span><% end %>
+						</li>
+						<% end -%>
+					</ul>
+				<% end -%>
+
+			<% end -%>
+		</ul>
+		<% end -%>
+		<!-- END : SCHEDULE INFORMATION -->
+	</div>
+	<br />	
+	<div class="wufooFormContainer">
+		<!-- BEGIN : PAYMENT INFORMATION -->
+		<div id="stage">
+		<div id="main">
+
+		<ul id="formFields">
+
+		<li>
+		<label class="desc" for="field0">Name on Card</label>
+		<div class="full">
+		<input id="field0" name="cc_info[name_on_card]" class="field text large" type="text" maxlength="255" value=""/> 
+		</div>
+		</li>
+
+		<li>
+		<div class="full">
+		<label class="desc" for="field21">Card Number</label>
+		<input id="field21" name="cc_info[card_number]" class="field text large" type="text" value=""/> 
+		</div>
+		</li>
+		<li>
+		<div class="full">
+			<label class="desc">Expiration Date</label>
+			<select class="field select small" name="cc_info[expiration_month]">
+			<% for m in 1..12 do -%>
+				<option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
+			<% end -%>
+			</select>
+		  <select class="field select small" name="cc_info[expiration_year]">
+				<option>2006</option>
+				<option>2007</option>
+				<option>2008</option>
+				<option>2009</option>
+				<option>2010</option>
+				<option>2011</option>
+				<option>2012</option>
+				<option>2013</option>
+				<option>2014</option>
+			</select>
+		</div>
+		</li>
+
+		<li>
+		<label class="desc" for="field15">Billing Address</label>
+		<div class="full">
+		<input id="field15" name="cc_info[address_one]" class="field text large "value=""/>
+		<p class="field ">Street Address</p>
+		</div>
+		<div class="left">
+		<input id="field17" name="cc_info[city]" class="field text medium "value=""/>
+		<p class="field ">City</p>
+		</div>
+		<div class="right">
+		<select class="field select medium" id="field20" name="cc_info[state]">
+			<%= render :partial => "reservations/states_options" %>
+		</select>
+		<p class="field ">State / Province / Region</p>
+		</div>
+		<div class="full">
+		<input id="field19" name="cc_info[zip]" class="field text small " maxlength="15"value=""/>
+		<p class="field ">Postal / Zip Code</p>
+		</div>
+		<p></p></li>
+		<li>
+		<label class="desc" for="field23"></label>
+		</li>
+		</ul>
+
+		<div class="buttons">
+		<input id="submit" name="cc_submit" class="button" type="submit" value="Complete Credit Card Transaction" />
+		</div>
+
+	</div><!--main-->
+	</div><!--stage-->
+	<!-- END : PAYMENT INFORMATION -->
+</div>
+<br />
+<div class="wufooFormContainer">
+	<!-- BEGIN : PAYMENT INFORMATION -->
+	<div id="stage">
+	<div id="main">			
+		<div>
+		</div>
+		<div class="buttons">
+		<input id="submit" name="cash_submit" class="button" type="submit" value="Complete Cash Transaction" />
+		<input type="checkbox" name="mark_as_paid" />
+		<label>Mark as paid (cash)</label>
+		</div>
+
+		</div><!--main-->
+		</div><!--stage-->
+		<!-- END : PAYMENT INFORMATION -->
+	</div>
+</form>

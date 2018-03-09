@@ -1,12 +1,12 @@
 <%= render :partial => "index_header" %>
 
-<form action="https://www.williamstransport.org/reservations/create" method="post">
+<form action="https://www.kenyoncoach.com/reservations/create" method="post">
 <input type="hidden" name="new_request" value="yes" />
 <% TransportSession.active_sessions.each do |ts| -%>
 <h4 style="margin-top: 0; text-decoration: underline;"><%= ts.name %></h4>
 <ul style="margin: 0;" class="activeSession">
 	<% ts.routes_in_order.each do |r| -%>
-	
+
 		<% if !r.going_away_buses.empty? -%>
 			<li class="direction"><%= r.point_a %> to <%= r.point_b %></li>
 			<ul class="activeSessionBuses">
@@ -23,12 +23,12 @@
 						<% if session[:user_id].nil? || !User.find(session[:user_id]).on_wait_list_for?(b.id) %>
 							<a href="/reservations/get_on_wait_list/<%= b.id %>">wait list (you would be #<%= b.no_ticket_held_on_wait_list_count + 1 %>)</a>
 						<% else %>
-							<% wlr = WaitListReservation.find(:first, :conditions => ["user_id = ? and bus_id = ?", @user.id, b.id]) %>
+							<% wlr = WaitListReservation.where("user_id = ? and bus_id = ?", @user.id, b.id).first %>
 							<% list_spot = wlr.spot_number %>
 							<% if (list_spot > 0) && !(wlr.has_opening?) %>
 							<span style="color: blue">you are #<%= list_spot %> on the wait list for </span>
 							<% else %>
-							<span style="color: red"><a href="/reservations/create?wait_list_id=<%= wlr.id %>">you are eligible to purchase a ticket for</a> </span>							
+							<span style="color: red"><a href="/reservations/create?wait_list_id=<%= wlr.id %>">you are eligible to purchase a ticket for</a> </span>
 							<% end %>
 						<% end %>
 					<% end %>
@@ -39,10 +39,10 @@
 				<% end -%>
 			</ul>
 		<% end -%>
-		
+
 	<% end %>
 	<% ts.routes_in_order.each do |r| %>
-		
+
 		<% if !r.coming_home_buses.empty? -%>
 			<li class="direction">
 				<%= r.point_b %> to <%= r.point_a %>
@@ -61,12 +61,12 @@
 						<% if session[:user_id].nil? || !User.find(session[:user_id]).on_wait_list_for?(b.id) %>
 							<a href="/reservations/get_on_wait_list/<%= b.id %>">wait list (you would be #<%= b.no_ticket_held_on_wait_list_count + 1 %>)</a>
 						<% else %>
-							<% wlr = WaitListReservation.find(:first, :conditions => ["user_id = ? and bus_id = ?", @user.id, b.id]) %>
+							<% wlr = WaitListReservation.where("user_id = ? and bus_id = ?", @user.id, b.id).first %>
 							<% list_spot = wlr.spot_number %>
 							<% if list_spot > 0 %>
 							<span style="color: blue">you are #<%= list_spot %> on the wait list for </span>
 							<% else %>
-							<span style="color: red"><a href="/reservations/create?wait_list_id=<%= wlr.id %>">you are eligible to get off the wait list for</a> </span>							
+							<span style="color: red"><a href="/reservations/create?wait_list_id=<%= wlr.id %>">you are eligible to get off the wait list for</a> </span>
 							<% end %>
 						<% end %>
 					<% end %>
@@ -77,7 +77,7 @@
 				<% end -%>
 			</ul>
 		<% end -%>
-		
+
 	<% end -%>
 </ul>
 <% end -%>
@@ -114,6 +114,6 @@
 				</ul>
 			<% end -%>
 		<% end -%>
-	<% end -%>	
+	<% end -%>
 </ul>
 <% end -%>

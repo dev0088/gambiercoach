@@ -6,7 +6,9 @@ class TransportSessionsController < ApplicationController
   # after_action :clear_flashes
 
   def index
-    redirect_to :action => 'list'
+    @sort_sql = TransportSession.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
+    @sort_by = @sort_sql.nil? ? "#{TransportSession.table_name}.#{TransportSession.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
+    @transport_sessions = TransportSession.order(@sort_by).paginate(page: 1, :per_page => 25)
   end
 
 
@@ -15,6 +17,9 @@ class TransportSessionsController < ApplicationController
     # to whatever controller/action shows all the views
     # (ex: redirect_to :controller => 'AdminConsole', :action => 'index')
     redirect_to :action => 'list'
+  end
+
+  def show
   end
 
   def list
@@ -38,7 +43,7 @@ class TransportSessionsController < ApplicationController
 
     @sort_sql = TransportSession.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{TransportSession.table_name}.#{TransportSession.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
-    @paginator, @transport_sessions = paginate(:transport_sessions, :order => @sort_by, :per_page => default_per_page)
+    @paginator, @transport_sessions = paginate(:transport_sessions, :order => @sort_by, :per_page => 25)
 
     render :action => "component", :layout => false
   end
@@ -70,7 +75,7 @@ class TransportSessionsController < ApplicationController
     if @successful
       return_to_main
     else
-      @options = { :scaffold_id => params[:scaffold_id], :action => "create" }
+      @options = { :scaffold_id => params[:controller], :action => "create" }
       render :partial => 'new_edit', :layout => true
     end
   end
@@ -86,7 +91,7 @@ class TransportSessionsController < ApplicationController
     return render :action => 'edit.rjs' if request.xhr?
 
     if @successful
-      @options = { :scaffold_id => params[:scaffold_id], :action => "update", :id => params[:id] }
+      @options = { :scaffold_id => params[:controller], :action => "update", :id => params[:id] }
       render :partial => 'new_edit', :layout => true
     else
       return_to_main

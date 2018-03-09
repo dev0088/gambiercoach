@@ -9,15 +9,6 @@ class Notifications < ActionMailer::Base
     @header     = {}
   end
   
-  def student_id_reservation_create_success(user, reservation)
-    @subject    = "#{Setting::NAME} / reservation complete"
-    @body       = {:user => user, :reservation => reservation}
-    @recipients  = "#{user.email}"
-    @from       = Setting::FROM_EMAIL
-    @sent_on    = Time.now
-    @header     = {}
-  end
-  
   def cash_reservation_create_success(user, reservation)
     @subject    = "#{Setting::NAME} / reservation complete / payment reminder"
     @body       = {:user => user, :reservation => reservation}
@@ -52,15 +43,6 @@ class Notifications < ActionMailer::Base
     @from       = Setting::FROM_EMAIL
     @sent_on    = Time.now
     @header     = {}
-  end
-
-  def admin_forgot_password(admin, url, sent_at = Time.now)
-    @subject    = "#{Setting::NAME} / administrator forgot password instructions"
-    @body       = {:admin => admin, :url => url}
-    @recipients = "#{admin.email}"
-    @from       = Setting::FROM_EMAIL
-    @sent_on    = sent_at
-    @headers    = {}
   end
 
   def forgot_password(user, url, sent_at = Time.now)

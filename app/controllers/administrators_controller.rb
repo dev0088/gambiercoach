@@ -6,13 +6,11 @@ class AdministratorsController < ApplicationController
   # after_action :clear_flashes
 
   def login
-    puts "=========== params: #{params.inspect}"
     case request.method
-    when :get
-      puts "=============="
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       admin = Administrator.authenticate(params[:username], params[:password])
       if admin != nil
         flash[:success] = "welcome, #{admin.username}"
@@ -35,11 +33,11 @@ class AdministratorsController < ApplicationController
 
   def change_password
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
-      admin = Administrator.find(session[:admin_id])
+    when 'POST'
+      admin = Administrator.where(id: session[:admin_id]).first
       if params[:new_password] != params[:repeat_new_password]
         flash.now[:error] = "your entered passwords did not match, please try again"
         render
@@ -83,14 +81,14 @@ class AdministratorsController < ApplicationController
     # Handling a POST from here on out...
 
     # Did they not enter an email/username?
-    if params["username"].empty?
+    if !params[:username].present?
       flash.now[:error] = 'please enter a username.'
       render
       return
     end
 
     # Did they enter a potential username?
-    admin = Administrator.find(:first, :conditions => ["username = ?", params["username"]])
+    admin = Administrator.where("username = ?", params["username"]).first
 
     # If the search turned up nil, we'll send the user back to try again.
     # Otherwise, we'll send them a change_password URL and notify them of that...
@@ -101,7 +99,7 @@ class AdministratorsController < ApplicationController
     else
       key = admin.generate_reset_password_token
       url = url_for(:action => 'change_password', :admin_id => admin.id, :auth_token => key)
-      Notifications.deliver_admin_forgot_password(admin, url)
+      # AdminNotify.deliver_forgot_password(user, url)
       flash[:success] = "emailed instructions for setting a new password to #{admin.email}.<br />Please follow the instructions in that email. Thank you."
       render
       return
@@ -145,7 +143,7 @@ class AdministratorsController < ApplicationController
 
     @sort_sql = Administrator.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Administrator.table_name}.#{Administrator.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
-    @paginator, @administrators = paginate(:administrators, :order => @sort_by, :per_page => default_per_page)
+    @paginator, @administrators = paginate(:administrators, :order => @sort_by, :per_page => 25)
 
     render :action => "component", :layout => false
   end
@@ -177,7 +175,7 @@ class AdministratorsController < ApplicationController
     if @successful
       return_to_main
     else
-      @options = { :scaffold_id => params[:scaffold_id], :action => "create" }
+      @options = { :scaffold_id => params[:controller], :action => "create" }
       render :partial => 'new_edit', :layout => true
     end
   end
@@ -193,7 +191,7 @@ class AdministratorsController < ApplicationController
     return render :action => 'edit.rjs' if request.xhr?
 
     if @successful
-      @options = { :scaffold_id => params[:scaffold_id], :action => "update", :id => params[:id] }
+      @options = { :scaffold_id => params[:controller], :action => "update", :id => params[:id] }
       render :partial => 'new_edit', :layout => true
     else
       return_to_main

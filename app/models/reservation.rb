@@ -3,23 +3,29 @@ class Reservation < ActiveRecord::Base
   has_many :credit_payment_events
   has_many :reservation_tickets, :dependent => :destroy
   has_many :reservation_modifications, :dependent => :destroy
-  before_create 'self.created_at = Time.now'
-  before_save 'self.last_modified_at = Time.now'
-  
+  before_create :update_created_at
+  before_save :update_last_modified_at
+
   UNPAID = 0
   PD_CREDIT = 1
   PD_CASH = 2
-  PD_STUDENT_ID = 3
+
+  def update_created_at
+    self.created_at = Time.now
+  end
+
+  def update_last_modified_at
+    self.last_modified_at = Time.now
+  end
 
   def charge_payment_event
-    return self.credit_payment_events.find(:first,
-                                           :conditions => "transaction_type = 'admin auth/capture' or transaction_type = 'auth/capture'")
+    return self.credit_payment_events.where("transaction_type = 'admin auth/capture' or transaction_type = 'auth/capture'").first
   end
 
   def total_in_money
     return total.to_money
   end
-  
+
   def past?
     self.reservation_tickets.each do |rt|
       if !rt.bus.departed?
@@ -28,7 +34,7 @@ class Reservation < ActiveRecord::Base
     end
     return true
   end
-  
+
   def earliest_session
     earliest_bus = nil
     self.reservation_tickets.each do |rt|
@@ -43,14 +49,14 @@ class Reservation < ActiveRecord::Base
 
     return earliest_bus.route.transport_session
   end
-  
+
   def cc_refund(amt, caller=nil)
     error_message = nil
     transaction_type = nil
     begin
       cpe = self.charge_payment_event
       credit_not_complete = true
-      
+
       # try a void first if the initial charge was less than 24 hours ago
       if cpe.created_at > (Time.now - 24.hours)
         tr = Payment::AuthorizeNet.new(:amount => amt.to_s,
@@ -89,7 +95,7 @@ class Reservation < ActiveRecord::Base
           end
         end
       end
-      
+
       # if we couldn't complete a void, try a credit
       if credit_not_complete
         tr = Payment::AuthorizeNet.new(:amount => amt.to_s,
@@ -125,14 +131,14 @@ class Reservation < ActiveRecord::Base
           error_message = "Credit Transaction only partially complete.<br />Please contact a system administrator for assistance.<br />Reference the following transaction identifier: #{tr.transaction_id}"
         end
       end
-      
+
     rescue TransportappError => error_msg
       error_message = error_msg
     rescue TransportappGatewayError => error_message
       error_message = "error while processing the credit<br />" + error_message
     end
   end
-  
+
   def readable_payment_status
     case self.payment_status
     when UNPAID
@@ -141,12 +147,10 @@ class Reservation < ActiveRecord::Base
       "paid by a credit card"
     when PD_CASH
       "paid in cash"
-    when PD_STUDENT_ID
-      "paid by Student ID"
     end
   end
 
   def self.all_unpaid
-    return self.find(:all, :conditions => ["payment_status = ?", UNPAID], :order => "users.login_id ASC", :include => :user)  
+    return self.where("payment_status = ?", UNPAID)
   end
 end

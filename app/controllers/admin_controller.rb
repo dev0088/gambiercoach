@@ -1,33 +1,15 @@
 class AdminController < ApplicationController
   before_action :admin_login_required
 
-  def edit_2007_2008_schedule
-    fname = "#{RAILS_ROOT}/app/views/index/2007_2008_schedule.rhtml"
-    case request.method
-    when :get
-      @text = File.read(fname)
-      render
-      return
-    when :post
-      f = File.open(fname, "w+")
-      f << params[:text]
-      f.close
-      flash.now[:success] = "saved the new text"
-      @text = File.read(fname)
-      render
-      return
-    end
-  end
-
   def edit_email
-    fname = "#{RAILS_ROOT}/app/views/notifications/#{params[:em]}.rhtml"
+    fname = "#{RAILS_ROOT}/app/views/notifications/#{params[:em]}.html.erb"
     @em = params[:em]
     case request.method
-    when :get
+    when 'GET'
       @text = File.read(fname)
       render
       return
-    when :post
+    when 'POST'
       f = File.open(fname, "w+")
       f << params[:text]
       f.close
@@ -39,13 +21,13 @@ class AdminController < ApplicationController
   end
 
   def edit_welcome
-    fname = "#{RAILS_ROOT}/app/views/index/_index_header.rhtml"
+    fname = "#{RAILS_ROOT}/app/views/index/_index_header.html.erb"
     case request.method
-    when :get
+    when 'GET'
       @text = File.read(fname)
       render
       return
-    when :post
+    when 'POST'
       f = File.open(fname, "w+")
       f << params[:text]
       f.close
@@ -57,13 +39,13 @@ class AdminController < ApplicationController
   end
 
   def edit_group_tickets
-    fname = "#{RAILS_ROOT}/app/views/index/group_tickets.rhtml"
+    fname = "#{RAILS_ROOT}/app/views/index/group_tickets.html.erb"
     case request.method
-    when :get
+    when 'GET'
       @text = File.read(fname)
       render
       return
-    when :post
+    when 'POST'
       f = File.open(fname, "w+")
       f << params[:text]
       f.close
@@ -76,16 +58,16 @@ class AdminController < ApplicationController
 
   def edit_about
     case request.method
-    when :get
-      @text = File.read("#{RAILS_ROOT}/app/views/index/about.rhtml")
+    when 'GET'
+      @text = File.read("#{RAILS_ROOT}/app/views/index/about.html.erb")
       render
       return
-    when :post
-      f = File.open("#{RAILS_ROOT}/app/views/index/about.rhtml", "w+")
+    when 'POST'
+      f = File.open("#{RAILS_ROOT}/app/views/index/about.html.erb", "w+")
       f << params[:text]
       f.close
       flash.now[:success] = "saved the new text"
-      @text = File.read("#{RAILS_ROOT}/app/views/index/about.rhtml")
+      @text = File.read("#{RAILS_ROOT}/app/views/index/about.html.erb")
       render
       return
     end
@@ -93,33 +75,16 @@ class AdminController < ApplicationController
 
   def edit_help
     case request.method
-    when :get
-      @text = File.read("#{RAILS_ROOT}/app/views/index/help.rhtml")
+    when 'GET'
+      @text = File.read("#{RAILS_ROOT}/app/views/index/help.html.erb")
       render
       return
-    when :post
-      f = File.open("#{RAILS_ROOT}/app/views/index/help.rhtml", "w+")
+    when 'POST'
+      f = File.open("#{RAILS_ROOT}/app/views/index/help.html.erb", "w+")
       f << params[:text]
       f.close
       flash.now[:success] = "saved the new text"
-      @text = File.read("#{RAILS_ROOT}/app/views/index/help.rhtml")
-      render
-      return
-    end
-  end
-
-  def edit_weekly_shuttle
-    case request.method
-    when :get
-      @text = File.read("#{RAILS_ROOT}/app/views/index/weekly_shuttle.rhtml")
-      render
-      return
-    when :post
-      f = File.open("#{RAILS_ROOT}/app/views/index/weekly_shuttle.rhtml", "w+")
-      f << params[:text]
-      f.close
-      flash.now[:success] = "saved the new text"
-      @text = File.read("#{RAILS_ROOT}/app/views/index/weekly_shuttle.rhtml")
+      @text = File.read("#{RAILS_ROOT}/app/views/index/help.html.erb")
       render
       return
     end

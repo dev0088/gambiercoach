@@ -1,4 +1,4 @@
-@options = { :scaffold_id => params[:scaffold_id], :action => "view", :id => @transport_session.id }
+@options = { :scaffold_id => params[:controller], :action => "view", :id => @transport_session.id }
 @create_options = @options.merge(:action => "create", :id => params[:id])
 
 if @successful

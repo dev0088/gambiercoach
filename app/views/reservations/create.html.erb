@@ -17,7 +17,7 @@
 	<% end -%>
 </div>
 
-<form action="https://www.williamstransport.org/reservations/complete" method="post">
+<form action="https://www.kenyoncoach.com/reservations/complete" method="post">
 	
 <input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
 
@@ -33,25 +33,12 @@
 	</p>
 </div>
 
-<h4 style="padding-left: 10px; padding-bottom: 10px;">You have three payment options...</h4>
-
-
-<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; margin: 0px auto";>
-	<h5 style="padding: 10px; margin: 0; font-size: 12px;">Option 1. Pay by Term Bill</h5>
-	<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Please enter your Student ID in the field below - for example, W1234567.</p><br/>
-	<input style="margin-left: 30px;" type="text" name="student_id" /><br/>
-	<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">
-		By clicking Finish Reservation, I agree to have my term bill charged <%= @reservation_price.to_s %> for this reservation.
-	</p>
-	<input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_student_id" value="Finish Reservation">	
-</div>
-
-
-<br />
+<h4 style="padding-left: 10px; padding-bottom: 10px;">You have two payment options...</h4>
 
 <div class="wufooFormContainer">
-<h5 style="padding: 10px; margin: 0; font-size: 12px;">Option 2. Pay by Credit Card</h5>
+<h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 1. Pay by Credit Card</h5>
 
+<hr />
 <% if !@user.stored_payment_addresses.empty? %>
 <p style="padding-left: 30px; padding-right: 20px;">You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%= @reservation_price.to_s %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
 <% @user.stored_payment_addresses.each do |spa| %>
@@ -70,6 +57,14 @@
 		<option>2012</option>
 		<option>2013</option>
 		<option>2014</option>
+                <option>2015</option>
+                <option>2016</option>
+                <option>2017</option>
+                <option>2018</option>
+                <option>2019</option>
+                <option>2020</option>
+                <option>2021</option>
+                <option>2022</option>
 	</select>
 	<br /><a href="/stored_address/edit/<%= spa.id %>">edit</a>
 	&nbsp;&nbsp;&nbsp;
@@ -120,6 +115,14 @@
 		<option>2012</option>
 		<option>2013</option>
 		<option>2014</option>
+<option>2015</option>
+<option>2016</option>
+<option>2017</option>
+<option>2018</option>
+<option>2019</option>
+<option>2020</option>
+<option>2021</option>
+<option>2022</option>
 	</select>
 </div>
 </li>
@@ -164,12 +167,10 @@
 
 </div><!--container-->
 
-
 <br />
 
-
 <div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; margin: 0px auto";>
-	<h5 style="padding: 10px; margin: 0; font-size: 12px;">Option 3. Pay by Cash / Check on Campus</h5>
+	<h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 2. Pay by Cash / Check on Campus</h5>
 	<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">If you pay by cash/check, you must follow the instructions in your reservation confirmation email in order to secure your ticket.</p>
 	<% if !@cash_reservations_allowed %>
 		<p style="padding-left: 10px; padding-right: 20px;">The cash reservations period has expired for 1 or more of your tickets.</p>
@@ -177,7 +178,5 @@
 		<input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">	
 	<% end %>
 </div>
-
-<br />
 </form>
 <br /><br /><br />

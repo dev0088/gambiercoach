@@ -1,0 +1,14 @@
+<h3>Select an email to edit</h3>
+
+<h4><a href="/admin/edit_email?em=cash_reservation_create_success">Cash Reservation Confirmation</a></h4>
+<h4><a href="/admin/edit_email?em=cc_reservation_create_success">CC Reservation Confirmation</a></h4>
+<h4><a href="/admin/edit_email?em=change_password_success">Change Password Success</a></h4>
+<h4><a href="/admin/edit_email?em=forgot_password">Forgot Password</a></h4>
+<h4><a href="/admin/edit_email?em=payment_received">Payment Received</a></h4>
+<h4><a href="/admin/edit_email?em=payment_reminder">Payment Reminder</a></h4>
+<h4><a href="/admin/edit_email?em=reservation_modify_success">Reservation Modification Success</a></h4>
+<h4><a href="/admin/edit_email?em=student_conductor_designation">Student Conductor Designation</a></h4>
+<h4><a href="/admin/edit_email?em=student_conductor_followup">Student Conductor Followup</a></h4>
+<h4><a href="/admin/edit_email?em=verify">Account Verification</a></h4>
+<h4><a href="/admin/edit_email?em=wait_list_spot_opened">Wait List Spot Opened</a></h4>
+<h4><a href="/admin/edit_email?em=wait_list_success">Wait List Signup Confirmation</a></h4>

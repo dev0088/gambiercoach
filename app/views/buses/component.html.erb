@@ -1,25 +1,25 @@
 <% if not request.xhr? %>
-<div id="<%= params[:scaffold_id] %>" class="ajax-scaffold">
-  <div id="<%= scaffold_content_id(params) %>">
+<div id="<%= params[:controller] %>" class="ajax-scaffold">
+  <div id="<%= params[:action] %>">
 <% end %>
     <div class="ajax-scaffold-header">
-      <div class="actions">  
+      <div class="actions">
         <% new_params = params.merge(:controller => '/buses', :action => 'new') %>
-        <%= loading_indicator_tag(new_params) %>
+        <%= new_buses_path %>
         <%= link_to_remote "Create New",
           { :url => new_params,
             :loading => "Element.show('#{loading_indicator_id(new_params)}');" },
-          { :href => url_for(new_params), 
+          { :href => url_for(new_params),
 			      :class => "create",
-			 			:alt => "c"} %> 		 
+			 			:alt => "c"} %>
       </div>
       <h2>Buses</h2>
   </div>
   <table cellpadding="0" cellspacing="0">
-  <thead>  
-    <tr> 
+  <thead>
+    <tr>
       <%= render :partial => 'column_headings' %>
-    </tr> 
+    </tr>
   </thead>
   <tbody>
     <tr>
@@ -29,10 +29,10 @@
         </div>
         <p id="<%= empty_message_id(params) %>" class="empty-message" <%= " style=\"display:none;\" " if !@buses.empty? %>>
           No Entries
-        </p>      
+        </p>
       </td>
     </tr>
-  </tbody>  
+  </tbody>
   <tbody id="<%= scaffold_tbody_id(params) %>">
     <% if !@buses.empty? %>
   	  <%= render :partial => 'bus', :collection => @buses, :locals => { :hidden => false } %>
@@ -47,6 +47,6 @@
 </div>
 
 <script type="text/javascript">
-Rico.Corner.round('<%= params[:scaffold_id] %>', {color: '#330066', bgColor: '#fff', compact: true});
+Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
 </script>
 <% end %>

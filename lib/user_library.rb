@@ -1,6 +1,6 @@
 module UserLibrary
 
-# Used as a before_actionfor actions that require
+# Used as a before_action for actions that require
 # a logged-in user.
 def login_required
   if user?
@@ -8,16 +8,16 @@ def login_required
     return true
   end
 
-  # store current location so that we can 
+  # store current location so that we can
   # come back after the user logged in
   store_location
   # receiver may overwrite this re-direct, but the home page should be the default landing point
   redirect_to :controller => "user", :action => "login"
-  return false 
+  return false
 end
 
-# Used as a before_actionfor action that do not require
-# a logged-in user, but would like to "use" the user if 
+# Used as a before_action for action that do not require
+# a logged-in user, but would like to "use" the user if
 # they *are* logged in... :)
 def load_user_if_logged_in
   if user?
@@ -52,8 +52,8 @@ def redirect_back_or_default(default)
   end
 end
 
-# checks to see if a user is logged in either by the session or by a 
-# remember-me token ... and loads the user into the session if they are 
+# checks to see if a user is logged in either by the session or by a
+# remember-me token ... and loads the user into the session if they are
 # returning with a remember-me token.
 def user?
   # First, is the user already authenticated?
@@ -65,7 +65,7 @@ def user?
     user_id, token = remember_me_token.split("_t_",2)
     new_token = User.authenticate_by_remember_me(user_id, token)
     if !new_token.nil?
-      user = User.find(:first, :conditions => ["id = ?", user_id])
+      user = User.where("id = ?", user_id).first
       if user.nil?
         return false
       end

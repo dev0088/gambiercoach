@@ -1,18 +1,18 @@
 class ManagerController < ApplicationController
   layout "admin"
   before_action :admin_login_required, :except => :trip_report
-  ssl_required :create_reservation
+  # ssl_required :create_reservation
 
   def bus
     @b = Bus.find(params[:id], :include => [:reservation_tickets, :wait_list_reservations])
   end
-  
+
   def system_reset_options
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       if !params[:clear_all_reservations].nil?
         Reservation.transaction do
           Reservation.destroy_all()
@@ -31,7 +31,7 @@ class ManagerController < ApplicationController
       redirect_to :controller => "admin", :action => "index"
     end
   end
-  
+
   def email_bus
     @bus = Bus.find(params[:id])
     if params[:email_address].empty?
@@ -42,7 +42,7 @@ class ManagerController < ApplicationController
     email_txt = "Bus: " + @bus.departure.strftime("%A, %B %d") + " departing " + @bus.starting_point + " for " + @bus.ending_point + " at " + @bus.departure.strftime("%I:%M %p") + "\n\n"
     email_txt << " res # -- student login id\n"
     email_txt << "---------------------------\n"
-    @bus.reservation_tickets.find(:all, :order => "reservations.id ASC", :include => :reservation).each do |rt|
+    @bus.reservation_tickets.order("reservations.id ASC").includes(:reservation).each do |rt|
       for i in 0...rt.quantity
         email_txt << sprintf("%6u", rt.reservation.id)+" -- "+rt.reservation.user.login_id+"\n"
       end
@@ -52,16 +52,16 @@ class ManagerController < ApplicationController
                                        email_txt,
                                        params[:email_address])
     flash[:success] = "email sent"
-    redirect_to :action => "bus", :id => @bus.id    
+    redirect_to :action => "bus", :id => @bus.id
   end
-  
+
   def session_conductors
     @s = TransportSession.find(params[:id], :include => :buses)
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.find(rt[0])
         if rt[1] == "1" && reservation_ticket.conductor_status == 0
@@ -75,7 +75,7 @@ class ManagerController < ApplicationController
       return
     end
   end
-  
+
   def session_reservations
     @reservations = []
     @s = TransportSession.find(params[:id])
@@ -84,23 +84,23 @@ class ManagerController < ApplicationController
       @reservations += b.reservations
     end
     @reservations = @reservations.uniq
-    
+
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
-      
+    when 'POST'
+
     end
   end
-  
+
   def edit_reservation
     @reservation = Reservation.find(params[:id])
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       refund_amt = "0".to_money
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.find(rt[0])
@@ -122,15 +122,15 @@ class ManagerController < ApplicationController
           reservation_ticket.save!
         end
       end
-      
+
       @reservation.reload
 
       if refund_amt.zero?
         flash[:success] = "Modified the reservation successfully<br />No ticket number changes made."
-      elsif (@reservation.payment_status == Reservation::UNPAID) || (@reservation.payment_status == Reservation::PD_STUDENT_ID)
-        flash[:success] = "Modified the reservation successfully"        
+      elsif @reservation.payment_status == Reservation::UNPAID
+        flash[:success] = "Modified the reservation successfully"
       elsif @reservation.payment_status == Reservation::PD_CASH
-        flash[:success] = "Modified the reservation successfully<br /> refund owed is #{refund_amt}"        
+        flash[:success] = "Modified the reservation successfully<br /> refund owed is #{refund_amt}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
         error_message = @reservation.cc_refund(refund_amt)
         error_message = nil
@@ -155,10 +155,10 @@ class ManagerController < ApplicationController
 
   def create_reservation
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       user = nil
       if params[:user_id] == "--"
         if params[:new_user_login] == ""
@@ -179,7 +179,7 @@ class ManagerController < ApplicationController
       else
         user = User.find(params[:user_id])
       end
-      
+
       # wants to be a conductor?
       conductor_wish = params[:conductor].nil? ? false : true
 
@@ -194,7 +194,7 @@ class ManagerController < ApplicationController
 
       # assume no errors till we report them down the line
       error_message = nil
-      
+
       # CASH?
       if !params[:cash_submit].nil?
         r = nil # the reservation
@@ -205,24 +205,13 @@ class ManagerController < ApplicationController
             if !params[:mark_as_paid].nil?
               pay_status = Reservation::PD_CASH
             end
-            
+
             r = save_reservation(pay_status, user, conductor_wish, reservation_requests, reservation_price)
             Notifications.deliver_cash_reservation_create_success(user, r)
           end
         # rescue TransportappError => error_msg
         #   error_message = error_msg
         # end
-      # STUDENT ID?
-      elsif !params[:student_id_submit].nil?
-        if params[:student_id].nil? || (params[:student_id].length < 7 || params[:student_id].length > 8)
-          flash.now[:error] = "Student ID should be 7 characters long.<br/>Please exclude the leading 'W.'"
-          render
-          return
-        end
-        User.transaction do
-          r = save_reservation(Reservation::PD_STUDENT_ID, user, conductor_wish, reservation_requests, reservation_price, params[:student_id])
-          Notifications.deliver_cash_reservation_create_success(user, r)
-        end
       # OR, CREDIT...
       else
         tr = nil
@@ -286,7 +275,7 @@ class ManagerController < ApplicationController
           error_message = "error while processing the credit card<br />" + error_message
         end
       end
-      
+
       if error_message.nil?
         flash.now[:success] = "Created the reservation for #{user.login_id}"
       else
@@ -302,7 +291,7 @@ class ManagerController < ApplicationController
   # when post, save the user in question
   def create_edit_user
     case request.method
-    when :get
+    when 'GET'
       if !params[:id].nil?
         @user = User.find(params[:id])
       else
@@ -310,7 +299,7 @@ class ManagerController < ApplicationController
       end
       render
       return
-    when :post
+    when 'POST'
       if params[:id].nil?
         @user = User.new(:verified => 1,
                          :new_password => "default")
@@ -330,11 +319,11 @@ class ManagerController < ApplicationController
       end
     end
   end
-  
+
   def find_user
     case request.method
-    when :get
-      @user = User.find(:first, :conditions => ["login_id = ?", params[:login_id]])
+    when 'GET'
+      @user = User.where("login_id = ?", params[:login_id]).first
       if @user.nil?
         flash[:error] = "Could not find a user with the login_id: " + params[:login_id]
         redirect_to :controller => "admin", :action => "index"
@@ -344,7 +333,7 @@ class ManagerController < ApplicationController
       end
     end
   end
-  
+
   def send_user_forgot_password
     user = User.find(params[:id])
     key = user.generate_reset_password_token
@@ -353,14 +342,14 @@ class ManagerController < ApplicationController
     flash[:success] = "emailed instructions for setting a new password to #{user.email}."
     redirect_to :action => "users"
   end
-  
+
   def unpaid_walkons
     case request.method
-    when :get
-      @unpaid_wos = WalkOn.find(:all, :conditions => ["payment_status = ?", WalkOn::UNPAID])
+    when 'GET'
+      @unpaid_wos = WalkOn.where("payment_status = ?", WalkOn::UNPAID)
       render
       return
-    when :post
+    when 'POST'
       marked_pd = 0
       params[:wo].each do |wo|
         if wo[1] == "mark_as_paid"
@@ -373,25 +362,25 @@ class ManagerController < ApplicationController
       flash[:success] = "saved walk-ons<br />marked #{marked_pd} as paid"
       redirect_to :controller => "admin", :action => "index"
       return
-    end    
+    end
   end
-  
+
   def walkons_csv
-    walkons = WalkOn.find(:all, :include => :bus)
+    walkons = WalkOn.includes(bus)
     stream_csv do |csv|
-      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id","payment_status","name","mailbox","phone1","phone2","student_id"]
+      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id","payment_status","name","mailbox","phone1","phone2"]
       walkons.each do |w|
-        csv << ["",w.bus.route.price.to_s,w.login_id,"","",w.bus.readable_route,w.bus.departure.strftime("%Y_%m_%d"),w.bus.departure.strftime("%I:%M %p"),w.bus.id.to_s,w.payment_status,w.name,w.mailbox,w.phone1,w.phone2,w.student_id]
+        csv << ["",w.bus.route.price.to_s,w.login_id,"","",w.bus.readable_route,w.bus.departure.strftime("%Y_%m_%d"),w.bus.departure.strftime("%I:%M %p"),w.bus.id.to_s,w.payment_status,w.name,w.mailbox,w.phone1,w.phone2]
       end
     end
   end
-  
+
   def all_reservations_csv
-    reservations = Reservation.find(:all, :include => :user)
+    reservations = Reservation.includes(:user)
     stream_csv do |csv|
-      csv << ["id","login_id","payment_status","current_total","created_at","last_modified_at","student_id"]
+      csv << ["id","login_id","payment_status","current_total","created_at","last_modified_at"]
       reservations.each do |r|
-        csv << [r.id.to_s,r.user.login_id,r.payment_status.to_s,r.total.to_s,time_string(r.created_at),time_string(r.last_modified_at),r.student_id]
+        csv << [r.id.to_s,r.user.login_id,r.payment_status.to_s,r.total.to_s,time_string(r.created_at),time_string(r.last_modified_at)]
       end
     end
   end
@@ -400,10 +389,10 @@ class ManagerController < ApplicationController
     s = TransportSession.find(params[:id])
     tickets = ReservationTicket.find_by_sql(["select rt.* from reservation_tickets rt, transport_sessions ts, buses b, routes r where ts.id = ? and ts.id = r.transport_session_id and r.id = b.route_id and rt.bus_id = b.id",params[:id]])
     stream_csv do |csv|
-      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id","payment_status","student_id"]
+      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id"]
       tickets.each do |t|
         for i in 1..(t.quantity)
-          csv << [t.reservation_id.to_s,t.bus.route.price.to_s,t.reservation.user.login_id,t.conductor_wish.to_s,t.conductor_status.to_s,t.bus.readable_route,t.bus.departure.strftime("%Y_%m_%d"),t.bus.departure.strftime("%I:%M %p"),t.bus.id.to_s,t.reservation.payment_status.to_s,t.reservation.student_id]
+          csv << [t.reservation_id.to_s,t.bus.route.price.to_s,t.reservation.user.login_id,t.conductor_wish.to_s,t.conductor_status.to_s,t.bus.readable_route,t.bus.departure.strftime("%Y_%m_%d"),t.bus.departure.strftime("%I:%M %p"),t.bus.id.to_s]
         end
       end
     end
@@ -411,11 +400,11 @@ class ManagerController < ApplicationController
 
   def unpaid_reservations
     case request.method
-    when :get
+    when 'GET'
       @unpaid_rs = Reservation.all_unpaid
       render
       return
-    when :post
+    when 'POST'
       marked_pd = 0
       canceled = 0
       params[:r].each do |r|
@@ -439,7 +428,7 @@ class ManagerController < ApplicationController
   def trip_report
     @bus = Bus.find_by_report_token(params[:id])
     case request.method
-    when :get
+    when 'GET'
       if @bus.nil?
         flash[:error] = "The URL you requested did not lead to a trip report form."
         redirect_to :controller => "index", :action => "index"
@@ -447,13 +436,13 @@ class ManagerController < ApplicationController
       end
       render :layout => false
       return
-    when :post
+    when 'POST'
       if @bus.nil?
         flash[:error] = "The trip report you tried to file did not have a valid trip report token."
         redirect_to :controller => "index", :action => "index"
         return
       end
-      
+
       # create and save trip report
       # create and save all walk-ons
       TripReport.transaction do
@@ -469,11 +458,10 @@ class ManagerController < ApplicationController
             wo.phone1 = params["walk_on_#{i}"][:phone1]
             wo.phone2 = params["walk_on_#{i}"][:phone2]
             wo.payment_status = 0
-            wo.student_id = params["walk_on_#{i}"][:student_id]
             wo.save!
           end
         end
-        
+
         usedTix = Hash.new
         params.keys.each do |p_key|
           if p_key =~ /.*_rt_.*$/
@@ -482,7 +470,7 @@ class ManagerController < ApplicationController
               if usedTix.key?(rtid)
                 usedTix[rtid] += 1
               else
-                usedTix[rtid] = 1              
+                usedTix[rtid] = 1
               end
             end
           end
@@ -515,17 +503,17 @@ class ManagerController < ApplicationController
       end
     end
     case request.method
-    when :get
+    when 'GET'
       render
       return
-    when :post
+    when 'POST'
       @trs.each do |tr|
         if params["report_"+tr.id.to_s] == "refunded"
           tr.refund_issued = 1
           tr.save!
         else
           tr.refund_issued = 0
-          tr.save!          
+          tr.save!
         end
       end
       render
@@ -535,27 +523,26 @@ class ManagerController < ApplicationController
 
   def bus_trip_report_used_reservations
     @b = Bus.find(params[:id])
-    @trurs = TripReportUsedReservation.find(:all, :conditions => ["bus_id = ?", params[:id]])
+    @trurs = TripReportUsedReservation.where("bus_id = ?", params[:id])
   end
-  
+
   private
-  
+
   def stream_csv
     filename_for_save = params[:action] + ".csv"
     headers["Content-Type"] ||= 'text/csv'
-    headers["Content-Disposition"] ||= "attachment; filename=\"#{filename_for_save}\"" 
+    headers["Content-Disposition"] ||= "attachment; filename=\"#{filename_for_save}\""
     render :text => Proc.new { |response, output|
-      csv = FasterCSV.new(output, :row_sep => "\r\n") 
+      csv = FasterCSV.new(output, :row_sep => "\r\n")
       yield csv
     }
   end
 
-  def save_reservation(pay_status, user, cond_wishes, reservation_details, reservation_price, student_id=nil)
+  def save_reservation(pay_status, user, cond_wishes, reservation_details, reservation_price)
     r = Reservation.new(:user => user,
-                        :payment_status => pay_status,
-                        :student_id => student_id)
+                        :payment_status => pay_status)
     r.save!
-    
+
     reservation_total = Money.new(0)
     reservation_details.each do |rd|
       bus = rd[0].reload
@@ -572,7 +559,17 @@ class ManagerController < ApplicationController
 
     # need to save the total
     r.total = reservation_total.to_s
-    r.save!    
+    r.save!
     return r
+  end
+
+  def users
+    case request.method
+    when 'GET'
+      render
+      return
+    when 'POST'
+      @users = User.where(username: params[:username])
+    end
   end
 end
