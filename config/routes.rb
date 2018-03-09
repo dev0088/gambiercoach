@@ -121,5 +121,7 @@ Rails.application.routes.draw do
   end
 
   get "/", :controller => "index", :action => "index"
-  get "/group_tickets", :controller => "admin", :action => "edit_group_tickets"
+  get "/group_tickets", :controller => "index", :action => "group_tickets"
+  get "/help", :controller => "index", :action => "help"
+  get "/about", :controller => "index", :action => "about"
 end
