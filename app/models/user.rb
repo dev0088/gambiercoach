@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
 
   def User.invalidate_token(complete_token)
     user_id, token = complete_token.split("_t_")
-    RememberMeToken.delete_all(["user_id = ? and token = ?", user_id, token])
+    RememberMeToken.where("user_id = ? and token = ?", user_id, token).delete_all
   end
 
   def set_remember_me

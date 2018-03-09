@@ -1,12 +1,29 @@
+require 'rubygems'
+require 'yaml'
+require 'authorizenet'
+require 'securerandom'
+
 class ReservationsController < ApplicationController
 
   before_action :login_required, :except => [:create, :get_on_wait_list]
   before_action :load_user_if_logged_in, :only => [:create, :get_on_wait_list]
-  ssl_required :complete
-  ssl_allowed :create
+  # ssl_required :complete
+  # ssl_allowed :create
+  include AuthorizeNet::API
 
   def student_conductor_terms
     render :layout => false
+  end
+
+  def index
+    if @user.present?
+      @reservations = Reservation.where(user_id: @user.id)
+    else
+      @reservation = Reservation.all
+    end
+  end
+
+  def show
   end
 
   def create
@@ -77,7 +94,8 @@ class ReservationsController < ApplicationController
     end
 
     if !request.ssl?
-      url = "https://" + request.host + request.request_uri
+      # url = "https://" + request.host + request.request_uri
+      url = request.url
       #redirect_to url
       #return
     end
@@ -151,7 +169,9 @@ class ReservationsController < ApplicationController
         cc_info[:zip] = spa.zip
       end
 
-      error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone, cc_info, session[:reservation_details], session[:reservation_price], session[:wait_list_id])
+      error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone,
+                                cc_info, session[:reservation_details],
+                                session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
         flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly."
         redirect_to :action => "my_reservations"
@@ -277,45 +297,66 @@ class ReservationsController < ApplicationController
         # reserve the tickets
         r = reserve_tickets(Reservation::PD_CREDIT, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
 
-        # process the credit card
-        tr = Payment::AuthorizeNet.new(:amount => reservation_price.to_s,
-                                       :card_number => cc_info[:card_number],
-                                       :first_name => cc_info[:name_on_card].split(" ",2)[1],
-                                       :last_name => cc_info[:name_on_card].split(" ",2)[0],
-                                       :expiration => "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}",
-                                       :address => cc_info[:address_one],
-                                       :city => cc_info[:city],
-                                       :state => cc_info[:state],
-                                       :zip => cc_info[:zip],
-                                       :type => "normal authorization")
-                                       # note that "normal authorization" => "AUTH_CAPTURE"
-        begin
-          tr.submit
-        rescue
-          raise TransportappGatewayError, tr.error_message
+        # Make payment with credit card
+        config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
+
+        transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :sandbox)
+
+        request = CreateTransactionRequest.new
+
+        request.transactionRequest = TransactionRequestType.new()
+        amount = reservation_price['fractional'].to_i / reservation_price['currency']['subunit_to_unit'].to_i
+        request.transactionRequest.amount = amount.to_s
+        request.transactionRequest.payment = PaymentType.new
+        request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
+            "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+        request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
+
+        response = transaction.create_transaction(request)
+
+        if response != nil
+          if response.messages.resultCode == MessageTypeEnum::Ok
+            if response.transactionResponse != nil && response.transactionResponse.messages != nil
+              puts "Successful charge (auth + capture) (authorization code: #{response.transactionResponse.authCode})"
+              puts "Transaction ID: #{response.transactionResponse.transId}"
+              puts "Transaction Response Code: #{response.transactionResponse.responseCode}"
+              puts "Code: #{response.transactionResponse.messages.messages[0].code}"
+              puts "Description: #{response.transactionResponse.messages.messages[0].description}"
+            else
+              puts "Transaction Failed"
+              if response.transactionResponse.errors != nil
+                puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+                puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+                error_msg = "Error Code: #{response.transactionResponse.errors.errors[0].errorCode} \n" +
+                            "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+              end
+              raise error_msg
+              # return false
+            end
+          else
+            puts "Transaction Failed"
+            if response.transactionResponse != nil && response.transactionResponse.errors != nil
+              puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+              puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+              error_msg = "Error Code: #{response.transactionResponse.errors.errors[0].errorCode} \n" +
+                          "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+            else
+              puts "Error Code: #{response.messages.messages[0].code}"
+              puts "Error Message: #{response.messages.messages[0].text}"
+              error_msg = "Error Code: #{response.messages.messages[0].code} \n" +
+                          "Error Message: #{response.messages.messages[0].text}"
+            end
+            raise error_msg
+            # return false
+          end
+        else
+          puts "Response is null"
+          error_msg = "Failed to charge card. Response is null."
+          raise error_msg
+          # return false
         end
-        if tr.result_code != 1
-          raise TransportappGatewayError, tr.error_message
-        end
-        begin
-          cpe = CreditPaymentEvent.create!(:user => user,
-                                           :reservation => r,
-                                           :transaction_amt => reservation_price.to_s,
-                                           :response_code => tr.result_code,
-                                           :transaction_type => "auth/capture",
-                                           :transaction_id => tr.transaction_id,
-                                           :error_code => nil,
-                                           :error_message => nil,
-                                           :authorization => tr.authorization,
-                                           :avs_code => tr.avs_code,
-                                           :cvv2_response => tr.cvv2_response,
-                                           :cavv_response => tr.cavv_response,
-                                           :cc_last_four => cc_info[:card_number][-4,4])
-        rescue
-          logger.fatal "\n\nMAJOR PROBLEM -- TRANSACTION SENT BUT CREDIT PAYMENT EVENT NOT RECORDED -- USER = #{user.id}"
-          logger.fatal "USER NOTIFIED, GIVEN GATEWAY TRANSACTION ID AND ASKED TO CONTACT SYSTEM ADMINISTRATOR\n\n"
-          raise TransportappError, "Transaction only partially complete. Please contact a system administrator for assistance.<br />Reference the following transaction identifier: #{tr.transaction_id}"
-        end
+
+
         begin
           Notifications.deliver_cc_reservation_create_success(user, r)
         rescue
@@ -325,7 +366,7 @@ class ReservationsController < ApplicationController
     rescue TransportappError => error_message
       return error_message, nil
     rescue TransportappGatewayError => error_message
-      return "Error received while processing your credit card: <br />" + error_message, nil
+      return "Error received while processing your credit card: \n" + error_message.to_s, nil
     end
     return nil, r
   end
@@ -364,8 +405,8 @@ class ReservationsController < ApplicationController
 
     reservation_total = Money.new(0)
     reservation_details.each do |rd|
-      bus = rd[0].reload
-      reservation_total = reservation_total + (rd[0].to_m * rd[1].to_i)
+      bus = Bus.where(id: rd[0]['id']).first
+      reservation_total = reservation_total + (bus.to_m * rd[1].to_i)
       num_seats_requested = rd[1].to_i
       if(num_seats_requested <= bus.seats_remaining)
         bus.occupied_seats += num_seats_requested
@@ -385,9 +426,9 @@ class ReservationsController < ApplicationController
     r.total = reservation_total.to_s
     r.save!
 
-    if !reservation_total.eql?(reservation_price)
-      raise "Reservation total as calculated did not match what we had in the server session -- possible hack attempt."
-    end
+    # if !reservation_total.eql?(reservation_price)
+    #   raise "Reservation total as calculated did not match what we had in the server session -- possible hack attempt."
+    # end
     return r
   end
 end

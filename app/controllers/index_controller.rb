@@ -3,4 +3,13 @@ class IndexController < ApplicationController
 
   def index
   end
+
+  def about
+  end
+
+  def group_tickets
+  end
+
+  def help
+  end
 end

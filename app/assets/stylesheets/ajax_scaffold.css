@@ -1,9 +1,9 @@
-/*  
+/*
  AjaxScaffoldGenerator version 3.1.0
  (c) 2006 Richard White <rrwhite@gmail.com>
- 
+
  AjaxScaffoldGenerator is freely distributable under the terms of an MIT-style license.
- 
+
  For details, see the AjaxScaffoldGenerator web site: http://www.ajaxscaffold.com/
 */
 
@@ -46,7 +46,7 @@ font: normal 17px verdana, sans-serif;
 
 .ajax-scaffold-header div.actions a {
 	color: #fff;
-	background: url(/images/add.gif) 1px 50% no-repeat;
+	background: url(/assets/images/add.gif) 1px 50% no-repeat;
 	font: bold 14px arial, sans-serif;
 	letter-spacing: -1px;
 	text-decoration: none;
@@ -204,7 +204,7 @@ padding: 2px;
 line-height: 16px;
 }
 
-/* ajax-scaffold Footer Styling 
+/* ajax-scaffold Footer Styling
    ========================== */
 
 .ajax-scaffold .ajax-scaffold-footer {
@@ -241,7 +241,7 @@ padding-right: 5px;
 border-right: solid 1px #ccc;
 }
 
-/* Messages 
+/* Messages
    ========================= */
 
 .ajax-scaffold .messages-container,
@@ -300,7 +300,7 @@ background: #bbf url(/images/information.gif) 2px 3px no-repeat;
 background-position: 7px 3px;
 }
 
-/* Error Styling 
+/* Error Styling
    ========================== */
 
 .ajax-scaffold #errorExplanation {
@@ -364,7 +364,7 @@ vertical-align: bottom;
 margin-bottom: 3px;
 }
 
-/* Form Styling 
+/* Form Styling
    ============================== */
 
 .ajax-scaffold td.update,
@@ -381,7 +381,7 @@ background: #ffb;
 border: solid 1px #DDDF37;
 border-top: none;
 }
-   
+
 .ajax-scaffold .submit {
 font-weight: bold;
 font-size: 14px;
@@ -467,10 +467,10 @@ border: solid 1px #1F7F00;
 
 /* IE hacks
    ==================================== */
-   
+
 * html .ajax-scaffold-header {
 height: 1%;
-}   
+}
 
 * html .ajax-scaffold td .messages-container {
 border-top: solid 1px #DAFFCD;

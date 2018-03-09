@@ -17,6 +17,6 @@ class WaitListReservation < ActiveRecord::Base
   end
 
   def spot_number
-    return WaitListReservation.count(["bus_id = ? AND spot_opened_at IS NULL AND created_at < ?", self.bus_id, self.created_at]) + 1
+    return WaitListReservation.where("bus_id = ? AND spot_opened_at IS NULL AND created_at < ?", self.bus_id, self.created_at).count + 1
   end
 end

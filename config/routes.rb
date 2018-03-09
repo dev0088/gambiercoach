@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get "/", :controller => "index", :action => "index"
+  get "/group_tickets", :controller => "index", :action => "group_tickets"
+  get "/help", :controller => "index", :action => "help"
+  get "/about", :controller => "index", :action => "about"
+  get "/reservations/my_reservations", :controller => "reservations", :action => "my_reservations"
+  get "/reservations/my_wait_list_reservations", :controller => "reservations", :action => "my_wait_list_reservations"
+  post "/reservations/complete", :controller => "reservations", :action => "complete"
+
   resources :admin do
     get :edit_email
     get :edit_welcome
@@ -34,7 +42,11 @@ Rails.application.routes.draw do
     get :component
     get :cancel
   end
-  resources :index, only: [:index]
+  resources :index, only: [:index] do
+    get :about
+    get :group_tickets
+    get :help
+  end
   resources :manager do
     collection do
       get :bus
@@ -68,8 +80,6 @@ Rails.application.routes.draw do
   end
   resources :reservations do
     get :student_conductor_terms
-    get :complete
-    get :my_reservations
     get :my_wait_list_reservations
     get :get_on_wait_list
     get :cancel_wait_list_reservation
@@ -120,8 +130,4 @@ Rails.application.routes.draw do
     end
   end
 
-  get "/", :controller => "index", :action => "index"
-  get "/group_tickets", :controller => "index", :action => "group_tickets"
-  get "/help", :controller => "index", :action => "help"
-  get "/about", :controller => "index", :action => "about"
 end

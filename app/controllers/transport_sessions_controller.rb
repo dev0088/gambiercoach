@@ -16,7 +16,8 @@ class TransportSessionsController < ApplicationController
     # If you have multiple scaffolds on the same view then you will want to change this to
     # to whatever controller/action shows all the views
     # (ex: redirect_to :controller => 'AdminConsole', :action => 'index')
-    redirect_to :action => 'list'
+    # redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 
   def show

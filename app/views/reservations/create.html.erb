@@ -17,8 +17,8 @@
 	<% end -%>
 </div>
 
-<form action="https://www.kenyoncoach.com/reservations/complete" method="post">
-	
+<form action="<%= reservations_complete_path %>" method="post">
+
 <input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
 
 <h4 style="padding-left: 10px; padding-bottom: 10px;">Would you like to be a Student Conductor?</h4>
@@ -68,7 +68,7 @@
 	</select>
 	<br /><a href="/stored_address/edit/<%= spa.id %>">edit</a>
 	&nbsp;&nbsp;&nbsp;
-	<%= link_to "delete", {:controller => "stored_address", :action => "delete", :id => spa.id}, :post => true %>
+	<%= link_to "delete", stored_address_delete_path(spa.id), :post => true %>
 </p>
 <% end %>
 
@@ -87,14 +87,14 @@
 <p class="instruct">Exactly as it appears on your credit card</p>
 <label class="desc" for="field0">Name on Card</label>
 <div class="full">
-<input id="field0" name="new_cc[name_on_card]" class="field text large" type="text" maxlength="255" value=""/> 
+<input id="field0" name="new_cc[name_on_card]" class="field text large" type="text" maxlength="255" value=""/>
 </div>
 </li>
 
 <li>
 <div class="full">
 <label class="desc" for="field21">Card Number</label>
-<input id="field21" name="new_cc[card_number]" class="field text large" type="text" value=""/> 
+<input id="field21" name="new_cc[card_number]" class="field text large" type="text" value=""/>
 </div>
 </li>
 <li>
@@ -175,7 +175,7 @@
 	<% if !@cash_reservations_allowed %>
 		<p style="padding-left: 10px; padding-right: 20px;">The cash reservations period has expired for 1 or more of your tickets.</p>
 	<% else %>
-		<input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">	
+		<input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">
 	<% end %>
 </div>
 </form>

@@ -90,14 +90,12 @@ class Bus < ActiveRecord::Base
   end
 
   def wait_list_count
-    # return WaitListReservation.count(["bus_id = ?", self.id])
     return WaitListReservation.where(bus_id: self.id).count
   end
 
   # represents the number of people who are currently on the wait list and do not have
   # a ticket held open for them
   def no_ticket_held_on_wait_list_count
-    # return WaitListReservation.count(["bus_id = ? and spot_opened_at IS NULL", self.id])
     return WaitListReservation.where("bus_id = ? and spot_opened_at IS NULL", self.id).count
   end
 
@@ -125,14 +123,14 @@ class Bus < ActiveRecord::Base
   def update_waiting_list
     earliest_open_spot = Setting.earliest_valid_wait_list_opening
     # total seats on bus - seats reserved by tickets - wait list spots that currently have a ticket held open for reserving
-    newly_available_seats = seats - occupied_seats - WaitListReservation.count(["bus_id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?", self.id, earliest_open_spot])
+    newly_available_seats = seats - occupied_seats - WaitListReservation.where("bus_id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?", self.id, earliest_open_spot).count
     if (newly_available_seats > 0) && (self.wait_list_count > 0)
       wlrs = self.wait_list_reservations.where("spot_opened_at IS NULL").order("created_at ASC")
       number_to_open = (wlrs.size > newly_available_seats) ? newly_available_seats : wlrs.size
       for i in 0...number_to_open
         wlrs[i].spot_opened_at = Time.now
         wlrs[i].save!
-        Notifications.deliver_wait_list_spot_opened(wlrs[i].user, wlrs[i].bus)
+        # Notifications.deliver_wait_list_spot_opened(wlrs[i].user, wlrs[i].bus)
       end
     end
   end

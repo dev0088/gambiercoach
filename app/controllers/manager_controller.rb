@@ -1,7 +1,14 @@
+require 'rubygems'
+require 'yaml'
+require 'authorizenet'
+require 'securerandom'
+
 class ManagerController < ApplicationController
   layout "admin"
   before_action :admin_login_required, :except => :trip_report
   # ssl_required :create_reservation
+
+  include AuthorizeNet::API
 
   def bus
     @b = Bus.find(params[:id], :include => [:reservation_tickets, :wait_list_reservations])
@@ -222,47 +229,64 @@ class ManagerController < ApplicationController
             r = save_reservation(Reservation::PD_CREDIT, user, conductor_wish, reservation_requests, reservation_price)
 
             cc_info = params[:cc_info]
-            # process the credit card
-            tr = Payment::AuthorizeNet.new(:amount => reservation_price.to_s,
-                                           :card_number => cc_info[:card_number],
-                                           :first_name => cc_info[:name_on_card].split(" ",2)[1],
-                                           :last_name => cc_info[:name_on_card].split(" ",2)[0],
-                                           :expiration => "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}",
-                                           :address => cc_info[:address_one],
-                                           :city => cc_info[:city],
-                                           :state => cc_info[:state],
-                                           :zip => cc_info[:zip],
-                                           :type => "normal authorization")
 
-#                                           :test_transaction => "true")
-                                           # note that "normal authorization" => "AUTH_CAPTURE"
-            begin
-              tr.submit
-            rescue
-              error_message = tr.error_message
+            # Make payment with credit card
+            config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
+
+            transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :sandbox)
+
+            request = CreateTransactionRequest.new
+
+            request.transactionRequest = TransactionRequestType.new()
+            request.transactionRequest.amount = reservation_price.to_s
+            request.transactionRequest.payment = PaymentType.new
+            request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
+                "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+            request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
+
+            response = transaction.create_transaction(request)
+
+            if response != nil
+              if response.messages.resultCode == MessageTypeEnum::Ok
+                if response.transactionResponse != nil && response.transactionResponse.messages != nil
+                  puts "Successful charge (auth + capture) (authorization code: #{response.transactionResponse.authCode})"
+                  puts "Transaction ID: #{response.transactionResponse.transId}"
+                  puts "Transaction Response Code: #{response.transactionResponse.responseCode}"
+                  puts "Code: #{response.transactionResponse.messages.messages[0].code}"
+                  puts "Description: #{response.transactionResponse.messages.messages[0].description}"
+                else
+                  puts "Transaction Failed"
+                  if response.transactionResponse.errors != nil
+                    puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+                    puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+                    error_msg = "Error Code: #{response.transactionResponse.errors.errors[0].errorCode} \n" +
+                                "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+                  end
+                  raise error_msg
+                  # return false
+                end
+              else
+                puts "Transaction Failed"
+                if response.transactionResponse != nil && response.transactionResponse.errors != nil
+                  puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+                  puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+                  error_msg = "Error Code: #{response.transactionResponse.errors.errors[0].errorCode} \n" +
+                              "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+                else
+                  puts "Error Code: #{response.messages.messages[0].code}"
+                  puts "Error Message: #{response.messages.messages[0].text}"
+                  error_msg = "Error Code: #{response.messages.messages[0].code} \n" +
+                              "Error Message: #{response.messages.messages[0].text}"
+                end
+                raise error_msg
+                # return false
+              end
+            else
+              puts "Response is null"
+              error_msg = "Failed to charge card. Response is null."
+              raise error_msg
+              # return false
             end
-            if tr.result_code != 1
-              raise TransportappGatewayError, tr.error_message
-            end
-          end
-          begin
-            cpe = CreditPaymentEvent.create!(:user => user,
-                                             :reservation => r,
-                                             :transaction_amt => reservation_price.to_s,
-                                             :response_code => tr.result_code,
-                                             :transaction_type => "admin auth/capture",
-                                             :transaction_id => tr.transaction_id,
-                                             :error_code => nil,
-                                             :error_message => nil,
-                                             :authorization => tr.authorization,
-                                             :avs_code => tr.avs_code,
-                                             :cvv2_response => tr.cvv2_response,
-                                             :cavv_response => tr.cavv_response,
-                                             :cc_last_four => params[:cc_info][:card_number][-4,4])
-          rescue
-            logger.fatal "\n\nMAJOR PROBLEM -- TRANSACTION SENT BUT CREDIT PAYMENT EVENT NOT RECORDED -- USER = #{user.id}"
-            logger.fatal "USER NOTIFIED, GIVEN GATEWAY TRANSACTION ID AND ASKED TO CONTACT SYSTEM ADMINISTRATOR\n\n"
-            error_message = "Transaction only partially complete. Please contact a system administrator for assistance.<br />Reference the following transaction identifier: #{tr.transaction_id}"
           end
           begin
             Notifications.deliver_cc_reservation_create_success(user, r)
@@ -272,7 +296,7 @@ class ManagerController < ApplicationController
         rescue TransportappError => error_msg
           error_message = error_msg
         rescue TransportappGatewayError => error_message
-          error_message = "error while processing the credit card<br />" + error_message
+          error_message = "error while processing the credit card\n" + error_message.to_s
         end
       end
 
@@ -283,6 +307,59 @@ class ManagerController < ApplicationController
       end
       render
       return
+    end
+  end
+
+  def charge_credit_card(amount, cc_info)
+    config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
+
+    transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :sandbox)
+
+    request = CreateTransactionRequest.new
+
+    request.transactionRequest = TransactionRequestType.new()
+    request.transactionRequest.amount = amount
+    request.transactionRequest.payment = PaymentType.new
+    request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
+        "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+    request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
+
+    response = transaction.create_transaction(request)
+
+    if response != nil
+      if response.messages.resultCode == MessageTypeEnum::Ok
+        if response.transactionResponse != nil && response.transactionResponse.messages != nil
+          puts "Successful charge (auth + capture) (authorization code: #{response.transactionResponse.authCode})"
+          puts "Transaction ID: #{response.transactionResponse.transId}"
+          puts "Transaction Response Code: #{response.transactionResponse.responseCode}"
+          puts "Code: #{response.transactionResponse.messages.messages[0].code}"
+          puts "Description: #{response.transactionResponse.messages.messages[0].description}"
+          return true
+        else
+          puts "Transaction Failed"
+          if response.transactionResponse.errors != nil
+            puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+            puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+          end
+          puts "Failed to charge card."
+          return false
+        end
+      else
+        puts "Transaction Failed"
+        if response.transactionResponse != nil && response.transactionResponse.errors != nil
+          puts "Error Code: #{response.transactionResponse.errors.errors[0].errorCode}"
+          puts "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
+        else
+          puts "Error Code: #{response.messages.messages[0].code}"
+          puts "Error Message: #{response.messages.messages[0].text}"
+        end
+        puts "Failed to charge card."
+        return false
+      end
+    else
+      puts "Response is null"
+      puts "Failed to charge card."
+      return false
     end
   end
 

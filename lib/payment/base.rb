@@ -8,7 +8,7 @@ class Base
 	attr_accessor :url
 	attr_accessor :require_avs, :test_transaction
 	attr_accessor :method, :type, :login, :password, :action, :description, :amount, :invoice_number, :customer_id, :name, :address, :city, :state, :zip, :country, :phone, :fax, :email, :card_number, :expiration, :account_number, :routing_code, :bank_name
-	
+
 	# Set the variables and get default variables from the :prefs file.
 	# This method will be overriden by each gateway to set sensible defaults
 	# for each gateway.
@@ -16,11 +16,11 @@ class Base
 	def initialize(options = {}) #:nodoc:
 		# set some sensible defaults
 		@type = 'normal authorization'
-		
+
 		# get defaults from a preference file
-		prefs = File.expand_path(options[:prefs] || "#{RAILS_ROOT}/config/authorize_net.yml")
+		prefs = File.expand_path(options[:prefs] || "../../../config/authorize_net.yml")
 		YAML.load(File.open(prefs)).each {|pref, value| instance_variable_set("@#{pref}", value) } if File.exists?(prefs)
-		
+
 		# include all provided data
 		options.each { |pref, value| instance_variable_set("@#{pref}", value) }
 
@@ -30,9 +30,9 @@ class Base
 	def submit #:nodoc:
 		raise PaymentError, "No gateway specified"
 	end
-	
+
 	private
-	
+
 	# Make sure that the required fields are not empty
 	def check_required
 	   for var in @required
@@ -51,7 +51,7 @@ class Base
 	   end
 	   @response_plain = http.post(uri.path, @data).body
 	   @response       = @response_plain.include?('<?xml') ? REXML::Document.new(@response_plain) : @response_plain
-	   
+
 	   @response.instance_variable_set "@response_plain", @response_plain
 	   def @response.plain; @response_plain; end
 	end
