@@ -102,7 +102,7 @@ class ReservationsController < ApplicationController
 
     if @user.nil?
       flash[:error] = "Please log in or verify your student credentials before continuing with your reservation"
-      store_location
+      # store_location
       redirect_to :controller => "user", :action => "login"
       return
     else
@@ -195,7 +195,7 @@ class ReservationsController < ApplicationController
   def get_on_wait_list
     if current_user.nil?
       flash[:error] = "Please log in or verify your student credentials before continuing with your wait list reservation"
-      store_location
+      # store_location
       redirect_to :controller => "user", :action => "login"
       return
     else
@@ -300,7 +300,7 @@ class ReservationsController < ApplicationController
         # Make payment with credit card
         config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
 
-        transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :sandbox)
+        transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => 'production')
 
         request = CreateTransactionRequest.new
 
