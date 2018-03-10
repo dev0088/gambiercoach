@@ -233,7 +233,7 @@ class ManagerController < ApplicationController
             # Make payment with credit card
             config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
 
-            transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => 'production')
+            transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :production)
 
             request = CreateTransactionRequest.new
 
@@ -313,7 +313,7 @@ class ManagerController < ApplicationController
   def charge_credit_card(amount, cc_info)
     config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
 
-    transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => 'production')
+    transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :production)
 
     request = CreateTransactionRequest.new
 
