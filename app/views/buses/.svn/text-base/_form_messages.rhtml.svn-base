@@ -1,0 +1,5 @@
+<%= render :partial => 'messages' %>
+
+<% unless @bus.nil? %>
+<%= error_messages_for 'bus' %>
+<% end %>

@@ -1,0 +1,5 @@
+Hello <%= @user.login_id %>,
+
+Congratulations! You have been selected as a Student Conductor for the following trip:
+
+<%= @bus.departure.strftime("%A, %B %d") %> departing <%= @bus.starting_point %> for <%= @bus.ending_point %> at <%= @bus.departure.strftime("%I:%M %p") %>

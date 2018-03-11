@@ -1,0 +1,1 @@
+<%= render_component :controller => '/administrators', :action => 'component', :params => params %>

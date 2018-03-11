@@ -1,0 +1,13 @@
+
+<h3>Edit Conductors</h3>
+<h4>Select a Bus</h4>
+<form action="/manager/display_reservations?type=bus">
+	<select name="id">
+		<% Bus.find(:all).each do |b| %>
+			<option value="<%= b.id %>"><%= b.readable_route %> (<%= b.departure.strftime("%A, %B %d") %> at <%= b.departure.strftime("%I:%M %p") %>)</option>
+		<% end %>
+	</select>
+	<input type="submit" value="go" />
+</form>
+
+<br /><br /><br /><br />

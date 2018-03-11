@@ -1,0 +1,5 @@
+Hello <%= @user.login_id %>,
+
+You successfully reserved a spot on the wait list for: 
+
+<%= @bus.departure.strftime("%A, %B %d") %> departing <%= @bus.starting_point %> for <%= @bus.ending_point %> at <%= @bus.departure.strftime("%I:%M %p") %>

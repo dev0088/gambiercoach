@@ -1,0 +1,7 @@
+Hello <%= @user.login_id %>,
+
+A wait list spot on the bus: 
+
+<%= @bus.departure.strftime("%A, %B %d") %> departing <%= @bus.starting_point %> for <%= @bus.ending_point %> at <%= @bus.departure.strftime("%I:%M %p") %>
+
+has just opened up for you. A ticket for this bus will be held for 24 hours in order to give you time to log in to your account and make your purchase.

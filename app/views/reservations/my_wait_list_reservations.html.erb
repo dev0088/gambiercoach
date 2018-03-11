@@ -1,0 +1,28 @@
+<h3>My Current Wait List Spots</h3>
+
+<% @wlrs.each do |wlr| %>
+<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+	<% if wlr.has_opening? %>
+		<h4 style="font-weight: bold; font-size: 130%; color: blue; padding: 0; margin: 0;">A ticket is now available for:</h4>
+		<p style="font-weight: bold; color: red; padding: 0; margin: 0; font-size: 80%;">your opening expires in <%= distance_of_time_in_words_to_now(wlr.spot_open_till) %></p>	
+	<% else %>
+		<h4 style="font-weight: bold; font-size: 120%; color: blue; padding: 0; margin: 0;">You are currently #<%= wlr.spot_number %> on the wait list for:</h4>
+	<% end %>
+	<ul class="activeSession">
+		<%= wlr.bus.starting_point %> to <%= wlr.bus.ending_point %>
+		<ul class="activeSessionBuses">
+		<li>
+			<%= wlr.bus.departure.strftime("%A, %B %d") %> departs <%= wlr.bus.starting_point %> at <%= wlr.bus.departure.strftime("%I:%M %p") %>
+		</li>
+		</ul>
+	</ul>
+	<% if wlr.has_opening? %>
+	<p><strong><a style="color: blue;" href="/reservations/create?wait_list_id=<%= wlr.id %>">Purchase this ticket now.</a></strong></p>
+	<% end %>
+	<p><strong>Want to cancel this wait list spot?</strong><a href="/reservations/cancel_wait_list_reservation/<%= wlr.id %>" style="text-decoration: none"> Click Here</a></p>
+</div>
+<br /><br />
+<% end %>
+
+<br /><br />
+<br /><br />

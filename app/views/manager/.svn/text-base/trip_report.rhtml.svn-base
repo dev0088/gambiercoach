@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title><%= Setting::NAME %></title>
+	<link rel="stylesheet" href="/stylesheets/williams.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="/javascripts/niftycube.js"></script>
+</head>
+<body>
+<div style="margin-left: 40px;">
+	<h2>Trip Report: <%= @bus.departure.strftime("%A, %B %d") %> departing <%= @bus.starting_point %> for <%= @bus.ending_point %> at <%= @bus.departure.strftime("%I:%M %p") %></h2>
+	<form action="/manager/trip_report" method="post">
+		<input type="hidden" name="id" value="<%= @bus.report_token %>" />
+		<label>Was the bus on time?</label>
+		<select name="on_time">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</select>
+		<br />
+		<label>Comments on the bus: </label>
+		<br />
+		<textarea cols="100" rows="6" name="comment"></textarea>
+		<br />
+		<br />
+		<br />
+		<label>Check off all tickets used for each bus: </label>
+		<br />
+		<table>
+			<% @bus.reservation_tickets.each do |rt| %>
+			<% for i in 1..rt.quantity %>
+				<tr style="height: 30px;">
+					<td style="width: 50px; text-align: left;">
+						<input type="checkbox" name="<%= rt.id %>_rt_<%= i %>" value="on" />
+					</td>
+					<td style="width: 150px; text-align: left;"><%= rt.reservation.user.login_id %></td>
+				</tr>
+			<% end %>
+			<% end %>
+		</table>
+		
+		<h4>Please register any walk-ons from the bus in the below form: </h4>
+		<table>
+			<tr>
+				<th style="width: 125px; text-align: left; text-decoration: underline;">name</th>
+				<th style="width: 150px; text-align: left; text-decoration: underline;">login id</th>
+				<th style="width: 150px; text-align: left; text-decoration: underline;">mailbox</th>
+				<th style="width: 150px; text-align: left; text-decoration: underline;">home/dorm phone</th>
+				<th style="width: 150px; text-align: left; text-decoration: underline;">mobile phone</th>
+			</tr>
+			<% for i in 1..30 %>
+			<tr>
+				<td style="width: 150px; text-align: left;"><input type="text" name="walk_on_<%= i %>[name]"></td>
+				<td style="width: 150px; text-align: left;"><input type="text" name="walk_on_<%= i %>[login_id]"></td>
+				<td style="width: 150px; text-align: left;"><input type="text" name="walk_on_<%= i %>[mailbox]"></td>
+				<td style="width: 150px; text-align: left;"><input type="text" name="walk_on_<%= i %>[phone1]"></td>
+				<td style="width: 150px; text-align: left;"><input type="text" name="walk_on_<%= i %>[phone2]"></td>			
+			</tr>
+			<% end %>
+		</table>
+		<div style="margin-left: 300px;">
+			<input type="submit" value="submit trip report" />
+		</div>
+	</form>
+</div>
+</body>
+</html>

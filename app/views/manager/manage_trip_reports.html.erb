@@ -1,0 +1,32 @@
+<h2>Trip Reports for: <%= @s.name %> <% if @only_refunded.nil? %>(all)<% else %>(only un-refunded)<% end %></h2>
+<br />
+<form action="/manager/manage_trip_reports" method="post">
+	<input type="hidden" name="id" value="<%= @s.id.to_s %>" />
+	<% if @only_unrefunded %><input type="hidden" name="only_unrefunded" value="" /><% end %>
+	<table style="font-size: 12px;">
+		<tr>
+			<th style="width: 100px; text-align: left; text-decoration: underline;">status</th>
+			<th style="width: 125px; text-align: left; text-decoration: underline;">bus</th>
+			<th style="width: 100px; text-align: left; text-decoration: underline;">conductor login id</th>
+			<th style="width: 20px; text-align: left; text-decoration: underline;">on time?</th>
+			<th style="width: 200px; text-align: left; text-decoration: underline;">comments</th>
+		</tr>
+		<% @trs.each do |tr| %>
+		<tr>
+			<td style="width: 150px; text-align: left;">
+				<select name="report_<%= tr.id.to_s %>">
+					<option value="unrefunded" <% if tr.refund_issued == 0 %>selected="selected"<% end %>>unrefunded</option>
+					<option value="refunded" <% if tr.refund_issued == 1 %>selected="selected"<% end %>>refunded</option>
+				</select>
+			</td>
+			<td style="width: 250px; text-align: left;"><%= tr.bus.readable_route %><br /><%= tr.bus.departure.strftime("%A, %B %d") %><br /><%= tr.bus.departure.strftime("%I:%M %p") %>)</td>
+			<td style="width: 150px; text-align: left;"><%= tr.user.login_id %></td>
+			<td style="width: 150px; text-align: left;"><%= tr.on_time == 1 ? "yes" : "no" %></td>
+			<td style="width: 150px; text-align: left;"><%= tr.comment %></td>
+		</tr>
+		<% end %>
+	</table>
+	<div style="margin-left: 300px;">
+		<input type="submit" value="save" />
+	</div>
+</form>

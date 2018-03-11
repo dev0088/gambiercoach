@@ -1,0 +1,26 @@
+<fieldset>
+	<div class="row">
+		<div class="form-element">
+  		<label for="setting_reservations_closing_time">Reservations closing time</label>
+  		<%= select_time @setting.reservations_closing_time, :prefix => "reservations_closing_time" %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-element">
+  		<label for="daily_payment_reminder_time">Daily payment reminder time</label>
+  		<%= select_time @setting.daily_payment_reminder_time, :prefix => "daily_payment_reminder_time" %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-element">
+			<label for="setting_cash_payment_deadline">Max Tickets Purchase (for drop-down)</label>
+			<%= text_field 'setting', 'max_tickets_purchase' , {:class=>"text-input"} %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-element">
+			<label for="wait_list_window_opening">Wait List Opening Window (in hours, as 0.5, 1, 1.5, 2, 2.5 up to 24)</label>
+			<%= text_field 'setting', 'wait_list_opening_window' , {:class=>"text-input"} %>
+		</div>
+	</div>
+</fieldset>

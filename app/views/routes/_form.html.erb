@@ -1,0 +1,40 @@
+<fieldset>
+	<div class="row">
+		<div class="form-element">
+			<label for="route_transport_session">Transport Session</label>
+			<%= select 'route', 'transport_session_id', TransportSession.find_all.collect {|ts| [ts.name, ts.id]} %>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-element">
+		  <label for="route_point_a">Home Point</label>
+		  <%= text_field 'route', 'point_a', {:class=>"text-input"} %>
+		</div>
+
+		<div class="form-element">
+		  <label for="route_point_b">Away Point</label>
+		  <%= text_field 'route', 'point_b', {:class=>"text-input"} %>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-element">
+		  <label for="route_price">Price</label>
+		  <%= text_field 'route', 'price', {:class=>"text-input"}  %>
+			<label class="example">example: 5.00 -- include the cents, always</label>
+		</div>		
+	</div>
+	<div class="row">
+		<div class="form-element">
+		  <label for="display_order">Schedule Display Order</label>
+		  <%= text_field 'route', 'display_order', {:class=>"text-input"}  %>
+			<label class="example">must be an integer, lower numbers displayed first</label>
+		</div>		
+	</div>
+	<div class="row">
+		<div class="form-element">
+		  <label for="route_information">Information</label>
+		  <%= text_area 'route', 'information'  %>
+		</div>
+	</div>
+</fieldset>

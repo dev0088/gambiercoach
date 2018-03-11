@@ -1,0 +1,37 @@
+<% if not request.xhr? %>
+<div id="<%= params[:controller] %>" class="ajax-scaffold">
+  <div id="<%= params[:action] %>">
+<% end %>
+<div class="ajax-scaffold-header">
+  <div class="actions">
+    <%= link_to "Create New", new_transport_session_path, :class => "create", remote: true %>
+  </div>
+  <h2>Transport Sessions</h2>
+</div>
+<table cellpadding="0" cellspacing="0">
+  <thead>
+    <tr>
+      <%= render :partial => 'column_headings' %>
+    </tr>
+  </thead>
+  <tbody id="transport_session-tbody">
+    <% @transport_sessions.each do |transport_session| %>
+        <tr>
+          <td><%= transport_session.name %></td>
+          <td><%= transport_session.reservations_opening_date %></td>
+          <td><%= transport_session.session_closing_date %></td>
+          <td><%= transport_session.cash_reservations_closing_date %></td>
+          <td><%= transport_session.cash_reservations_information %></td>
+          <td>
+            <%= link_to "Edit", edit_transport_session_path(transport_session) %>
+          </td>
+          <td>
+            <%= link_to "Delete", transport_session_path(transport_session),
+                :method => :delete, :confirm => 'Are you sure?' %>
+          </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate @transport_sessions %>

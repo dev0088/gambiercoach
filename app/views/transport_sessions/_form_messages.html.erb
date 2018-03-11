@@ -1,0 +1,5 @@
+<%= render :partial => 'messages' %>
+
+<% unless @transport_session.nil? %>
+<%= error_messages_for 'transport_session' %>
+<% end %>

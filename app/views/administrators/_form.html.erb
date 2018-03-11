@@ -1,0 +1,25 @@
+<fieldset>
+	<div class="row">
+		<!--[form:administrator]-->
+<% unless @administrator.superuser? -%>
+<div class="form-element">
+  <label for="administrator_username">Username</label>
+  <%= text_field 'administrator', 'username' , {:class=>"text-input"} %>
+</div>
+<% end -%>
+
+<div class="form-element">
+  <label for="administrator_new_password">Set a password</label>
+  <%= password_field 'administrator', 'new_password' , {:class=>"text-input"} %>
+</div>
+</div>
+<div class="row">
+<div class="form-element">
+  <label for="administrator_email">Email</label>
+  <%= text_field 'administrator', 'email' , {:class=>"text-input"} %>
+</div>
+
+<!--[eoform:administrator]-->
+
+	</div>
+</fieldset>

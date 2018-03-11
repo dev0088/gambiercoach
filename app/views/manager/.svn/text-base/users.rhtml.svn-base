@@ -1,0 +1,10 @@
+<h3>Edit Existing Users</h3>
+
+<form action="/manager/users" method="post">
+	<label>Login Id: </label><input name="login_id" type="text" />
+	<input type="submit" value="find" />
+</form>
+<br />
+<h4><a href="/manager/create_edit_user">or, Add a User</a></h4>
+
+<br /><br /><br /><br />
