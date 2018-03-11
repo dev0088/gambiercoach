@@ -1,2 +1,0 @@
-class TransportappError < RuntimeError
-end
