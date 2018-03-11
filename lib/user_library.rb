@@ -1,5 +1,5 @@
 module UserLibrary
-
+ 
 # Used as a before_action for actions that require
 # a logged-in user.
 def login_required
