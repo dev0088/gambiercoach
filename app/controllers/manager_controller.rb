@@ -11,7 +11,7 @@ class ManagerController < ApplicationController
   include AuthorizeNet::API
 
   def bus
-    @b = Bus.find(params[:id], :include => [:reservation_tickets, :wait_list_reservations])
+    @b = Bus.where(id: params[:id]).includes(:reservation_tickets).includes(:wait_list_reservations).first
   end
 
   def system_reset_options
@@ -109,15 +109,16 @@ class ManagerController < ApplicationController
       return
     when 'POST'
       refund_amt = "0".to_money
-      params[:rt].each do |rt|
-        reservation_ticket = ReservationTicket.find(rt[0])
-        if "0" == rt[1]
+      params[:rt].each do |rt_id|
+        reservation_ticket = ReservationTicket.find(rt_id)
+        reservation_ticket_count = params[:rt][rt_id]
+        if "0" == reservation_ticket_count
           refund_amt = reservation_ticket.bus.route.to_m * reservation_ticket.quantity
           reservation_ticket.destroy
         else
-          difference = reservation_ticket.quantity.to_i - rt[1].to_i
+          difference = reservation_ticket.quantity.to_i - reservation_ticket_count.to_i
           refund_amt = reservation_ticket.bus.route.to_m * difference
-          reservation_ticket.quantity = rt[1]
+          reservation_ticket.quantity = reservation_ticket_count
           if params[reservation_ticket.id.to_s + "_conductor"] == "yes"
 	    if reservation_ticket.conductor_status == 0
 	      Notifications.deliver_student_conductor_designation(reservation_ticket.reservation.user, reservation_ticket.bus)

@@ -30,8 +30,8 @@
 			<li><a href="/manager/create_edit_user">Create a User</a></li>
 			<li style="list-style-type: none"></li>
 			<li><a href="<%= transport_sessions_path %>">Sessions</a></li>
-			<li><a href="/routes/list">Routes</a></li>
-			<li><a href="/buses/list">Buses</a></li>
+			<li><%= link_to "Routes", routes_path %></li>
+			<li><%= link_to "Buses", buses_path %></li>
 			<li style="list-style-type: none"></li>
 			<li><a href="/settings/edit_settings">Global Settings</a></li>
 			<li><a href="/manager/system_reset_options">System Reset Options</a></li>

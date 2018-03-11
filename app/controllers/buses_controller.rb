@@ -6,7 +6,10 @@ class BusesController < ApplicationController
   # after_action :clear_flashes
 
   def index
-    redirect_to :action => 'list'
+    @sort_sql = Bus.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
+    @sort_by = @sort_sql.nil? ? "#{Bus.table_name}.#{Bus.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
+    # @paginator, @buses = paginate(:buses, :order => @sort_by, :per_page => 25, :include => :route)
+    @buses = Bus.includes(:route).order(@sort_by).paginate(page: params[:page], :per_page => 25)
   end
 
 
@@ -14,7 +17,7 @@ class BusesController < ApplicationController
     # If you have multiple scaffolds on the same view then you will want to change this to
     # to whatever controller/action shows all the views
     # (ex: redirect_to :controller => 'AdminConsole', :action => 'index')
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 
   def list

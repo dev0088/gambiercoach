@@ -6,9 +6,11 @@ class SettingsController < ApplicationController
   # after_action :clear_flashes
 
   def index
-    redirect_to :action => 'list'
+    # redirect_to :action => 'list'
   end
 
+  def show
+  end
 
   def return_to_main
     # If you have multiple scaffolds on the same view then you will want to change this to
@@ -94,8 +96,10 @@ class SettingsController < ApplicationController
   end
 
   def edit_settings
+    puts "===== params: #{params.inspect}"
     case request.method
     when 'GET'
+      puts "===== GET: params: #{params.inspect}"
       @setting = Setting.first
       if @setting.nil?
         @setting = Setting.new
@@ -103,13 +107,14 @@ class SettingsController < ApplicationController
       render
       return
     when 'POST'
+      puts "===== POST: params: #{params.inspect}"
       @setting = Setting.first
       if @setting.nil?
         @setting = Setting.new
       end
-      params[:setting][:reservations_closing_time] = params[:reservations_closing_time][:hour] + ":" + params[:reservations_closing_time][:minute]
-      params[:setting][:daily_payment_reminder_time] = params[:daily_payment_reminder_time][:hour] + ":" + params[:daily_payment_reminder_time][:minute]
-      if @setting.update_attributes(params[:setting])
+      # update_params = params[:setting]
+
+      if @setting.update_attributes(update_params)
 
       else
 
@@ -156,5 +161,14 @@ class SettingsController < ApplicationController
     return render :action => 'cancel.rjs' if request.xhr?
 
     return_to_main
+  end
+
+  def update_params
+    new_update_params = params[:setting]
+    new_update_params[:reservations_closing_time] = params[:reservations_closing_time][:hour] + ":" + params[:reservations_closing_time][:minute]
+    new_update_params[:daily_payment_reminder_time] = params[:daily_payment_reminder_time][:hour] + ":" + params[:daily_payment_reminder_time][:minute]
+
+    new_update_params.permit(:max_tickets_purchase, :wait_list_opening_window,
+      :reservations_closing_time, :daily_payment_reminder_time)
   end
 end

@@ -1,5 +1,14 @@
 <%= render :partial => 'messages' %>
 
 <% unless @bus.nil? %>
-<%= error_messages_for 'bus' %>
+  <% if @bus.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@bus.errors.count, "error") %> prohibited this bus from being saved:</h2>
+      <ul>
+      <% @bus.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 <% end %>

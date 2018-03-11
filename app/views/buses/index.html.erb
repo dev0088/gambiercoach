@@ -1,0 +1,46 @@
+<% if not request.xhr? %>
+<div id="<%= params[:controller] %>" class="ajax-scaffold">
+  <div id="<%= params[:action] %>">
+<% end %>
+    <div class="ajax-scaffold-header">
+      <div class="actions">
+        <% new_params = params.merge(:controller => '/buses', :action => 'new') %>
+        <%= link_to "Create New", new_bus_path, :class => "create", remote: true %>
+      </div>
+      <h2>Buses</h2>
+    </div>
+    <table cellpadding="0" cellspacing="0">
+    <thead>
+      <tr>
+        <%= render :partial => 'column_headings' %>
+      </tr>
+    </thead>
+
+    <tbody id="bus-tbody">
+    <% @buses.each do |bus| %>
+        <tr>
+          <td><%= "#{bus.route.point_a} - #{bus.route.point_b}"  %></td>
+          <td><%= bus.going_away %></td>
+          <td><%= bus.departure %></td>
+          <td><%= bus.seats %></td>
+          <td>
+            <%= link_to "Edit", edit_bus_path(bus) %>
+          </td>
+          <td>
+            <%= link_to "Delete", bus_path(bus),
+                :method => :delete, :confirm => 'Are you sure?' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= will_paginate @buses %>
+
+<% if not request.xhr? %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
+</script>
+<% end %>

@@ -18,7 +18,7 @@ class Base
 		@type = 'normal authorization'
 		
 		# get defaults from a preference file
-		prefs = File.expand_path(options[:prefs] || "#{RAILS_ROOT}/config/authorize_net.yml")
+		prefs = File.expand_path(options[:prefs] || "#{Rails.root}/config/authorize_net.yml")
 		YAML.load(File.open(prefs)).each {|pref, value| instance_variable_set("@#{pref}", value) } if File.exists?(prefs)
 		
 		# include all provided data

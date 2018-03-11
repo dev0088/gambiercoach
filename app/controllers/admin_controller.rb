@@ -2,7 +2,7 @@ class AdminController < ApplicationController
   before_action :admin_login_required
 
   def edit_email
-    fname = "#{RAILS_ROOT}/app/views/notifications/#{params[:em]}.html.erb"
+    fname = "#{Rails.root}/app/views/notifications/#{params[:em]}.html.erb"
     @em = params[:em]
     case request.method
     when 'GET'
@@ -21,7 +21,7 @@ class AdminController < ApplicationController
   end
 
   def edit_welcome
-    fname = "#{RAILS_ROOT}/app/views/index/_index_header.html.erb"
+    fname = "#{Rails.root}/app/views/index/_index_header.html.erb"
     case request.method
     when 'GET'
       @text = File.read(fname)
@@ -39,7 +39,7 @@ class AdminController < ApplicationController
   end
 
   def edit_group_tickets
-    fname = "#{RAILS_ROOT}/app/views/index/group_tickets.html.erb"
+    fname = "#{Rails.root}/app/views/index/group_tickets.html.erb"
     case request.method
     when 'GET'
       @text = File.read(fname)
@@ -59,15 +59,15 @@ class AdminController < ApplicationController
   def edit_about
     case request.method
     when 'GET'
-      @text = File.read("#{RAILS_ROOT}/app/views/index/about.html.erb")
+      @text = File.read("#{Rails.root}/app/views/index/about.html.erb")
       render
       return
     when 'POST'
-      f = File.open("#{RAILS_ROOT}/app/views/index/about.html.erb", "w+")
+      f = File.open("#{Rails.root}/app/views/index/about.html.erb", "w+")
       f << params[:text]
       f.close
       flash.now[:success] = "saved the new text"
-      @text = File.read("#{RAILS_ROOT}/app/views/index/about.html.erb")
+      @text = File.read("#{Rails.root}/app/views/index/about.html.erb")
       render
       return
     end
@@ -76,15 +76,15 @@ class AdminController < ApplicationController
   def edit_help
     case request.method
     when 'GET'
-      @text = File.read("#{RAILS_ROOT}/app/views/index/help.html.erb")
+      @text = File.read("#{Rails.root}/app/views/index/help.html.erb")
       render
       return
     when 'POST'
-      f = File.open("#{RAILS_ROOT}/app/views/index/help.html.erb", "w+")
+      f = File.open("#{Rails.root}/app/views/index/help.html.erb", "w+")
       f << params[:text]
       f.close
       flash.now[:success] = "saved the new text"
-      @text = File.read("#{RAILS_ROOT}/app/views/index/help.html.erb")
+      @text = File.read("#{Rails.root}/app/views/index/help.html.erb")
       render
       return
     end

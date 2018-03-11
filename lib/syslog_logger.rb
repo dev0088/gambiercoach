@@ -28,11 +28,11 @@ require 'logger'
 #
 # In 0.10.0, change this line:
 # 
-#   RAILS_DEFAULT_LOGGER = Logger.new("#{RAILS_ROOT}/log/#{RAILS_ENV}.log")
+#   RAILS_DEFAULT_LOGGER = Logger.new("#{Rails.root}/log/#{RAILS_ENV}.log")
 #
 # to:
 #
-#   RAILS_DEFAULT_LOGGER ||= Logger.new("#{RAILS_ROOT}/log/#{RAILS_ENV}.log")
+#   RAILS_DEFAULT_LOGGER ||= Logger.new("#{Rails.root}/log/#{RAILS_ENV}.log")
 #
 # Other versions of Rails should have a similar change.
 #

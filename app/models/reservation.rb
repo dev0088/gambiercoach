@@ -135,7 +135,7 @@ class Reservation < ActiveRecord::Base
     rescue TransportappError => error_msg
       error_message = error_msg
     rescue TransportappGatewayError => error_message
-      error_message = "error while processing the credit<br />" + error_message
+      error_message = "error while processing the credit<br />" + error_message.to_s
     end
   end
 

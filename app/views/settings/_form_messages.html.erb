@@ -1,5 +1,14 @@
 <%= render :partial => 'messages' %>
 
 <% unless @setting.nil? %>
-<%= error_messages_for 'setting' %>
+  <% if @setting.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@setting.errors.count, "error") %> prohibited this setting from being saved:</h2>
+      <ul>
+      <% @setting.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 <% end %>
