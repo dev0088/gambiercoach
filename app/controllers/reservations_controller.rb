@@ -237,7 +237,7 @@ class ReservationsController < ApplicationController
       refund_amt = "0".to_money
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.where(id: rt).first
-        next reservation_ticket.nil?
+        next if reservation_ticket.nil?
         numbers_of_tickets = params[:rt][rt]
         if "0" == numbers_of_tickets
           refund_amt += reservation_ticket.bus.route.to_m * reservation_ticket.quantity
