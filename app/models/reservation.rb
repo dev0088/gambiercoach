@@ -55,6 +55,10 @@ class Reservation < ActiveRecord::Base
     transaction_type = nil
     begin
       cpe = self.charge_payment_event
+      if cpe.nil?
+        error_message = "Internal Error: no payment events for reservation id: #{self.id}"
+        return
+      end
       credit_not_complete = true
 
       # try a void first if the initial charge was less than 24 hours ago
@@ -91,7 +95,7 @@ class Reservation < ActiveRecord::Base
           rescue
             logger.fatal "\n\nMAJOR PROBLEM -- VOID TRANSACTION SENT BUT CREDIT PAYMENT EVENT NOT RECORDED -- USER = #{user.id}"
             logger.fatal "USER NOTIFIED, GIVEN GATEWAY TRANSACTION ID AND ASKED TO CONTACT SYSTEM ADMINISTRATOR\n\n"
-            error_message = "Credit Transaction only partially complete.<br />Please contact a system administrator for assistance.<br />Reference the following transaction identifier: #{tr.transaction_id}"
+            error_message = "Credit Transaction only partially complete.\nPlease contact a system administrator for assistance.\nReference the following transaction identifier: #{tr.transaction_id}"
           end
         end
       end
@@ -128,14 +132,14 @@ class Reservation < ActiveRecord::Base
         rescue
           logger.fatal "\n\nMAJOR PROBLEM -- CREDIT TRANSACTION SENT BUT CREDIT PAYMENT EVENT NOT RECORDED -- USER = #{user.id}"
           logger.fatal "USER NOTIFIED, GIVEN GATEWAY TRANSACTION ID AND ASKED TO CONTACT SYSTEM ADMINISTRATOR\n\n"
-          error_message = "Credit Transaction only partially complete.<br />Please contact a system administrator for assistance.<br />Reference the following transaction identifier: #{tr.transaction_id}"
+          error_message = "Credit Transaction only partially complete.\nPlease contact a system administrator for assistance.\nReference the following transaction identifier: #{tr.transaction_id}"
         end
       end
 
     rescue TransportappError => error_msg
       error_message = error_msg
     rescue TransportappGatewayError => error_message
-      error_message = "error while processing the credit<br />" + error_message.to_s
+      error_message = "error while processing the credit\n" + error_message.to_s
     end
   end
 

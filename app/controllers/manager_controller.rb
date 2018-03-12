@@ -70,11 +70,14 @@ class ManagerController < ApplicationController
       return
     when 'POST'
       params[:rt].each do |rt|
-        reservation_ticket = ReservationTicket.find(rt[0])
-        if rt[1] == "1" && reservation_ticket.conductor_status == 0
-          Notifications.deliver_student_conductor_designation(reservation_ticket.reservation.user, reservation_ticket.bus)
+        reservation_ticket = ReservationTicket.find(rt)
+        numbers_of_tickets = params[:rt][rt]
+        if numbers_of_tickets == "1" && reservation_ticket.conductor_status == 0
+          Notifications.deliver_student_conductor_designation(
+            reservation_ticket.reservation.user,
+            reservation_ticket.bus)
         end
-        reservation_ticket.conductor_status = rt[1]
+        reservation_ticket.conductor_status = numbers_of_tickets
         reservation_ticket.save!
       end
       flash[:success] = "Saved your conductor designations"
@@ -134,18 +137,18 @@ class ManagerController < ApplicationController
       @reservation.reload
 
       if refund_amt.zero?
-        flash[:success] = "Modified the reservation successfully<br />No ticket number changes made."
+        flash[:success] = "Modified the reservation successfully\nNo ticket number changes made."
       elsif @reservation.payment_status == Reservation::UNPAID
         flash[:success] = "Modified the reservation successfully"
       elsif @reservation.payment_status == Reservation::PD_CASH
-        flash[:success] = "Modified the reservation successfully<br /> refund owed is #{refund_amt}"
+        flash[:success] = "Modified the reservation successfully\n refund owed is #{refund_amt}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
         error_message = @reservation.cc_refund(refund_amt)
         error_message = nil
         if error_message.nil?
-          flash[:success] = "Modified the reservation successfully<br /> the credit card was refunded #{refund_amt}"
+          flash[:success] = "Modified the reservation successfully\n the credit card was refunded #{refund_amt}"
         else
-          flash[:error] = "Modified the reservation successfully<br /> but we had trouble refunding the credit card.<br /><br /> Manually credit the transaction id ##{@reservation.charge_payment_event.transaction_id} for #{refund_amt}."
+          flash[:error] = "Modified the reservation successfully\n but we had trouble refunding the credit card.\n\n Manually credit the transaction id ##{@reservation.charge_payment_event.transaction_id} for #{refund_amt}."
         end
       end
 
@@ -178,7 +181,7 @@ class ManagerController < ApplicationController
                            :new_password => "default")
           user.login_id = params[:new_user_login]
           unless user.save
-            flash[:error] = "Problems creating the user: <br />"
+            flash[:error] = "Problems creating the user: \n"
             flash[:error] += user.errors.full_html_error_string
             render
             return
@@ -233,8 +236,10 @@ class ManagerController < ApplicationController
 
             # Make payment with credit card
             config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
-
-            transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => :production)
+            transaction = Transaction.new(
+                            config["api_login_id"],
+                            config["api_transaction_key"],
+                            :gateway => config["api_environment_mode"])
 
             request = CreateTransactionRequest.new
 
@@ -304,7 +309,7 @@ class ManagerController < ApplicationController
       if error_message.nil?
         flash.now[:success] = "Created the reservation for #{user.login_id}"
       else
-        flash.now[:error] = "Problem while creating the reservation<br />" + error_message
+        flash.now[:error] = "Problem while creating the reservation\n" + error_message
       end
       render
       return
@@ -379,18 +384,18 @@ class ManagerController < ApplicationController
       return
     when 'POST'
       if params[:id].nil?
-        @user = User.new(:verified => 1,
-                         :new_password => "default")
+        @user = User.new(:verified => 1)
       else
         @user = User.find(params[:id])
       end
       @user.login_id = params[:login_id]
       @user.phone = params[:phone]
       if @user.save
+        @user.change_password('default', 'default')
         flash[:success] = "Saved the user: " + @user.login_id
         redirect_to :action => "users"
       else
-        flash[:error] = "Problems with saving the user: <br />"
+        flash[:error] = "Problems with saving the user: \n"
         flash[:error] += @user.errors.full_html_error_string
         render
         return
@@ -437,7 +442,7 @@ class ManagerController < ApplicationController
           marked_pd += 1
         end
       end
-      flash[:success] = "saved walk-ons<br />marked #{marked_pd} as paid"
+      flash[:success] = "saved walk-ons\nmarked #{marked_pd} as paid"
       redirect_to :controller => "admin", :action => "index"
       return
     end
@@ -497,7 +502,7 @@ class ManagerController < ApplicationController
           canceled += 1
         end
       end
-      flash[:success] = "saved unpaid reservations<br />#{canceled} canceled and #{marked_pd} marked as paid"
+      flash[:success] = "saved unpaid reservations\n#{canceled} canceled and #{marked_pd} marked as paid"
       redirect_to :controller => "admin", :action => "index"
       return
     end
@@ -563,7 +568,7 @@ class ManagerController < ApplicationController
                                             :reservation_ticket_id => cur.id)
         end
       end
-      flash[:success] = "Thank you for submitting your trip report.<br />We will contact you with a refund shortly."
+      flash[:success] = "Thank you for submitting your trip report.\nWe will contact you with a refund shortly."
       redirect_to :controller => "index", :action => "index"
       return
     end

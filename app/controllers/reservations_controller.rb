@@ -134,7 +134,7 @@ class ReservationsController < ApplicationController
     if !params[:pay_by_cash].nil? # paying by cash / check
       error_msg, reservation = process_cash(@user, @conductor_wish, @contact_phone, session[:reservation_details], session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
-        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to #{reservation.earliest_session.cash_reservations_information}"
+        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to #{reservation.earliest_session.cash_reservations_information}"
         redirect_to :action => "my_reservations"
         return
       else
@@ -144,7 +144,7 @@ class ReservationsController < ApplicationController
     elsif !params[:new_cc_submit].nil? # paying with a newly entered cc
       error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone, params[:new_cc], session[:reservation_details], session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
-        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly."
+        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly."
         redirect_to :action => "my_reservations"
         return
       else
@@ -173,7 +173,7 @@ class ReservationsController < ApplicationController
                                 cc_info, session[:reservation_details],
                                 session[:reservation_price], session[:wait_list_id])
       if error_msg.nil?
-        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!<br />You will receive an e-mail confirmation shortly."
+        flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly."
         redirect_to :action => "my_reservations"
         return
       else
@@ -236,14 +236,16 @@ class ReservationsController < ApplicationController
     when 'POST'
       refund_amt = "0".to_money
       params[:rt].each do |rt|
-        reservation_ticket = ReservationTicket.find(rt[0])
-        if "0" == rt[1]
+        reservation_ticket = ReservationTicket.where(id: rt).first
+        next reservation_ticket.nil?
+        numbers_of_tickets = params[:rt][rt]
+        if "0" == numbers_of_tickets
           refund_amt += reservation_ticket.bus.route.to_m * reservation_ticket.quantity
           reservation_ticket.destroy
         else
-          difference = reservation_ticket.quantity.to_i - rt[1].to_i
+          difference = reservation_ticket.quantity.to_i - numbers_of_tickets.to_i
           refund_amt += reservation_ticket.bus.route.to_m * difference
-          reservation_ticket.quantity = rt[1]
+          reservation_ticket.quantity = numbers_of_tickets
           reservation_ticket.save!
         end
       end
@@ -255,13 +257,13 @@ class ReservationsController < ApplicationController
         unless refund_amt.zero?
           Notifications.deliver_reservation_modified_by_user(@user, @reservation.id, refund_amt.to_s)
         end
-        flash[:success] = "Modified your reservation successfully,<br /> we will refund you #{refund_amt}"
+        flash[:success] = "Modified your reservation successfully,\n we will refund you #{refund_amt}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
         error_message = @reservation.cc_refund(refund_amt)
         if error_message.nil?
-          flash[:success] = "Modified your reservation successfully,<br /> your credit card was refunded #{refund_amt}"
+          flash[:success] = "Modified your reservation successfully,\n your credit card was refunded #{refund_amt}"
         else
-          flash[:error] = "Modified your reservation successfully,<br /> but we had trouble refunding your credit card.<br /><br /> Please contact a system administrator<br />and reference transaction id ##{@reservation.charge_payment_event.transaction_id}."
+          flash[:error] = "Modified your reservation successfully,\n but we had trouble refunding your credit card.\n\n Please contact a system administrator\nand reference transaction id ##{@reservation.charge_payment_event.transaction_id}."
         end
       end
 
@@ -273,7 +275,7 @@ class ReservationsController < ApplicationController
         @reservation.total = (@reservation.total.to_money - refund_amt).to_s
         @reservation.save!
       end
-      Notifications.deliver_reservation_modify_success(@user, @reservation)
+      # Notifications.deliver_reservation_modify_success(@user, @reservation)
       redirect_to :action => "my_reservations"
     end
   end
@@ -300,7 +302,10 @@ class ReservationsController < ApplicationController
         # Make payment with credit card
         config = YAML.load_file(File.dirname(__FILE__) + "/../../config/credentials.yml")
 
-        transaction = Transaction.new(config["api_login_id"], config["api_transaction_key"], :gateway => 'production')
+        transaction = Transaction.new(
+                        config["api_login_id"],
+                        config["api_transaction_key"],
+                        :gateway => config["api_environment_mode"])
 
         request = CreateTransactionRequest.new
 
@@ -360,7 +365,7 @@ class ReservationsController < ApplicationController
         begin
           Notifications.deliver_cc_reservation_create_success(user, r)
         rescue
-          return "Transaction complete and reservation saved, but we could not send an email confirmation.<br />Please see your 'My Reservations' and contact a System Administrator if you need more information.", r
+          return "Transaction complete and reservation saved, but we could not send an email confirmation.\nPlease see your 'My Reservations' and contact a System Administrator if you need more information.", r
         end
       end
     rescue TransportappError => error_message
@@ -418,7 +423,7 @@ class ReservationsController < ApplicationController
         rt.save!
       else
         # gotta do the raise for the transaction rollback
-        raise TransportappError, "One or more of the buses you requested tickets for<br />no longer has seats remaining."
+        raise TransportappError, "One or more of the buses you requested tickets for\nno longer has seats remaining."
       end
     end
 

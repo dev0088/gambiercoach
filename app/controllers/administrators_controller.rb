@@ -54,7 +54,7 @@ class AdministratorsController < ApplicationController
           else
             flash.now[:error] = ""
             admin.errors.full_messages.each do |e|
-              flash.now[:error] += e + "<br />"
+              flash.now[:error] += e + "\n"
             end
           end
           render
@@ -67,7 +67,7 @@ class AdministratorsController < ApplicationController
   def forgot_password
     # Always redirect if logged in
     if !session[:admin_id].nil?
-      flash[:error] = "you are already logged in.<br />If you forgot your password and want to reset it, log out and then click 'forgot password' on the log in page."
+      flash[:error] = "you are already logged in.\nIf you forgot your password and want to reset it, log out and then click 'forgot password' on the log in page."
       redirect_to :controller => "admin", :action => "index"
       return
     end
@@ -100,7 +100,7 @@ class AdministratorsController < ApplicationController
       key = admin.generate_reset_password_token
       url = url_for(:action => 'change_password', :admin_id => admin.id, :auth_token => key)
       # AdminNotify.deliver_forgot_password(user, url)
-      flash[:success] = "emailed instructions for setting a new password to #{admin.email}.<br />Please follow the instructions in that email. Thank you."
+      flash[:success] = "emailed instructions for setting a new password to #{admin.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return
     end

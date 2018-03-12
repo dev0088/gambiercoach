@@ -53,7 +53,7 @@ class UserController < ApplicationController
       return
     when 'POST'
       if params[:login_id] =~ /^.+@.+\..+$/
-        flash[:error] = "Please provide a valid username,<br /> rather than a full email address."
+        flash[:error] = "Please provide a valid username,\n rather than a full email address."
         redirect_to :action => "login"
         return
       end
@@ -164,7 +164,7 @@ class UserController < ApplicationController
   def forgot_password
     # Always redirect if logged in
     if !@user.nil?
-      flash[:error] = "you are already logged in.<br />If you forgot your password and want to reset it, log out and then click 'forgot password' on the log in page."
+      flash[:error] = "you are already logged in.\nIf you forgot your password and want to reset it, log out and then click 'forgot password' on the log in page."
       redirect_to :controller => "home", :action => "index"
       return
     end
@@ -196,7 +196,7 @@ class UserController < ApplicationController
       key = user.generate_reset_password_token
       url = url_for(:action => 'change_forgot_password', :user_id => user.id, :auth_token => key)
       Notifications.deliver_forgot_password(user, url)
-      flash.now[:success] = "emailed instructions for setting a new password to #{user.email}.<br />Please follow the instructions in that email. Thank you."
+      flash.now[:success] = "emailed instructions for setting a new password to #{user.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return
     end

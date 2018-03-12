@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   get "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
   post "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
 
+  get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
+  post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
+  
   resources :admin do
     get :edit_email
     get :edit_welcome
@@ -66,7 +69,6 @@ Rails.application.routes.draw do
   resources :manager do
     collection do
       get :bus
-      get :create_edit_user
       get :system_reset_options
       get :email_bus
       get :session_conductors

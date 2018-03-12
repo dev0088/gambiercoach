@@ -3,7 +3,6 @@
 <% else %>
 	<h3>Editing the User: <%= @user.login_id %></h3>
 <% end %>
-
 <form action="/manager/create_edit_user" method="post">
 	<div class="wufooFormContainer">
 		<% if @user.nil? || @user.new_record? %>
@@ -18,13 +17,13 @@
 			<li>
 				<label class="desc" for="field0">Login Id</label>
 				<div class="full">
-					<input name="login_id" class="field text medium" type="text" maxlength="255" value="<%= @user.login_id if !@user.nil? %>"/> 
+					<input name="login_id" class="field text medium" type="text" maxlength="255" value="<%= @user.login_id if !@user.nil? %>"/>
 				</div>
 			</li>
 			<li>
 				<label class="desc" for="field0">Phone</label>
 				<div class="full">
-					<input name="login_id" class="field text small" type="text" maxlength="30" value="<%= @user.phone if !@user.nil? %>"/> 
+					<input name="phone" class="field text small" type="text" maxlength="30" value="<%= @user.phone if !@user.nil? %>"/>
 				</div>
 			</li>
 			<% if !@user.nil? && !@user.new_record? %>
