@@ -30,15 +30,15 @@ class ApplicationController < ActionController::Base
     price = Money.new(0)
     cash_reservations_allowed = true
     selections.each do |p|
-      if (p[0] =~ /^[0-9]+$/).present?
-        if p[1].to_i > 0
+      if (p =~ /^[0-9]+$/).present?
+        if selections[p].to_i > 0
           # bus = Bus.find(p[0])
           bus = Bus.find(p)
-          reservations << [bus, p[1].to_i]
+          reservations << [bus, selections[p].to_i]
           if !bus.cash_reservations_allowed?
             cash_reservations_allowed = false
           end
-          price = price + (bus.to_m * p[1].to_i)
+          price = price + (bus.to_m * selections[p].to_i)
         end
       end
     end
