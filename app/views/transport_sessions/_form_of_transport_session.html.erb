@@ -1,0 +1,8 @@
+<% tr_id = if transport_session.nil? then action else transport_session.id end %>
+<tr id="<%= tr_id %>" style="display:none">
+  <td id="td" + "<%= tr_id %>" class="<%= action %>" colspan="7">
+    <%= form_tag ("/transport_sessions/#{action}") do %>
+      <%= render :partial => 'form', locals: {transport_session: transport_session, action: action} %>
+    <% end %>
+  </td>
+</tr>

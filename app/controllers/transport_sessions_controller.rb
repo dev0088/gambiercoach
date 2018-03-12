@@ -9,6 +9,7 @@ class TransportSessionsController < ApplicationController
     @sort_sql = TransportSession.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{TransportSession.table_name}.#{TransportSession.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
     @transport_sessions = TransportSession.order(@sort_by).paginate(page: 1, :per_page => 25)
+    @new_transport_session = TransportSession.new()
   end
 
 

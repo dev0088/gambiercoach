@@ -4,11 +4,15 @@ Rails.application.routes.draw do
   get "/group_tickets", :controller => "index", :action => "group_tickets"
   get "/help", :controller => "index", :action => "help"
   get "/about", :controller => "index", :action => "about"
+
   get "/reservations/my_reservations", :controller => "reservations", :action => "my_reservations"
   get "/reservations/my_wait_list_reservations", :controller => "reservations", :action => "my_wait_list_reservations"
   post "/reservations/complete", :controller => "reservations", :action => "complete"
+  get "/reservations/cancel_wait_list_reservation/:id(.:format)", :controller => "reservations", :action => "cancel_wait_list_reservation"
+
   get "/settings/edit_settings", :controller => "settings", :action => "edit_settings"
   post "/settings/edit_settings", :controller => "settings", :action => "edit_settings"
+
   get "admin/edit_welcome", :controller => "admin", :action => "edit_welcome"
   post "admin/edit_welcome", :controller => "admin", :action => "edit_welcome"
   get "admin/edit_about", :controller => "admin", :action => "edit_about"
@@ -21,12 +25,13 @@ Rails.application.routes.draw do
   post "admin/email_texts", :controller => "admin", :action => "email_texts"
   get "admin/edit_email", :controller => "admin", :action => "edit_email"
   post "admin/edit_email", :controller => "admin", :action => "edit_email"
+
   get "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
   post "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
 
   get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
   post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
-  
+
   resources :admin do
     get :edit_email
     get :edit_welcome

@@ -61,7 +61,7 @@ class ManagerController < ApplicationController
   end
 
   def session_conductors
-    @s = TransportSession.find(params[:id], :include => :buses)
+    @s = TransportSession.includes(:buses).find(params[:id])
     case request.method
     when 'GET'
       render
