@@ -50,9 +50,10 @@ class HourlyCron < ActiveRecord::Base
 
       buses.each do |bus|
         if bus.conductor.nil?
-          Notifications.deliver_admin_report("NO CONDUCTOR SPECIFIED FOR A BUS WHEN BUS LISTS WERE SENT",
-                                             bus.departure.strftime("%A, %B %d") + " / " + bus.starting_point + " <-> " + bus.ending_point + " / " + bus.departure.strftime("%I:%M %p"),
-                                             Setting::ADMIN_EMAIL)
+          Notifications.admin_report("NO CONDUCTOR SPECIFIED FOR A BUS WHEN BUS LISTS WERE SENT",
+            bus.departure.strftime("%A, %B %d") + " / " + bus.starting_point + " <-> " + bus.ending_point + " / " + bus.departure.strftime("%I:%M %p"),
+            Setting::ADMIN_EMAIL
+          ).deliver_now
         else
           email_txt = "Bus: " + bus.departure.strftime("%A, %B %d") + " departing " + bus.starting_point + " for " + bus.ending_point + " at " + bus.departure.strftime("%I:%M %p") + "\n\n"
           email_txt << " res # -- student login id\n"
@@ -63,9 +64,7 @@ class HourlyCron < ActiveRecord::Base
             end
           end
           subject = "Conductor bus list for " + bus.departure.strftime("%A, %B %d") +" "+ bus.departure.strftime("%I:%M %p") + " / " + bus.starting_point + "<->" + bus.ending_point
-          Notifications.deliver_conductor_bus_list(subject,
-                                                   email_txt,
-                                                   bus.conductor.email)
+          Notifications.conductor_bus_list(subject, email_txt, bus.conductor.email).deliver_now
         end
       end
     end
@@ -78,7 +77,7 @@ class HourlyCron < ActiveRecord::Base
     buses = Bus.where("departure < ? and departure > ?", now - 1.75.hours, now - 2.25.hours)
     buses.each do |b|
       tr = TripReport.setup(b)
-      Notifications.deliver_student_conductor_followup(b.conductor, b)
+      Notifications.student_conductor_followup(b.conductor, b).deliver_now
     end
   end
 
@@ -89,7 +88,7 @@ class HourlyCron < ActiveRecord::Base
     rtime = Setting.daily_payment_reminder_time
     if ((rtime.hour == now.hour) && (now.min < 15)) || ((rtime.hour - 1 == now.hour) && (now.min > 45))
       Reservation.all_unpaid.each do |ur|
-        Notifications.deliver_payment_reminder(ur.user, ur)
+        Notifications.payment_reminder(ur.user, ur).deliver_now
       end
     end
   end

@@ -125,7 +125,7 @@ class UserController < ApplicationController
     when 'POST'
       @user.change_password(params[:password], params[:repeat_password])
       if @user.errors.empty?
-#        Notifications.deliver_change_password_success(@user)
+        Notifications.change_password_success(@user).deliver_now
         flash[:success] = "saved your new password"
         render
         return
@@ -149,7 +149,7 @@ class UserController < ApplicationController
       if @user.errors.empty?
         @user.reset_password_token = nil
         @user.save
- #       Notifications.deliver_change_password_success(@user)
+       Notifications.change_password_success(@user).deliver_now
         flash[:success] = "saved your new password, please log in"
         redirect_to :action => "login"
         return
@@ -195,7 +195,7 @@ class UserController < ApplicationController
     else
       key = user.generate_reset_password_token
       url = url_for(:action => 'change_forgot_password', :user_id => user.id, :auth_token => key)
-      Notifications.deliver_forgot_password(user, url)
+      Notifications.forgot_password(user, url).deliver_now
       flash.now[:success] = "emailed instructions for setting a new password to #{user.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return
