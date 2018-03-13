@@ -8,7 +8,8 @@ class BusesController < ApplicationController
   def index
     @sort_sql = Bus.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Bus.table_name}.#{Bus.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
-    @buses = Bus.includes(:route).order(@sort_by).paginate(page: params[:page], :per_page => 25)
+    @buses = Bus.includes(:route).order(@sort_by).paginate(page: params[:page], :per_page => 15)
+    @new_bus = Bus.new
   end
 
 
@@ -41,7 +42,7 @@ class BusesController < ApplicationController
     @sort_sql = Bus.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Bus.table_name}.#{Bus.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
     @paginator, @buses = paginate(:buses, :order => @sort_by, :per_page => 25, :include => :route)
-    
+
     render :action => "component", :layout => false
   end
 
@@ -62,19 +63,17 @@ class BusesController < ApplicationController
 
   def create
     begin
-      @bus = Bus.new(params[:bus])
+      @bus = Bus.new(update_params)
       @successful = @bus.save
     rescue
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'create.rjs' if request.xhr?
-    if @successful
-      return_to_main
-    else
+    if !@successful
       @options = { :scaffold_id => params[:controller], :action => "create" }
-      render :partial => 'new_edit', :layout => true
     end
+
+    return_to_main
   end
 
   def edit
@@ -92,6 +91,24 @@ class BusesController < ApplicationController
       render :partial => 'new_edit', :layout => true
     else
       return_to_main
+    end
+  end
+
+  def update_bus
+    begin
+      @bus = Bus.find(params[:id])
+      @successful = @bus.update_attributes(update_params)
+      result = @bus.to_json
+      status_code = 200
+    rescue
+      flash[:error], @successful  = $!.to_s, false
+      result = { message: flash[:error] }
+      status_code = 403
+    end
+
+    respond_to do |format|
+      format.html { redirect_to "/buses" }
+      format.json { render status: status_code, json: result }
     end
   end
 
@@ -120,8 +137,6 @@ class BusesController < ApplicationController
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'destroy.rjs' if request.xhr?
-
     # Javascript disabled fallback
     return_to_main
   end
@@ -132,5 +147,12 @@ class BusesController < ApplicationController
     return render :action => 'cancel.rjs' if request.xhr?
 
     return_to_main
+  end
+
+  private
+  def update_params
+    params.require(:bus)
+          .permit(:route_id, :going_away, :departure, :seats, :occupied_seats,
+                  :reservations_closing_date, :report_token)
   end
 end

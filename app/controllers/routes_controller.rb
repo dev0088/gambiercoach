@@ -10,13 +10,14 @@ class RoutesController < ApplicationController
     @sort_sql = Route.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Route.table_name}.#{Route.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
     @routes = Route.order(@sort_by).paginate(page: 1, :per_page => 25)
+    @new_route = Route.new
   end
 
   def return_to_main
     # If you have multiple scaffolds on the same view then you will want to change this to
     # to whatever controller/action shows all the views
     # (ex: redirect_to :controller => 'AdminConsole', :action => 'index')
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 
   def list
@@ -62,19 +63,17 @@ class RoutesController < ApplicationController
 
   def create
     begin
-      @route = Route.new(params[:route])
+      @route = Route.new(update_params)
       @successful = @route.save
     rescue
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'create.rjs' if request.xhr?
-    if @successful
-      return_to_main
-    else
+    if !@successful
       @options = { :scaffold_id => params[:controller], :action => "create" }
-      render :partial => 'new_edit', :layout => true
     end
+
+    redirect_to '/routes'
   end
 
   def edit
@@ -92,6 +91,24 @@ class RoutesController < ApplicationController
       render :partial => 'new_edit', :layout => true
     else
       return_to_main
+    end
+  end
+
+  def update_route
+    begin
+      @route = Route.find(params[:id])
+      @successful = @route.update_attributes(update_params)
+      result = @route.to_json
+      status_code = 200
+    rescue
+      flash[:error], @successful  = $!.to_s, false
+      result = {message: flash[:error]}
+      status_code = 403
+    end
+
+    respond_to do |format|
+      format.html {redirect_to "/routes"}
+      format.json { render status: status_code, json: result }
     end
   end
 
@@ -120,7 +137,7 @@ class RoutesController < ApplicationController
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'destroy.rjs' if request.xhr?
+    # return render :action => 'destroy.rjs' if request.xhr?
 
     # Javascript disabled fallback
     return_to_main
@@ -132,5 +149,13 @@ class RoutesController < ApplicationController
     return render :action => 'cancel.rjs' if request.xhr?
 
     return_to_main
+  end
+
+  private
+  def update_params
+    route_params = params[:route]
+    params.require(:route)
+          .permit(:transport_session_id, :point_a, :point_b,
+                  :information, :price, :display_order)
   end
 end

@@ -1,0 +1,24 @@
+<% if !bus.id.present? %>
+  <% bus_id = 0 %>
+  <% bus_url = "/buses" %>
+  <% bus_action_title = "Create" %>
+<% else %>
+  <% bus_id = bus.id %>
+  <% bus_url = "/buses/#{action}/#{bus_id}" %>
+  <% bus_action_title = "Update" %>
+<% end %>
+
+<tr id="tr-<%= bus_id %>" style="display:none">
+  <td id="td-<%= bus_id %>" class="<%= bus_action_title.downcase %>" colspan="8">
+    <%= form_tag bus_url, :method => :post, :id => "#{bus_id}", :class => "ts_form" do %>
+      <h4><%= bus_action_title %> Bus</h4>
+      <%= render :partial => 'form', locals: {bus: bus, action: action} %>
+      <p class="form-footer">
+        <%= submit_tag "Save", :id => "save-#{bus_id}",
+                    :onclick => "return update_bus(#{bus_id})"%>
+        <%= link_to "Cancel", "#" ,:id => "cancel-#{bus_id}",
+                    :onclick => "cancel_bus(#{bus_id})" %>
+      </p>
+    <% end %>
+  </td>
+</tr>

@@ -33,6 +33,8 @@ Rails.application.routes.draw do
   post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
 
   post "/transport_sessions/update_transport_session/:id(.:format)", :controller => "transport_sessions", :action => "update_transport_session"
+  post "/routes/update_route/:id(.:format)", :controller => "routes", :action => "update_route"
+  post "/buses/update_bus/:id(.:format)", :controller => "buses", :action => "update_bus"
 
   resources :admin do
     get :edit_email

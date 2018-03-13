@@ -5,35 +5,76 @@
     <div class="ajax-scaffold-header">
       <div class="actions">
         <% new_params = params.merge(:controller => '/routes', :action => 'new') %>
-        <%= link_to "Create New", new_route_path, :class => "create", remote: true %>
+        <%= link_to "Create New", "#", :class => "create", remote: true, :id => 'create-route' %>
       </div>
       <h2>Routes</h2>
-  </div>
-  <table cellpadding="0" cellspacing="0">
-  <thead>
-    <tr>
-      <%= render :partial => 'column_headings' %>
-    </tr>
-  </thead>
-  <tbody id="transport_session-tbody">
-    <% @routes.each do |route| %>
+    </div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <%= render partial: "form_of_route",
+                   locals: {route: @new_route, action: "create"}
+        %>
         <tr>
-          <td><%= route.transport_session.name %></td>
-          <td><%= route.point_a %></td>
-          <td><%= route.point_b %></td>
-          <td><%= route.information %></td>
-          <td><%= route.price %></td>
-          <td><%= route.display_order %></td>
-          <td>
-            <%= link_to "Edit", edit_route_path(route) %>
-          </td>
-          <td>
-            <%= link_to "Delete", route_path(route),
-                :method => :delete, :confirm => 'Are you sure?' %>
-          </td>
-      </tr>
-    <% end %>
-  </tbody>
+          <%= render :partial => 'column_headings' %>
+        </tr>
+      </thead>
+      <tbody id="transport_session-tbody">
+        <% @routes.each_with_index do |route, index| %>
+          <%= render partial: "form_of_route",
+                     locals: {route: route, action: "update_route"}
+          %>
+          <tr class="<%= index.odd? ? 'odd': 'even' %>">
+            <td><%= route.transport_session.name %></td>
+            <td><%= route.point_a %></td>
+            <td><%= route.point_b %></td>
+            <td><%= route.information %></td>
+            <td><%= route.price %></td>
+            <td><%= route.display_order %></td>
+            <td>
+              <%= link_to "Edit", "#", :id => "edit_#{route.id}",
+                          :onclick => "edit_route(#{route.id})" %>
+            </td>
+            <td>
+              <%= link_to "Delete", route_path(route),
+                          :method => :delete, :confirm => 'Are you sure?' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-</table>
-<%= will_paginate @transport_sessions %>
+    <%= will_paginate @routes %>
+
+<% if not request.xhr? %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
+</script>
+
+<script>
+  function edit_route(id) {
+    jQuery("#tr-" + id).css({'display': ''});
+  }
+
+  function update_route(id) {
+    var td = jQuery("#td-" + id);
+    var name = jQuery("#td-" + id + " form fieldset input").val();
+  }
+
+  function cancel_route(id) {
+    jQuery("#tr-" + id).css({'display': 'none'});
+    window.location.href = "/routes";
+  }
+
+  jQuery(document).ready(function() {
+
+    jQuery("#create-route").click(function(event) {
+      jQuery("#tr-0").css({'display': ''});
+      event.preventDefault();
+    });
+
+  });
+</script>
+<% end %>

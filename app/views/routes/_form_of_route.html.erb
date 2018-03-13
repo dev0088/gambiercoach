@@ -1,0 +1,24 @@
+<% if !route.id.present? %>
+  <% route_id = 0 %>
+  <% route_url = "/routes" %>
+  <% route_action_title = "Create" %>
+<% else %>
+  <% route_id = route.id %>
+  <% route_url = "/routes/#{action}/#{route_id}" %>
+  <% route_action_title = "Update" %>
+<% end %>
+
+<tr id="tr-<%= route_id %>" style="display:none">
+  <td id="td-<%= route_id %>" class="<%= route_action_title.downcase %>" colspan="8">
+    <%= form_tag route_url, :method => :post, :id => "#{route_id}", :class => "ts_form" do %>
+      <h4><%= route_action_title %> Route</h4>
+      <%= render :partial => 'form', locals: {route: route, action: action} %>
+      <p class="form-footer">
+        <%= submit_tag "Save", :id => "save-#{route_id}",
+                    :onclick => "return update_route(#{route_id})"%>
+        <%= link_to "Cancel", "#" ,:id => "cancel-#{route_id}",
+                    :onclick => "cancel_route(#{route_id})" %>
+      </p>
+    <% end %>
+  </td>
+</tr>

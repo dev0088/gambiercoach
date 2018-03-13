@@ -5,30 +5,37 @@
     <div class="ajax-scaffold-header">
       <div class="actions">
         <% new_params = params.merge(:controller => '/buses', :action => 'new') %>
-        <%= link_to "Create New", new_bus_path, :class => "create", remote: true %>
+        <%= link_to "Create New", "#", :class => "create", remote: true, :id => 'create-bus' %>
       </div>
       <h2>Buses</h2>
     </div>
     <table cellpadding="0" cellspacing="0">
     <thead>
+      <%= render partial: "form_of_bus",
+                 locals: {bus: @new_bus, action: "create"}
+      %>
       <tr>
         <%= render :partial => 'column_headings' %>
       </tr>
     </thead>
 
     <tbody id="bus-tbody">
-    <% @buses.each do |bus| %>
-        <tr>
-          <td><%= "#{bus.route.point_a} - #{bus.route.point_b}"  %></td>
+      <% @buses.each_with_index do |bus, index| %>
+        <%= render partial: "form_of_bus",
+                   locals: {bus: bus, action: "update_bus"}
+        %>
+        <tr class="<%= index.odd? ? 'odd': 'even' %>">
+          <td><%= "(#{bus.route.transport_session.name}) #{bus.route.point_a} - #{bus.route.point_b}"  %></td>
           <td><%= bus.going_away %></td>
           <td><%= bus.departure %></td>
           <td><%= bus.seats %></td>
           <td>
-            <%= link_to "Edit", edit_bus_path(bus) %>
+            <%= link_to "Edit", "#", :id => "edit_#{bus.id}",
+                        :onclick => "edit_bus(#{bus.id})" %>
           </td>
           <td>
             <%= link_to "Delete", bus_path(bus),
-                :method => :delete, :confirm => 'Are you sure?' %>
+                        :method => :delete, :confirm => 'Are you sure?' %>
           </td>
         </tr>
       <% end %>
@@ -42,5 +49,30 @@
 
 <script type="text/javascript">
   Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
+</script>
+
+<script>
+  function edit_bus(id) {
+    jQuery("#tr-" + id).css({'display': ''});
+  }
+
+  function update_bus(id) {
+    var td = jQuery("#td-" + id);
+    var name = jQuery("#td-" + id + " form fieldset input").val();
+  }
+
+  function cancel_bus(id) {
+    jQuery("#tr-" + id).css({'display': 'none'});
+    window.location.href = "/buses";
+  }
+
+  jQuery(document).ready(function() {
+
+    jQuery("#create-bus").click(function(event) {
+      jQuery("#tr-0").css({'display': ''});
+      event.preventDefault();
+    });
+
+  });
 </script>
 <% end %>

@@ -73,13 +73,12 @@ class TransportSessionsController < ApplicationController
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'create.rjs' if request.xhr?
+    # return render :action => 'create.rjs' if request.xhr?
     if !@successful
       @options = { :scaffold_id => params[:controller], :action => "create" }
     end
-      # render :partial => 'new_edit', :layout => true
-      redirect_to '/transport_sessions'
 
+    redirect_to '/transport_sessions'
   end
 
   def edit

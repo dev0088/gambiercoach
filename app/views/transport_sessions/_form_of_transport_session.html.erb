@@ -1,14 +1,17 @@
 <% if !transport_session.id.present? %>
   <% ts_id = 0 %>
   <% ts_url = "/transport_sessions" %>
+  <% ts_action_title = "Create" %>
 <% else %>
   <% ts_id = transport_session.id %>
   <% ts_url = "/transport_sessions/#{action}/#{ts_id}" %>
+  <% ts_action_title = "Update" %>
 <% end %>
 
 <tr id="tr-<%= ts_id %>" style="display:none">
-  <td id="td-<%= ts_id %>" class="<%= action %>" colspan="7">
+  <td id="td-<%= ts_id %>" class="<%= ts_action_title.downcase %>" colspan="7">
     <%= form_tag ts_url, :method => :post, :id => "#{ts_id}", :class => "ts_form" do %>
+      <h4><%= ts_action_title %> Transport Session</h4>
       <%= render :partial => 'form', locals: {transport_session: transport_session, action: action} %>
       <p class="form-footer">
         <%= submit_tag "Save", :id => "save-#{ts_id}",
