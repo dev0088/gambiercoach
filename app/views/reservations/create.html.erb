@@ -5,12 +5,16 @@
 		<ul class="activeSessionBuses">
 			<li>
 				<span style="font-size: 110%; font-weight: bold;"><%= r[1] %></span> ticket(s) for: <br />
-				<%= r[0].starting_point %> to <%= r[0].ending_point %>, departing <%= r[0].departure.strftime("%A, %B %d") %> at <%= r[0].departure.strftime("%I:%M %p") %>
+				<%= r[0][:starting_point] %> to <%= r[0][:ending_point] %>,
+						departing <%= if r[0][:departure].nil? then '' else r[0][:departure].strftime("%A, %B %d") end %> at
+						<%= if r[0][:departure].nil? then '' else r[0][:departure].strftime("%I:%M %p") end %>
 			</li>
 		</ul>
 		<% end -%>
 	</ul>
-	<h5 style="margin-left: 40px; margin-bottom: 0; padding-bottom: 0;">Total: <%= @reservation_price.to_s %></h5>
+	<h5 style="margin-left: 40px; margin-bottom: 0; padding-bottom: 0;">
+		Total: <%= convert_reservation_price(@reservation_price) %>
+	</h5>
 	<br />
 	<% if @wait_list_id.nil? -%>
 	<a href="/" style="text-decoration: none; color: black; font-size: 90%;">&#171; Back / Modify Bus Selections</a>
@@ -40,7 +44,7 @@
 
 <hr />
 <% if !@user.stored_payment_addresses.empty? %>
-<p style="padding-left: 30px; padding-right: 20px;">You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%= @reservation_price.to_s %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
+<p style="padding-left: 30px; padding-right: 20px;">You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
 <% @user.stored_payment_addresses.each do |spa| %>
 <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
 	<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" /> Use this stored card information.
@@ -77,7 +81,7 @@
 <hr />
 <% end %>
 
-<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= @reservation_price.to_s %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
+<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
 <div id="stage">
 <div id="main">
 
