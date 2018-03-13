@@ -10,6 +10,13 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require jquery
 //= require rails-ujs
-//= require turbolinks
+//= require prototype.js
+//= require ajax_scaffold.js
+//= require niftycube.js
+//= require rico_corner.js
+//= require controls.js
+//= require dragdrop.js
+//= require effects.js
 //= require_tree .

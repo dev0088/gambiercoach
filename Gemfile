@@ -56,3 +56,5 @@ gem "will_paginate", '~> 3.1.5'
 gem "passenger"
 gem 'money-rails'
 gem 'authorizenet'
+gem 'jquery-rails'
+gem 'jquery-ui-rails'

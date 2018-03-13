@@ -1,8 +1,21 @@
-<% tr_id = if transport_session.nil? then action else transport_session.id end %>
-<tr id="<%= tr_id %>" style="display:none">
-  <td id="td" + "<%= tr_id %>" class="<%= action %>" colspan="7">
-    <%= form_tag ("/transport_sessions/#{action}") do %>
+<% if !transport_session.id.present? %>
+  <% ts_id = 0 %>
+  <% ts_url = "/transport_sessions" %>
+<% else %>
+  <% ts_id = transport_session.id %>
+  <% ts_url = "/transport_sessions/#{action}/#{ts_id}" %>
+<% end %>
+
+<tr id="tr-<%= ts_id %>" style="display:none">
+  <td id="td-<%= ts_id %>" class="<%= action %>" colspan="7">
+    <%= form_tag ts_url, :method => :post, :id => "#{ts_id}", :class => "ts_form" do %>
       <%= render :partial => 'form', locals: {transport_session: transport_session, action: action} %>
+      <p class="form-footer">
+        <%= submit_tag "Save", :id => "save-#{ts_id}",
+                    :onclick => "return update_transport_session(#{ts_id})"%>
+        <%= link_to "Cancel", "#" ,:id => "cancel-#{ts_id}",
+                    :onclick => "cancel_transport_session(#{ts_id})" %>
+      </p>
     <% end %>
   </td>
 </tr>

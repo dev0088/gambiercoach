@@ -67,19 +67,19 @@ class TransportSessionsController < ApplicationController
 
   def create
     begin
-      @transport_session = TransportSession.new(params[:transport_session])
+      @transport_session = TransportSession.new(update_params)
       @successful = @transport_session.save
     rescue
       flash[:error], @successful  = $!.to_s, false
     end
 
     return render :action => 'create.rjs' if request.xhr?
-    if @successful
-      return_to_main
-    else
+    if !@successful
       @options = { :scaffold_id => params[:controller], :action => "create" }
-      render :partial => 'new_edit', :layout => true
     end
+      # render :partial => 'new_edit', :layout => true
+      redirect_to '/transport_sessions'
+
   end
 
   def edit
@@ -90,13 +90,31 @@ class TransportSessionsController < ApplicationController
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'edit.rjs' if request.xhr?
+    # return render :action => 'edit.rjs' if request.xhr?
 
     if @successful
       @options = { :scaffold_id => params[:controller], :action => "update", :id => params[:id] }
       render :partial => 'new_edit', :layout => true
     else
       return_to_main
+    end
+  end
+
+  def update_transport_session
+    begin
+      @transport_session = TransportSession.find(params[:id])
+      @successful = @transport_session.update_attributes(update_params)
+      result = @transport_session.to_json
+      status_code = 200
+    rescue
+      flash[:error], @successful  = $!.to_s, false
+      result = {message: flash[:error]}
+      status_code = 403
+    end
+
+    respond_to do |format|
+      format.html {redirect_to "/transport_sessions"}
+      format.json { render status: status_code, json: result }
     end
   end
 
@@ -137,5 +155,30 @@ class TransportSessionsController < ApplicationController
     return render :action => 'cancel.rjs' if request.xhr?
 
     return_to_main
+  end
+
+  private
+  def update_params
+    transport_session_params = params[:transport_session]
+    transport_session_params[:reservations_opening_date] =
+      DateTime.new(
+        transport_session_params["reservations_opening_date(1i)"].to_i,
+        transport_session_params["reservations_opening_date(2i)"].to_i,
+        transport_session_params["reservations_opening_date(3i)"].to_i,
+        transport_session_params["reservations_opening_date(4i)"].to_i,
+        transport_session_params["reservations_opening_date(5i)"].to_i
+      )
+      transport_session_params[:cash_reservations_closing_date] =
+        DateTime.new(
+          transport_session_params["cash_reservations_closing_date(1i)"].to_i,
+          transport_session_params["cash_reservations_closing_date(2i)"].to_i,
+          transport_session_params["cash_reservations_closing_date(3i)"].to_i,
+          transport_session_params["cash_reservations_closing_date(4i)"].to_i,
+          transport_session_params["cash_reservations_closing_date(5i)"].to_i
+        )
+    params.require(:transport_session)
+             .permit(:name, :reservations_opening_date,
+                     :cash_reservations_closing_date,
+                     :cash_reservations_information)
   end
 end

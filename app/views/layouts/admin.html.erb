@@ -6,12 +6,11 @@
 	<title><%= Setting::NAME %></title>
 	<link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="/assets/stylesheets/williams_print.css" type="text/css" media="print" />
-  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
   <%= stylesheet_link_tag '/assets/stylesheets/ajax_scaffold.css'%>
-  <script type="text/javascript" src="/assets/javascripts/niftycube.js"></script>
 
-  <%= javascript_include_tag '/assets/javascripts/rico_corner'%>
+  <%= javascript_include_tag :application %>
+
 </head>
 <body>
 	<div id="leftSidebar">

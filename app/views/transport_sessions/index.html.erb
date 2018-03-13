@@ -4,7 +4,7 @@
 <% end %>
     <div class="ajax-scaffold-header">
       <div class="actions">
-        <%= link_to "Create New", new_transport_session_path, :class => "create", remote: true %>
+        <%= link_to "Create New", "#", :class => "create", remote: true, :id => 'create-transport-session' %>
       </div>
       <h2>Transport Sessions</h2>
     </div>
@@ -20,7 +20,7 @@
       <tbody id="transport_session-tbody">
         <% @transport_sessions.each_with_index do |transport_session, index| %>
             <%= render partial: "form_of_transport_session",
-                       locals: {transport_session: transport_session, action: "edit"}
+                       locals: {transport_session: transport_session, action: "update_transport_session"}
             %>
             <tr class="<%= index.odd? ? 'odd': 'even' %>">
               <td><%= transport_session.name %></td>
@@ -29,7 +29,8 @@
               <td><%= transport_session.cash_reservations_closing_date %></td>
               <td><%= transport_session.cash_reservations_information %></td>
               <td>
-                <%= link_to "Edit", edit_transport_session_path(transport_session) %>
+                <%= link_to "Edit", "#", :id => "edit_#{transport_session.id}",
+                            :onclick => "edit_transport_session(#{transport_session.id})" %>
               </td>
               <td>
                 <%= link_to "Delete", transport_session_path(transport_session),
@@ -48,5 +49,52 @@
 
 <script type="text/javascript">
   Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
+</script>
+
+<script>
+  function edit_transport_session(id) {
+    jQuery("#tr-" + id).css({'display': ''});
+  }
+
+  function update_transport_session(id) {
+    var td = jQuery("#td-" + id);
+    var name = jQuery("#td-" + id + " form fieldset input").val();
+  }
+
+  function cancel_transport_session(id) {
+    jQuery("#tr-" + id).css({'display': 'none'});
+    window.location.href = "/transport_sessions"
+  }
+
+  jQuery(document).ready(function() {
+    jQuery("#create-transport-session").click(function(event) {
+      jQuery("#tr-0").css({'display': ''});
+      event.preventDefault();
+    });
+
+    // jQuery(".ts_form").on('submit', function(e){
+    //   var id = jQuery(this).attr('id');
+    //   jQuery("#tr-" + id).css({'display': 'none'});
+    //   e.preventDefault();
+    //   var data = {name: ''};
+    //   jQuery.ajax({
+    //     type: "GET",
+    //     url: "/transport_sessions/update_transport_session/" + id,
+    //     data: data,
+    //     success: function(){
+    //       alert("Ajax succefully!")
+    //     },
+    //     error: function (jqXHR, textStatus, errorThrown){
+    //       alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+    //     }
+    //   }).done(function() {
+    //     alert( "second success" );
+    //   })
+    //   .fail(function (jqXHR, textStatus, errorThrown) {
+    //       alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+    //   })
+    // });
+
+  });
 </script>
 <% end %>

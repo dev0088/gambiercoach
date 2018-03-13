@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
   post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
 
+  post "/transport_sessions/update_transport_session/:id(.:format)", :controller => "transport_sessions", :action => "update_transport_session"
+
   resources :admin do
     get :edit_email
     get :edit_welcome

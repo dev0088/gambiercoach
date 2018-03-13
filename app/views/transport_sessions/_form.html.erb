@@ -1,4 +1,5 @@
-<fieldset>
+<% ts_id = if transport_session.id.nil? then action else transport_session.id end %>
+<fieldset id="fielset-<%= ts_id %>">
 	<div class="row">
 		<!--[form:transport_session]-->
 		<div class="form-element">
