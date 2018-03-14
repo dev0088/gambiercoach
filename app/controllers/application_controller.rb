@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   # include SslRequirement
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-  before_action :force_ssl, :only => [:login]
+  # before_action :force_ssl, :only => [:login]
 
   Rails.application.config.filter_parameters += [:password]
   Rails.application.config.filter_parameters += [:card_number]

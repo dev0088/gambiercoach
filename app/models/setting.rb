@@ -8,7 +8,7 @@ class Setting < ActiveRecord::Base
   EMAIL = "@kenyon.edu"
   ADMIN_EMAIL = "vigd@kenyon.edu"
   FROM_EMAIL = "vigd@kenyon.edu"
-  SERVER_URL = "http://www.kenyoncoach.com"
+  SERVER_URL = "http://www.gambiercoach.com"
 
   validates_numericality_of :max_tickets_purchase, :only_integer => true
   after_save :update_relevant_fields

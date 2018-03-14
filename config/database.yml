@@ -49,6 +49,6 @@ test:
 #
 production:
   <<: *default
-  database: kenyon_production
-  username: kenyon
-  password: <%= ENV['KENYON_DATABASE_PASSWORD'] %>
+  database: kenyon_development # kenyon_production
+  username: root
+  password: 123456 # <%= ENV['KENYON_DATABASE_PASSWORD'] %>

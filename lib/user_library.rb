@@ -1,5 +1,5 @@
 module UserLibrary
- 
+
 # Used as a before_action for actions that require
 # a logged-in user.
 def login_required
@@ -83,7 +83,7 @@ end
 # Returns the current user from the session, if any exists
 def current_user
   return nil if current_user_id.nil?
-  User.find(current_user_id)
+  User.where(id: current_user_id).first
 end
 
 def current_user_id

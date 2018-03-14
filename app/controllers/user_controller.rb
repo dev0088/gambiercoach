@@ -30,7 +30,6 @@ class UserController < ApplicationController
         if params[:set_remember_me] == "1"
           cookies[:transport_remember_me_token] = {:value => user.id.to_s + "_t_" + user.set_remember_me, :expires => Time.now + 1.week}
         end
-        puts "===== redirect to reservations/craete .."
         redirect_to_stored_or_default :controller => "reservations", :action => "create"
         return
       else
