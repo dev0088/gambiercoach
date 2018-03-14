@@ -457,15 +457,20 @@ class ManagerController < ApplicationController
         csv << ["",w.bus.route.price.to_s,w.login_id,"","",w.bus.readable_route,w.bus.departure.strftime("%Y_%m_%d"),w.bus.departure.strftime("%I:%M %p"),w.bus.id.to_s,w.payment_status,w.name,w.mailbox,w.phone1,w.phone2]
       end
     end
+?
+    @walkons = WalkOn.includes(:user)
+    respond_to do |format|
+      format.html
+      format.csv { send_data @reservations.to_csv }
+    end
+
   end
 
   def all_reservations_csv
-    reservations = Reservation.includes(:user)
-    stream_csv do |csv|
-      csv << ["id","login_id","payment_status","current_total","created_at","last_modified_at"]
-      reservations.each do |r|
-        csv << [r.id.to_s,r.user.login_id,r.payment_status.to_s,r.total.to_s,time_string(r.created_at),time_string(r.last_modified_at)]
-      end
+    @reservations = Reservation.includes(:user)
+    respond_to do |format|
+      format.html
+      format.csv { send_data @reservations.to_csv }
     end
   end
 
@@ -491,15 +496,16 @@ class ManagerController < ApplicationController
     when 'POST'
       marked_pd = 0
       canceled = 0
-      params[:r].each do |r|
-        if r[1] == "mark_as_paid"
-          res = Reservation.find(r[0])
+      params[:r].each do |reservation_id|
+        action_value = params[:r][reservation_id]
+        if action_value == "mark_as_paid"
+          res = Reservation.find(reservation_id)
           res.payment_status = Reservation::PD_CASH
           res.save!
           Notifications.payment_received(res.user, res).deliver_now
           marked_pd += 1
-        elsif r[1] == "cancel"
-          Reservation.destroy(r[0])
+        elsif action_value == "cancel"
+          Reservation.destroy(reservation_id)
           canceled += 1
         end
       end
@@ -653,7 +659,7 @@ class ManagerController < ApplicationController
       render
       return
     when 'POST'
-      @users = User.where(username: params[:username])
+      @users = User.where(login_id: params[:login_id])
     end
   end
 end

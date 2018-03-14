@@ -1,3 +1,5 @@
+require 'csv'
+
 class Reservation < ActiveRecord::Base
   belongs_to :user
   has_many :credit_payment_events
@@ -156,5 +158,16 @@ class Reservation < ActiveRecord::Base
 
   def self.all_unpaid
     return self.where("payment_status = ?", UNPAID)
+  end
+
+  def self.to_csv
+    attributes = %w{id email name}
+
+    CSV.generate(headers: true) do |csv|
+      csv << column_names
+      all.each do |reservation|
+        csv << reservation.attributes.values
+      end
+    end
   end
 end

@@ -52,7 +52,7 @@
 <br />
 
 <h3>Walk-ons CSV Retrieval by Session (submit to download)</h3>
-<form action="/manager/walkons_csv" method="post">
+<form action="/manager/walkons_csv.csv" method="post">
 	<select name="id">
 		<%= options_from_collection_for_select(TransportSession.all, :id, :name) %>
 	</select>
@@ -63,7 +63,7 @@
 <h3><a style="color: black;" href="/manager/unpaid_reservations">Manage Unpaid Reservations (mark paid, cancel, etc.)</a></h3>
 <br />
 
-<h3><a style="color: black;" href="/manager/all_reservations_csv">Reservations CSV (click to download)</a></h3>
+<h3><a style="color: black;" href="/manager/all_reservations_csv.csv">Reservations CSV (click to download)</a></h3>
 <br />
 
 <h3>Tickets CSV Retrieval by Session (submit to download)</h3>

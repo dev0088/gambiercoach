@@ -47,7 +47,6 @@ class ReservationsController < ApplicationController
         if !wlr.bus.cash_reservations_allowed?
           @cash_reservations_allowed = false
         end
-        a
         @reservation_price = wlr.bus.to_m
         @wait_list_id = params[:wait_list_id]
         session[:reservation_details] = @reservation_requests

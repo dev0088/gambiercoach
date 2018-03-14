@@ -8,7 +8,13 @@ Rails.application.routes.draw do
   get "/reservations/my_reservations", :controller => "reservations", :action => "my_reservations"
   get "/reservations/my_wait_list_reservations", :controller => "reservations", :action => "my_wait_list_reservations"
   post "/reservations/complete", :controller => "reservations", :action => "complete"
+  get "/reservations/create", :controller => "reservations", :action => "create"
+  get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
+  post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
+  get "/reservations/get_on_wait_list/:id(.:format)", :controller => "reservations", :action => "get_on_wait_list"
   get "/reservations/cancel_wait_list_reservation/:id(.:format)", :controller => "reservations", :action => "cancel_wait_list_reservation"
+  get "/reservations/student_conductor_terms", :controller => "reservations", :action => "student_conductor_terms"
+
 
   get "/settings/edit_settings", :controller => "settings", :action => "edit_settings"
   post "/settings/edit_settings", :controller => "settings", :action => "edit_settings"
@@ -28,10 +34,7 @@ Rails.application.routes.draw do
 
   get "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
   post "/manager/edit_reservation/:id(.:format)", :controller => "manager", :action => "edit_reservation"
-
-  get "/reservations/create", :controller => "reservations", :action => "create"
-  get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
-  post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
+  get "/manager/send_user_forgot_password/:id(.:format)", :controller => "manager", :action => "send_user_forgot_password"
 
   post "/transport_sessions/update_transport_session/:id(.:format)", :controller => "transport_sessions", :action => "update_transport_session"
   post "/routes/update_route/:id(.:format)", :controller => "routes", :action => "update_route"
@@ -80,7 +83,7 @@ Rails.application.routes.draw do
     collection do
       get :bus
       get :system_reset_options
-      get :email_bus
+      post :email_bus
       get :session_conductors
       post :session_conductors
       get :session_reservations
@@ -92,12 +95,15 @@ Rails.application.routes.draw do
       get :create_edit_user
       post :create_edit_user
       get :find_user
-      get :send_user_forgot_password
+      get :manage_trip_reports
+      post :manage_trip_reports
+      get :bus_trip_report_used_reservations
+      # get :send_user_forgot_password
       get :unpaid_walkons
       post :unpaid_walkons
-      get :walkons_csv
+      post :walkons_csv
       get :all_reservations_csv
-      get :session_tickets_csv
+      post :session_tickets_csv
       get :unpaid_reservations
       post :unpaid_reservations
       get :trip_report
@@ -107,47 +113,25 @@ Rails.application.routes.draw do
     end
   end
   resources :reservations do
-    get :student_conductor_terms
-    get :my_wait_list_reservations
-    get :get_on_wait_list
-    get :cancel_wait_list_reservation
-    get :modify
-    post :modify
-    get :process_cc
-    get :process_cash
-    get :reserve_tickets
   end
+
   resources :routes do
-    get :return_to_main
-    get :list
-    get :component_update
-    get :component
-    get :cancel
   end
   resources :settings do
-    get :return_to_main
-    get :list
-    get :component_update
-    get :component
-    get :edit_settings
-    post :edit_settings
-    get :cancel
   end
   resources :stored_address do
     post :delete
   end
   resources :transport_sessions do
-    get :return_to_main
-    get :component_update
-    get :component
-    get :cancel
   end
   resources :user do
     collection do
       get :login
       post :login
+      get :verify
       post :verify
       get :complete_verify
+      post :complete_verify
       get :logout
       get :change_password
       post :change_password
