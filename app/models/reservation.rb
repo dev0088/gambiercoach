@@ -161,12 +161,15 @@ class Reservation < ActiveRecord::Base
   end
 
   def self.to_csv
-    attributes = %w{id email name}
-
     CSV.generate(headers: true) do |csv|
-      csv << column_names
+      csv << ["id", "login_id", "payment_status", "current_total", "created_at", "last_modified_at"]
       all.each do |reservation|
-        csv << reservation.attributes.values
+        csv << [reservation.id,
+                reservation.user.login_id,
+                reservation.payment_status,
+                reservation.total,
+                time_string(reservation.created_at),
+                time_string(reservation.last_modified_at)]
       end
     end
   end

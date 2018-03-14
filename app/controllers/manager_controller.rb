@@ -450,20 +450,10 @@ class ManagerController < ApplicationController
   end
 
   def walkons_csv
-    walkons = WalkOn.includes(bus)
-    stream_csv do |csv|
-      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id","payment_status","name","mailbox","phone1","phone2"]
-      walkons.each do |w|
-        csv << ["",w.bus.route.price.to_s,w.login_id,"","",w.bus.readable_route,w.bus.departure.strftime("%Y_%m_%d"),w.bus.departure.strftime("%I:%M %p"),w.bus.id.to_s,w.payment_status,w.name,w.mailbox,w.phone1,w.phone2]
-      end
-    end
-?
     @walkons = WalkOn.includes(:user)
     respond_to do |format|
-      format.html
-      format.csv { send_data @reservations.to_csv }
+      format.csv { send_data @walkons.to_csv }
     end
-
   end
 
   def all_reservations_csv
@@ -475,13 +465,49 @@ class ManagerController < ApplicationController
   end
 
   def session_tickets_csv
-    s = TransportSession.find(params[:id])
-    tickets = ReservationTicket.find_by_sql(["select rt.* from reservation_tickets rt, transport_sessions ts, buses b, routes r where ts.id = ? and ts.id = r.transport_session_id and r.id = b.route_id and rt.bus_id = b.id",params[:id]])
-    stream_csv do |csv|
-      csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id"]
-      tickets.each do |t|
-        for i in 1..(t.quantity)
-          csv << [t.reservation_id.to_s,t.bus.route.price.to_s,t.reservation.user.login_id,t.conductor_wish.to_s,t.conductor_status.to_s,t.bus.readable_route,t.bus.departure.strftime("%Y_%m_%d"),t.bus.departure.strftime("%I:%M %p"),t.bus.id.to_s]
+    # s = TransportSession.find(params[:id])
+    # tickets = ReservationTicket.find_by_sql(["select rt.* from reservation_tickets rt, transport_sessions ts, buses b, routes r where ts.id = ? and ts.id = r.transport_session_id and r.id = b.route_id and rt.bus_id = b.id",params[:id]])
+    # stream_csv do |csv|
+    #   csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id"]
+    #   tickets.each do |t|
+    #     for i in 1..(t.quantity)
+    #       csv << [t.reservation_id.to_s,t.bus.route.price.to_s,t.reservation.user.login_id,t.conductor_wish.to_s,t.conductor_status.to_s,t.bus.readable_route,t.bus.departure.strftime("%Y_%m_%d"),t.bus.departure.strftime("%I:%M %p"),t.bus.id.to_s]
+    #     end
+    #   end
+    # end
+
+    transport_session = TransportSession.find(params[:id])
+    @reservation_tickets = ReservationTicket.find_by_sql(
+                            ["select rt.*
+                              from reservation_tickets rt,
+                                transport_sessions ts,
+                                buses b,
+                                routes r
+                              where ts.id = ? and ts.id = r.transport_session_id
+                                    and r.id = b.route_id and rt.bus_id = b.id",
+                              params[:id]])
+    respond_to do |format|
+      format.csv { send_data generate_reservation_tickets_csv_data(@reservation_tickets) }
+    end
+
+  end
+
+  def generate_reservation_tickets_csv_data(reservation_tickets)
+    CSV.generate(headers: true) do |csv|
+      csv << ["reservation_id", "price", "login_id", "conductor_wish",
+              "conductor_status", "bus_route", "bus_date", "bus_time",
+              "bus_id"]
+      reservation_tickets.each do |reservation_ticket|
+        for i in 1..(reservation_ticket.quantity)
+          csv << [reservation_ticket.reservation_id.to_s,
+                  reservation_ticket.bus.route.price.to_s,
+                  reservation_ticket.reservation.user.login_id,
+                  reservation_ticket.conductor_wish.to_s,
+                  reservation_ticket.conductor_status.to_s,
+                  reservation_ticket.bus.readable_route,
+                  reservation_ticket.bus.departure.strftime("%Y_%m_%d"),
+                  reservation_ticket.bus.departure.strftime("%I:%M %p"),
+                  reservation_ticket.bus.id.to_s]
         end
       end
     end

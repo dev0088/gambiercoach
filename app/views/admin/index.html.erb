@@ -67,7 +67,7 @@
 <br />
 
 <h3>Tickets CSV Retrieval by Session (submit to download)</h3>
-<form action="/manager/session_tickets_csv" method="post">
+<form action="/manager/session_tickets_csv.csv" method="post">
 	<select name="id">
 		<%= options_from_collection_for_select(TransportSession.all, :id, :name) %>
 	</select>
