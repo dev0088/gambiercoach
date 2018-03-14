@@ -47,6 +47,7 @@ class ReservationsController < ApplicationController
         if !wlr.bus.cash_reservations_allowed?
           @cash_reservations_allowed = false
         end
+        a
         @reservation_price = wlr.bus.to_m
         @wait_list_id = params[:wait_list_id]
         session[:reservation_details] = @reservation_requests
@@ -67,7 +68,8 @@ class ReservationsController < ApplicationController
     # like editing a stored address, and is now back...
     elsif !session[:wait_list_id].nil?
       @reservation_requests = session[:reservation_details]
-      @reservation_price = session[:reservation_price]
+      # @reservation_price = session[:reservation_price]
+      @reservation_price = Money.new(session[:reservation_price]["fractional"])
       @cash_reservations_allowed = session[:cash_reservations_allowed]
       @wait_list_id = session[:wait_list_id]
 
@@ -78,7 +80,8 @@ class ReservationsController < ApplicationController
     # then needed to go log in or sign up
     elsif !session[:reservation_details].nil?
       @reservation_requests = session[:reservation_details]
-      @reservation_price = session[:reservation_price]
+      # @reservation_price = session[:reservation_price]
+      @reservation_price = Money.new(session[:reservation_price]["fractional"])
       @cash_reservations_allowed = session[:cash_reservations_allowed]
 
     else
@@ -120,7 +123,8 @@ class ReservationsController < ApplicationController
       @conductor_wish = true
       if params[:contact_phone].empty?
         @reservation_requests = session[:reservation_details]
-        @reservation_price = session[:reservation_price]
+        # @reservation_price = session[:reservation_price]
+        @reservation_price = Money.new(session[:reservation_price]["fractional"])
         @wait_list_id = session[:wait_list_id]
         flash[:error] = "Please both check the box AND provide your contact phone number if you would like to be considered for the conductor position"
         redirect_to :action => "create"
