@@ -1,10 +1,12 @@
+<% administrator_id = if administrator.id.nil? then 0 else administrator.id end %>
+
 <fieldset>
 	<div class="row">
 		<!--[form:administrator]-->
-<% unless @administrator.superuser? -%>
+<% unless administrator.superuser? -%>
 <div class="form-element">
-  <label for="administrator_username">Username</label>
-  <%= text_field 'administrator', 'username' , {:class=>"text-input"} %>
+  <label for="administrator_username">User Name</label>
+  <%= text_field 'administrator', 'username' , {:class=>"text-input", :value => administrator.username} %>
 </div>
 <% end -%>
 
@@ -16,7 +18,7 @@
 <div class="row">
 <div class="form-element">
   <label for="administrator_email">Email</label>
-  <%= text_field 'administrator', 'email' , {:class=>"text-input"} %>
+  <%= text_field 'administrator', 'email' , {:class=>"text-input", :value => administrator.email} %>
 </div>
 
 <!--[eoform:administrator]-->

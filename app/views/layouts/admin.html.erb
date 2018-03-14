@@ -36,7 +36,7 @@
 			<li><a href="/manager/system_reset_options">System Reset Options</a></li>
 			<% if @admin.superuser? -%>
 				<li style="list-style-type: none"></li>
-				<li><a href="/administrators/list">Administrators</a></li>
+				<li><%= link_to "Administrators", administrators_path %></li>
 			<% end -%>
 			<li style="list-style-type: none"></li>
 			<li><a href="/admin/edit_welcome">Welcome Text</a></li>

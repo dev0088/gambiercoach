@@ -1,0 +1,24 @@
+<% if !administrator.id.present? %>
+  <% administrator_id = 0 %>
+  <% administrator_url = "/administrators" %>
+  <% administrator_action_title = "Create" %>
+<% else %>
+  <% administrator_id = administrator.id %>
+  <% administrator_url = "/administrators/#{action}/#{administrator_id}" %>
+  <% administrator_action_title = "Update" %>
+<% end %>
+
+<tr id="tr-<%= administrator_id %>" style="display:none">
+  <td id="td-<%= administrator_id %>" class="<%= administrator_action_title.downcase %>" colspan="8">
+    <%= form_tag administrator_url, :method => :post, :id => "#{administrator_id}", :class => "administrator_form" do %>
+      <h4><%= administrator_action_title %> administrator</h4>
+      <%= render :partial => 'form', locals: {administrator: administrator, action: action} %>
+      <p class="form-footer">
+        <%= submit_tag "Save", :id => "save-#{administrator_id}",
+                    :onclick => "return update_administrator(#{administrator_id})"%>
+        <%= link_to "Cancel", "#" ,:id => "cancel-#{administrator_id}",
+                    :onclick => "cancel_administrator(#{administrator_id})" %>
+      </p>
+    <% end %>
+  </td>
+</tr>

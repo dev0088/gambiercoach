@@ -1,0 +1,77 @@
+<% if not request.xhr? %>
+<div id="<%= params[:controller] %>" class="ajax-scaffold">
+  <div id="<%= params[:action] %>">
+<% end %>
+    <div class="ajax-scaffold-header">
+      <div class="actions">
+        <% new_params = params.merge(:controller => '/administrators', :action => 'new') %>
+        <%= link_to "Create New", "#", :class => "create", remote: true, :id => 'create-administrator' %>
+      </div>
+      <h2>Administrators</h2>
+    </div>
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <%= render partial: "form_of_administrator",
+                   locals: {administrator: @new_administrator, action: "create"}
+        %>
+        <tr>
+          <%= render :partial => 'column_headings' %>
+        </tr>
+      </thead>
+      <tbody id="administrators-tbody">
+        <% @administrators.each_with_index do |administrator, index| %>
+      	  <%= render partial: "form_of_administrator",
+                     locals: {administrator: administrator, action: "update_administrator"}
+          %>
+          <tr class="<%= index.odd? ? 'odd': 'even' %>">
+            <td><%= administrator.username %></td>
+            <td><%= administrator.email %></td>
+            <td>
+              <%= link_to "Edit", "#", :id => "edit_#{administrator.id}",
+                          :onclick => "edit_administrator(#{administrator.id})" %>
+            </td>
+            <td>
+              <% if administrator.superuser == 0 %>
+                <%= link_to "Delete", administrator_path(administrator),
+                            :method => :delete, :confirm => 'Are you sure?' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate @administrators %>
+
+<% if not request.xhr? %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Rico.Corner.round('<%= params[:controller] %>', {color: '#330066', bgColor: '#fff', compact: true});
+</script>
+
+<script>
+  function edit_administrator(id) {
+    jQuery("#tr-" + id).css({'display': ''});
+  }
+
+  function update_administrator(id) {
+    var td = jQuery("#td-" + id);
+    var name = jQuery("#td-" + id + " form fieldset input").val();
+  }
+
+  function cancel_administrator(id) {
+    jQuery("#tr-" + id).css({'display': 'none'});
+    window.location.href = "/administrators";
+  }
+
+  jQuery(document).ready(function() {
+
+    jQuery("#create-administrator").click(function(event) {
+      jQuery("#tr-0").css({'display': ''});
+      event.preventDefault();
+    });
+
+  });
+</script>
+<% end %>

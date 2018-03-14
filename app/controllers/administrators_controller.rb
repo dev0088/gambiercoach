@@ -73,7 +73,7 @@ class AdministratorsController < ApplicationController
     end
 
     # Render on GET
-    if request.method == :get
+    if request.method == 'GET'
       render
       return
     end
@@ -99,7 +99,7 @@ class AdministratorsController < ApplicationController
     else
       key = admin.generate_reset_password_token
       url = url_for(:action => 'change_password', :admin_id => admin.id, :auth_token => key)
-      # AdminNotify.deliver_forgot_password(user, url)
+      # AdminNotify.forgot_password(user, url).deliver_now
       flash[:success] = "emailed instructions for setting a new password to #{admin.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return
@@ -111,7 +111,10 @@ class AdministratorsController < ApplicationController
   end
 
   def index
-    redirect_to :action => 'list'
+    @sort_sql = Administrator.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
+    @sort_by = @sort_sql.nil? ? "#{Administrator.table_name}.#{Administrator.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
+    @administrators = Administrator.order(@sort_by).paginate(page: 1, :per_page => 25)
+    @new_administrator = Administrator.new
   end
 
 
@@ -119,7 +122,7 @@ class AdministratorsController < ApplicationController
     # If you have multiple scaffolds on the same view then you will want to change this to
     # to whatever controller/action shows all the views
     # (ex: redirect_to :controller => 'AdminConsole', :action => 'index')
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 
   def list
@@ -165,19 +168,16 @@ class AdministratorsController < ApplicationController
 
   def create
     begin
-      @administrator = Administrator.new(params[:administrator])
+      @administrator = Administrator.new(craete_administrator_params)
       @successful = @administrator.save
     rescue
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'create.rjs' if request.xhr?
-    if @successful
-      return_to_main
-    else
+    if !@successful
       @options = { :scaffold_id => params[:controller], :action => "create" }
-      render :partial => 'new_edit', :layout => true
     end
+    redirect_to '/administrators'
   end
 
   def edit
@@ -195,6 +195,24 @@ class AdministratorsController < ApplicationController
       render :partial => 'new_edit', :layout => true
     else
       return_to_main
+    end
+  end
+
+  def update_administrator
+    begin
+      @administrator = Administrator.find(params[:id])
+      @successful = @administrator.update_attributes(update_administrator_params)
+      result = @administrator.to_json
+      status_code = 200
+    rescue
+      flash[:error], @successful  = $!.to_s, false
+      result = {message: flash[:error]}
+      status_code = 403
+    end
+
+    respond_to do |format|
+      format.html {redirect_to "/administrators"}
+      format.json { render status: status_code, json: result }
     end
   end
 
@@ -226,8 +244,6 @@ class AdministratorsController < ApplicationController
       flash[:error], @successful  = $!.to_s, false
     end
 
-    return render :action => 'destroy.rjs' if request.xhr?
-
     # Javascript disabled fallback
     return_to_main
   end
@@ -239,4 +255,20 @@ class AdministratorsController < ApplicationController
 
     return_to_main
   end
+end
+
+private
+def update_administrator_params
+  params[:administrator][:new_password] = nil if params[:administrator][:new_password] == ""
+  administrator_params = params[:administrator]
+  params.require(:administrator)
+        .permit(:username, :email, :new_password)
+end
+
+def craete_administrator_params
+  params[:administrator][:new_password] = "default" if !params[:administrator][:new_password].present?
+  administrator_params = params[:administrator]
+  administrator_params[:superuser] = 0
+  params.require(:administrator)
+        .permit(:username, :email, :superuser, :new_password)
 end

@@ -176,8 +176,8 @@ class TransportSessionsController < ApplicationController
           transport_session_params["cash_reservations_closing_date(5i)"].to_i
         )
     params.require(:transport_session)
-             .permit(:name, :reservations_opening_date,
-                     :cash_reservations_closing_date,
-                     :cash_reservations_information)
+          .permit(:name, :reservations_opening_date,
+                  :cash_reservations_closing_date,
+                  :cash_reservations_information)
   end
 end

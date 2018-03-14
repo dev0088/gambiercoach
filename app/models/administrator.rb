@@ -20,11 +20,8 @@ class Administrator < ActiveRecord::Base
   # ]
 
   def self.authenticate(username, pass)
-    puts "======== #{__callee__}:#{__LINE__}:#{__FILE__}: #{username}, #{pass}"
-
     u = where("username = ?", username).first
     return nil if u.nil?
-    puts "======== #{__callee__}:#{__LINE__}:#{__FILE__}: #{username}, #{pass}"
     where("username = ? AND salted_password = ?",
       username, Administrator.salted_password(u.salt,
                   Administrator.hashed(pass))
@@ -33,7 +30,8 @@ class Administrator < ActiveRecord::Base
 
   def generate_reset_password_token
     write_attribute('reset_password_token', Administrator.hashed(self.salted_password + Time.now.to_i.to_s + rand.to_s))
-    udpate
+    # update_without_callbacks
+    # update_attribtues
     return self.reset_password_token
   end
 

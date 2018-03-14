@@ -6,7 +6,6 @@ class RoutesController < ApplicationController
   # after_action :clear_flashes
 
   def index
-    # redirect_to :action => 'list'
     @sort_sql = Route.scaffold_columns_hash[current_sort(params)].sort_sql rescue nil
     @sort_by = @sort_sql.nil? ? "#{Route.table_name}.#{Route.primary_key} asc" : @sort_sql  + " " + current_sort_direction(params)
     @routes = Route.order(@sort_by).paginate(page: 1, :per_page => 25)
@@ -136,8 +135,6 @@ class RoutesController < ApplicationController
     rescue
       flash[:error], @successful  = $!.to_s, false
     end
-
-    # return render :action => 'destroy.rjs' if request.xhr?
 
     # Javascript disabled fallback
     return_to_main

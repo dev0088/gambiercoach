@@ -18,7 +18,7 @@
           <%= render :partial => 'column_headings' %>
         </tr>
       </thead>
-      <tbody id="transport_session-tbody">
+      <tbody id="routes-tbody">
         <% @routes.each_with_index do |route, index| %>
           <%= render partial: "form_of_route",
                      locals: {route: route, action: "update_route"}
