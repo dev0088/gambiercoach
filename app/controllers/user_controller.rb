@@ -11,6 +11,11 @@ class UserController < ApplicationController
   #
   # If a user is already logged in and they try to access this page (or submit a login form),
   # they should be redirected to the home page and notified that they're already logged in
+
+  def promote
+    puts "==================="
+  end
+
   def login
     if !@user.nil?
       flash[:success] = "you're already logged in as: #{@user.login_id}"

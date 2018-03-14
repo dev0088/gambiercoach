@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
   # before_action :force_ssl, :only => [:login]
+  after_action :return_errors, only: [:page_not_found, :server_error]
 
   Rails.application.config.filter_parameters += [:password]
   Rails.application.config.filter_parameters += [:card_number]
@@ -12,6 +13,20 @@ class ApplicationController < ActionController::Base
   Rails.application.config.filter_parameters += [:expiration_month]
   Rails.application.config.filter_parameters += [:expiration_year]
   Rails.application.config.filter_parameters += [:name_on_card]
+
+  def page_not_found
+    @status = 404
+    @layout = "application"
+    # @template = "not_found_error"
+    @template = "promote"
+  end
+
+  def server_error
+     @status = 500
+     @layout = "error"
+     # @template = "internal_server_error"
+     @template = "promote"
+  end
 
   def force_ssl(options = {})
     host = options.delete(:host)
@@ -44,4 +59,13 @@ class ApplicationController < ActionController::Base
     end
     return reservations, price, cash_reservations_allowed
   end
+
+  private
+
+ def return_errors
+   respond_to do |format|
+         format.html { render template: 'errors/' + @template, layout: 'layouts/' + @layout, status: @status }
+         format.all  { render nothing: true, status: @status }
+   end
+ end
 end

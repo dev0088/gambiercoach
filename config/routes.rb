@@ -140,7 +140,14 @@ Rails.application.routes.draw do
       post :change_forgot_password
       get :forgot_password
       get :sent_forgot_password_link
+      get :promote
     end
   end
+
+  get '404', to: 'application#page_not_found'
+  get '422', to: 'application#server_error'
+  get '500', to:  'application#server_error'
+  get '/promote', to: 'user#promote'
+  match '*path' => redirect('/promote'), via: :get
 
 end
