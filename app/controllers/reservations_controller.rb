@@ -86,7 +86,8 @@ class ReservationsController < ApplicationController
     else
 
       # something went seriously wrong, we have no idea why the user is here! ;)
-      raise
+      # raise
+      redirect_to :controller => "index", :action => "index"
     end
 
     if @reservation_requests.empty?
