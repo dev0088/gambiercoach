@@ -465,17 +465,6 @@ class ManagerController < ApplicationController
   end
 
   def session_tickets_csv
-    # s = TransportSession.find(params[:id])
-    # tickets = ReservationTicket.find_by_sql(["select rt.* from reservation_tickets rt, transport_sessions ts, buses b, routes r where ts.id = ? and ts.id = r.transport_session_id and r.id = b.route_id and rt.bus_id = b.id",params[:id]])
-    # stream_csv do |csv|
-    #   csv << ["reservation_id","price","login_id","conductor_wish","conductor_status","bus_route","bus_date","bus_time","bus_id"]
-    #   tickets.each do |t|
-    #     for i in 1..(t.quantity)
-    #       csv << [t.reservation_id.to_s,t.bus.route.price.to_s,t.reservation.user.login_id,t.conductor_wish.to_s,t.conductor_status.to_s,t.bus.readable_route,t.bus.departure.strftime("%Y_%m_%d"),t.bus.departure.strftime("%I:%M %p"),t.bus.id.to_s]
-    #     end
-    #   end
-    # end
-
     transport_session = TransportSession.find(params[:id])
     @reservation_tickets = ReservationTicket.find_by_sql(
                             ["select rt.*
