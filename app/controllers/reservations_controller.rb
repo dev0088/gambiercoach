@@ -88,6 +88,7 @@ class ReservationsController < ApplicationController
       # something went seriously wrong, we have no idea why the user is here! ;)
       # raise
       redirect_to :controller => "user", :action => "promote"
+      return
     end
 
     if @reservation_requests.empty?
