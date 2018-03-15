@@ -33,12 +33,11 @@ class ReservationsController < ApplicationController
     @cash_reservations_allowed = true
 
     # is someone coming from an open wait list spot's "purchase your ticket" jump?
-    puts "======= /reservation/create: params: #{params.inspect}"
-    if !params[:wait_list_id].nil?
+    if params[:wait_list_id].present?
       wlr = WaitListReservation.where("id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?",
                                   params[:wait_list_id], Setting.earliest_valid_wait_list_opening
                                 ).first
-      if wlr.nil?
+      if !wlr.present?
         flash[:error] = "Your request off the wait list was not allowed. Please contact the system administrator."
         redirect_to :action => "my_wait_list_reservations"
         return
@@ -57,7 +56,7 @@ class ReservationsController < ApplicationController
       end
 
     # inbound from the schedule page
-    elsif !params[:new_request].nil?
+    elsif params[:new_request].present?
       @reservation_requests, @reservation_price, @cash_reservations_allowed = parse_schedule_selections(params)
       session[:reservation_details] = @reservation_requests
       session[:reservation_price] = @reservation_price
@@ -66,7 +65,7 @@ class ReservationsController < ApplicationController
 
     # someone was reserving a spot off the wait list, then jumped to another page
     # like editing a stored address, and is now back...
-    elsif !session[:wait_list_id].nil?
+    elsif session[:wait_list_id].present?
       @reservation_requests = session[:reservation_details]
       # @reservation_price = session[:reservation_price]
       @reservation_price = Money.new(session[:reservation_price]["fractional"])
@@ -78,19 +77,18 @@ class ReservationsController < ApplicationController
     #
     # in other words, somebody created reservation request details but
     # then needed to go log in or sign up
-    elsif !session[:reservation_details].nil?
+    elsif session[:reservation_details].present?
+      # binding.pry
       @reservation_requests = session[:reservation_details]
       # @reservation_price = session[:reservation_price]
       @reservation_price = Money.new(session[:reservation_price]["fractional"])
       @cash_reservations_allowed = session[:cash_reservations_allowed]
-
-    else
-
+    # else
       # something went seriously wrong, we have no idea why the user is here! ;)
       # raise
-      flash.now[:error] = "something went seriously wrong, we have no idea why the user is here! ;)"
+      # flash.now[:error] = "something went seriously wrong, we have no idea why the user is here!"
       # redirect_to :controller => "user", :action => "promote"
-      return
+      # return
     end
 
     if @reservation_requests.empty?
@@ -149,7 +147,11 @@ class ReservationsController < ApplicationController
         redirect_to :action => "create"
       end
     elsif !params[:new_cc_submit].nil? # paying with a newly entered cc
-      error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone, params[:new_cc], session[:reservation_details], session[:reservation_price], session[:wait_list_id])
+      error_msg, reservation = process_cc(@user, @conductor_wish, @contact_phone,
+                                          params[:new_cc],
+                                          session[:reservation_details],
+                                          session[:reservation_price],
+                                          session[:wait_list_id])
       if error_msg.nil?
         flash[:success] = "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly."
         redirect_to :action => "my_reservations"
