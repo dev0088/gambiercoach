@@ -182,7 +182,7 @@ class UserController < ApplicationController
     # Handling a POST from here on out...
 
     # Did they not enter an email/username?
-    if params["login_id"].empty?
+    if params["login_id"].present?
       flash.now[:error] = 'please enter an email address or username.'
       render
       return

@@ -33,6 +33,7 @@ class ReservationsController < ApplicationController
     @cash_reservations_allowed = true
 
     # is someone coming from an open wait list spot's "purchase your ticket" jump?
+    puts "======= /reservation/create: params: #{params.inspect}"
     if !params[:wait_list_id].nil?
       wlr = WaitListReservation.where("id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?",
                                   params[:wait_list_id], Setting.earliest_valid_wait_list_opening
@@ -87,7 +88,8 @@ class ReservationsController < ApplicationController
 
       # something went seriously wrong, we have no idea why the user is here! ;)
       # raise
-      redirect_to :controller => "user", :action => "promote"
+      flash.now[:error] = "something went seriously wrong, we have no idea why the user is here! ;)"
+      # redirect_to :controller => "user", :action => "promote"
       return
     end
 
