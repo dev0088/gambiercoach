@@ -5,9 +5,10 @@
 		<ul class="activeSessionBuses">
 			<li>
 				<span style="font-size: 110%; font-weight: bold;"><%= r[1] %></span> ticket(s) for: <br />
-				<%= r[0][:starting_point] %> to <%= r[0][:ending_point] %>,
-						departing <%= if r[0][:departure].nil? then '' else r[0][:departure].strftime("%A, %B %d") end %> at
-						<%= if r[0][:departure].nil? then '' else r[0][:departure].strftime("%I:%M %p") end %>
+				<% route = Route.find(r[0]['route_id']) %>
+				<%= route.point_a %> to <%= route.point_b %>,
+						departing <%= if r[0]['departure'].nil? then '' else r[0]['departure'].to_datetime.strftime("%A, %B %d") end %> at
+						<%= if r[0]['departure'].nil? then '' else r[0]['departure'].to_datetime.strftime("%I:%M %p") end %>
 			</li>
 		</ul>
 		<% end -%>
