@@ -31,7 +31,7 @@ class ReservationsController < ApplicationController
     @reservation_price = nil
     @wait_list_id = nil
     @cash_reservations_allowed = true
-
+    # binding.pry
     # is someone coming from an open wait list spot's "purchase your ticket" jump?
     if params[:wait_list_id].present?
       wlr = WaitListReservation.where("id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?",
