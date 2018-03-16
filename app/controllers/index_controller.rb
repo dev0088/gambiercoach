@@ -6,6 +6,8 @@ class IndexController < ApplicationController
     if !@user.nil?
       if session[:wait_list_id].present?
         redirect_to :controller => "reservations", :action => "get_on_wait_list", :id => session[:wait_list_id]
+      elsif session[:reservation_details].present?
+        redirect_to :controller => "reservations", :action => "create"
       else
         render
       end

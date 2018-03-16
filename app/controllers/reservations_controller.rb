@@ -87,10 +87,10 @@ class ReservationsController < ApplicationController
       @cash_reservations_allowed = session[:cash_reservations_allowed]
     else
       # something went seriously wrong, we have no idea why the user is here! ;)
-      # raise
+      raise
       # flash.now[:error] = "something went seriously wrong, we have no idea why the user is here!"
       # binding.pry
-      redirect_to :action => "get_on_wait_list"
+      # redirect_to :action => "get_on_wait_list"
       return
     end
 
