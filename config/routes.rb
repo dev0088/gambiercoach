@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get "/reservations/my_wait_list_reservations", :controller => "reservations", :action => "my_wait_list_reservations"
   post "/reservations/complete", :controller => "reservations", :action => "complete"
   get "/reservations/create", :controller => "reservations", :action => "create"
+  post "/reservations/create", :controller => "reservations", :action => "create"
   get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
   post "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
   get "/reservations/get_on_wait_list/:id(.:format)", :controller => "reservations", :action => "get_on_wait_list"
