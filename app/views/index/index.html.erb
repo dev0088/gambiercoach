@@ -1,6 +1,6 @@
 <%= render :partial => "index_header" %>
 
-<form action="<%= reservations_path() %>" method="post">
+<form action="<%= reservations_create_path %>" method="post">
 <input type="hidden" name="new_request" value="yes" />
 <% TransportSession.active_sessions.each do |ts| -%>
 <h4 style="margin-top: 0; text-decoration: underline;"><%= ts.name %></h4>

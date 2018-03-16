@@ -13,7 +13,6 @@ class UserController < ApplicationController
   # they should be redirected to the home page and notified that they're already logged in
 
   def promote
-    puts "==================="
   end
 
   def login
@@ -35,7 +34,7 @@ class UserController < ApplicationController
         if params[:set_remember_me] == "1"
           cookies[:transport_remember_me_token] = {:value => user.id.to_s + "_t_" + user.set_remember_me, :expires => Time.now + 1.week}
         end
-        redirect_to_stored_or_default :controller => "reservations", :action => "create"
+        redirect_to_stored_or_default :controller => "index", :action => "index"
         return
       else
         flash.now[:error] = "please re-check your login id and password<br/>If this is your first time using the service, scroll down and enter your student id in the second box on this page"

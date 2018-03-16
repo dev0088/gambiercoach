@@ -31,9 +31,9 @@ class ReservationsController < ApplicationController
     @reservation_price = nil
     @wait_list_id = nil
     @cash_reservations_allowed = true
-    # binding.pry
     # is someone coming from an open wait list spot's "purchase your ticket" jump?
     if params[:wait_list_id].present?
+      # binding.pry
       wlr = WaitListReservation.where("id = ? AND spot_opened_at IS NOT NULL AND spot_opened_at > ?",
                                   params[:wait_list_id], Setting.earliest_valid_wait_list_opening
                                 ).first
@@ -57,6 +57,7 @@ class ReservationsController < ApplicationController
 
     # inbound from the schedule page
     elsif params[:new_request].present?
+      # binding.pry
       @reservation_requests, @reservation_price, @cash_reservations_allowed = parse_schedule_selections(params)
       session[:reservation_details] = @reservation_requests
       session[:reservation_price] = @reservation_price
@@ -66,6 +67,7 @@ class ReservationsController < ApplicationController
     # someone was reserving a spot off the wait list, then jumped to another page
     # like editing a stored address, and is now back...
     elsif session[:wait_list_id].present?
+      # binding.pry
       @reservation_requests = session[:reservation_details]
       # @reservation_price = session[:reservation_price]
       @reservation_price = Money.new(session[:reservation_price]["fractional"])
@@ -83,12 +85,13 @@ class ReservationsController < ApplicationController
       # @reservation_price = session[:reservation_price]
       @reservation_price = Money.new(session[:reservation_price]["fractional"])
       @cash_reservations_allowed = session[:cash_reservations_allowed]
-    # else
+    else
       # something went seriously wrong, we have no idea why the user is here! ;)
       # raise
       # flash.now[:error] = "something went seriously wrong, we have no idea why the user is here!"
-      # redirect_to :controller => "user", :action => "promote"
-      # return
+      # binding.pry
+      redirect_to :action => "get_on_wait_list"
+      return
     end
 
     if @reservation_requests.empty?
@@ -118,6 +121,7 @@ class ReservationsController < ApplicationController
   def complete
     # gathering the yay / nay on conductor wishes
     # forcing user back if they checked but did not give phone number
+    # binding.pry
     @conductor_wish = false
     @contact_phone = nil
     if params[:conductor] == "yes"
@@ -202,12 +206,14 @@ class ReservationsController < ApplicationController
   end
 
   def get_on_wait_list
+    session[:wait_list_id] = params[:id]
     if current_user.nil?
       flash[:error] = "Please log in or verify your student credentials before continuing with your wait list reservation"
       # store_location
       redirect_to :controller => "user", :action => "login"
       return
     else
+      # binding.pry
       # if user is not already on the wait list for this bus
       if WaitListReservation.where("user_id = ? and bus_id = ?", @user.id, params[:id]).first.nil?
         b = Bus.find(params[:id])
@@ -221,6 +227,7 @@ class ReservationsController < ApplicationController
       else
         flash[:error] = "You were already on the wait list for the specified bus. No need to get another spot."
       end
+      session[:wait_list_id] = nil
       redirect_to :controller => "index", :action => "index"
     end
   end
