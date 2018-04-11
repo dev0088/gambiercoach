@@ -42,7 +42,6 @@ class UserController < ApplicationController
         else
           render
         end
-        # redirect_to_stored_or_default :controller => "index", :action => "index"
         return
       else
         flash.now[:error] = "please re-check your login id and password<br/>If this is your first time using the service, scroll down and enter your student id in the second box on this page"

@@ -28,9 +28,9 @@
 			<li><a href="/manager/create_reservation">Create a Reservation</a></li>
 			<li><a href="/manager/create_edit_user">Create a User</a></li>
 			<li style="list-style-type: none"></li>
-			<li><a href="<%= transport_sessions_path %>">Sessions</a></li>
-			<li><%= link_to "Routes", routes_path %></li>
-			<li><%= link_to "Buses", buses_path %></li>
+      <li><%= link_to "Sessions (#{transport_sessions_count_helper})", transport_sessions_path %></li>
+			<li><%= link_to "Routes (#{route_count_helper})", routes_path %></li>
+			<li><%= link_to "Buses (#{buses_count_helper})", buses_path %></li>
 			<li style="list-style-type: none"></li>
 			<li><a href="/settings/edit_settings">Global Settings</a></li>
 			<li><a href="/manager/system_reset_options">System Reset Options</a></li>
