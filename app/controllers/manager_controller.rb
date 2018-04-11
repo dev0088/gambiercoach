@@ -248,7 +248,7 @@ class ManagerController < ApplicationController
             request.transactionRequest.amount = reservation_price.to_s
             request.transactionRequest.payment = PaymentType.new
             request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
-                "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+                "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", cc_info[:ccv])
             request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
 
             response = transaction.create_transaction(request)
@@ -328,7 +328,7 @@ class ManagerController < ApplicationController
     request.transactionRequest.amount = amount
     request.transactionRequest.payment = PaymentType.new
     request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
-        "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+        "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", cc_info[:ccv])
     request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
 
     response = transaction.create_transaction(request)

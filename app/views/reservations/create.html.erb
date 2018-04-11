@@ -45,41 +45,55 @@
 
 <hr />
 <% if !@user.stored_payment_addresses.empty? %>
-<p style="padding-left: 30px; padding-right: 20px;">You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
-<% @user.stored_payment_addresses.each do |spa| %>
-<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
-	<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" /> Use this stored card information.
-	<br />Name on Card: <strong><%= spa.name_on_card %></strong>
-	<br />Billing Address: <strong><%= spa.address_one %> <%= spa.city %>, <%= spa.state %> <%= spa.zip %></strong>
-	<br />Card Number: &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="card_number_<%= spa.id %>" />
-	<br />Expiration Date: <select name="expiration_month_<%= spa.id %>"><% for m in 1..12 do -%><option><%= (m < 10) ? "0#{m}" : "#{m}" %></option><% end -%></select><select name="expiration_year_<%= spa.id %>">
-		<option>2006</option>
-		<option>2007</option>
-		<option>2008</option>
-		<option>2009</option>
-		<option>2010</option>
-		<option>2011</option>
-		<option>2012</option>
-		<option>2013</option>
-		<option>2014</option>
-                <option>2015</option>
-                <option>2016</option>
-                <option>2017</option>
-                <option>2018</option>
-                <option>2019</option>
-                <option>2020</option>
-                <option>2021</option>
-                <option>2022</option>
-	</select>
-	<br /><a href="/stored_address/edit/<%= spa.id %>">edit</a>
-	&nbsp;&nbsp;&nbsp;
-	<%= link_to "delete", stored_address_delete_path(spa.id), :post => true %>
-</p>
-<% end %>
+	<p style="padding-left: 30px; padding-right: 20px;">
+		You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
+	</p>
 
-<input name="stored_cc_submit" class="button" type="submit" value="Complete Transaction with Selected Stored Information" style="margin-left: 30px;" />
+	<% @user.stored_payment_addresses.each do |spa| %>
+		<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
+			<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" /> Use this stored card information.
+			<br />Name on Card: <strong><%= spa.name_on_card %></strong>
+			<br />Billing Address: <strong><%= spa.address_one %> <%= spa.city %>, <%= spa.state %> <%= spa.zip %></strong>
+			<br />Card Number: &nbsp;&nbsp;&nbsp;<input type="text" name="card_number_<%= spa.id %>" />
+			<br />Expiration Date:
+			<select name="expiration_month_<%= spa.id %>">
+				<% for m in 1..12 do -%>
+					<option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
+				<% end -%>
+			</select>
+			<select name="expiration_year_<%= spa.id %>">
+				<option>2006</option>
+				<option>2007</option>
+				<option>2008</option>
+				<option>2009</option>
+				<option>2010</option>
+				<option>2011</option>
+				<option>2012</option>
+				<option>2013</option>
+				<option>2014</option>
+		    <option>2015</option>
+		    <option>2016</option>
+		    <option>2017</option>
+		    <option>2018</option>
+		    <option>2019</option>
+		    <option>2020</option>
+		    <option>2021</option>
+		    <option>2022</option>
+			</select>
 
-<hr />
+			<br />CCV: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="text" name="ccv_<%= spa.id %>" class="field text small" style="width: 15%;"/>
+			<br />
+
+			<a href="<%= edit_stored_address_path(spa.id) %>">edit</a>
+			&nbsp;&nbsp;&nbsp;
+			<%= link_to "delete", stored_address_path(spa.id), :method => :delete %>
+		</p>
+	<% end %>
+
+	<input name="stored_cc_submit" class="button" type="submit" value="Complete Transaction with Selected Stored Information" style="margin-left: 30px;" />
+
+	<hr />
 <% end %>
 
 <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
@@ -120,16 +134,23 @@
 		<option>2012</option>
 		<option>2013</option>
 		<option>2014</option>
-<option>2015</option>
-<option>2016</option>
-<option>2017</option>
-<option>2018</option>
-<option>2019</option>
-<option>2020</option>
-<option>2021</option>
-<option>2022</option>
+		<option>2015</option>
+		<option>2016</option>
+		<option>2017</option>
+		<option>2018</option>
+		<option>2019</option>
+		<option>2020</option>
+		<option>2021</option>
+		<option>2022</option>
 	</select>
 </div>
+</li>
+
+<li>
+	<div class="full">
+		<label class="desc" for="field22">CCV</label>
+		<input id="field22" name="new_cc[ccv]" class="field text medium" type="text" value=""/>
+	</div>
 </li>
 
 <li>

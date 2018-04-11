@@ -87,9 +87,8 @@ class ReservationsController < ApplicationController
       @cash_reservations_allowed = session[:cash_reservations_allowed]
     else
       # something went seriously wrong, we have no idea why the user is here! ;)
-      raise
-      # flash.now[:error] = "something went seriously wrong, we have no idea why the user is here!"
-      # binding.pry
+      # raise
+      flash.now[:error] = "mistaken action!"
       # redirect_to :action => "get_on_wait_list"
       return
     end
@@ -332,7 +331,7 @@ class ReservationsController < ApplicationController
         request.transactionRequest.amount = amount.to_s
         request.transactionRequest.payment = PaymentType.new
         request.transactionRequest.payment.creditCard = CreditCardType.new(cc_info[:card_number],
-            "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", "123")
+            "#{cc_info[:expiration_month]}/#{cc_info[:expiration_year]}", cc_info[:ccv])
         request.transactionRequest.transactionType = TransactionTypeEnum::AuthCaptureTransaction
 
         response = transaction.create_transaction(request)
@@ -353,7 +352,7 @@ class ReservationsController < ApplicationController
                 error_msg = "Error Code: #{response.transactionResponse.errors.errors[0].errorCode} \n" +
                             "Error Message: #{response.transactionResponse.errors.errors[0].errorText}"
               end
-              raise error_msg
+              raise TransportappError, error_msg
               # return false
             end
           else
@@ -369,13 +368,13 @@ class ReservationsController < ApplicationController
               error_msg = "Error Code: #{response.messages.messages[0].code} \n" +
                           "Error Message: #{response.messages.messages[0].text}"
             end
-            raise error_msg
+            raise TransportappError, error_msg
             # return false
           end
         else
           puts "Response is null"
           error_msg = "Failed to charge card. Response is null."
-          raise error_msg
+          raise TransportappError, error_msg
           # return false
         end
 

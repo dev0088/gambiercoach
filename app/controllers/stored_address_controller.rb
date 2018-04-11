@@ -18,6 +18,16 @@ class StoredAddressController < ApplicationController
     end
   end
 
+  def destroy
+    case request.method
+    when 'POST'
+      @spa = @user.stored_payment_addresses.find(params[:id])
+      @spa.destroy
+      redirect_to :controller => "reservations", :action => "create"
+      return
+    end
+  end
+
   def delete
     case request.method
     when 'POST'
