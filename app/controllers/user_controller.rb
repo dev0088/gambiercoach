@@ -34,7 +34,15 @@ class UserController < ApplicationController
         if params[:set_remember_me] == "1"
           cookies[:transport_remember_me_token] = {:value => user.id.to_s + "_t_" + user.set_remember_me, :expires => Time.now + 1.week}
         end
-        redirect_to_stored_or_default :controller => "index", :action => "index"
+
+        if session[:wait_list_id].present?
+          redirect_to :controller => "reservations", :action => "get_on_wait_list", :id => session[:wait_list_id]
+        elsif session[:reservation_details].present?
+          redirect_to :controller => "reservations", :action => "create"
+        else
+          render
+        end
+        # redirect_to_stored_or_default :controller => "index", :action => "index"
         return
       else
         flash.now[:error] = "please re-check your login id and password<br/>If this is your first time using the service, scroll down and enter your student id in the second box on this page"
