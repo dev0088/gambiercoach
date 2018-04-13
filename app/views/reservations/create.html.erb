@@ -49,9 +49,9 @@
 		You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
 	</p>
 
-	<% @user.stored_payment_addresses.each do |spa| %>
+	<% @user.stored_payment_addresses.each_with_index do |spa, index| %>
 		<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
-			<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" /> Use this stored card information.
+			<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" checked="<%= if index == 0 then true else false end %>" /> Use this stored card information.
 			<br />Name on Card: <strong><%= spa.name_on_card %></strong>
 			<br />Billing Address: <strong><%= spa.address_one %> <%= spa.city %>, <%= spa.state %> <%= spa.zip %></strong>
 			<br />Card Number: &nbsp;&nbsp;&nbsp;<input type="text" name="card_number_<%= spa.id %>" />
