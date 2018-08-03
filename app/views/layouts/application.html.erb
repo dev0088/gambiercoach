@@ -16,8 +16,8 @@
   		<% else -%>
   		<ul>
   			<li><a href="/">Book Tickets</a></li>
-  			<li><%= link_to "My Reservations", "/reservations/my_reservations" %>
-  			<li><a href="/reservations/my_wait_list_reservations">My Waiting Lists</a></li>
+  			<li><%= link_to "My Reservations (#{my_reservations_count_helper})", "/reservations/my_reservations" %>
+  			<li><a href="/reservations/my_wait_list_reservations">My Waiting Lists (<%= my_waiting_lists_count_helper %>)</a></li>
   			<li><a href="/user/change_password">Change My Password</a></li>
   			<li><a href="/user/logout">Logout</a></li>
   		</ul>
