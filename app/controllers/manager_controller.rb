@@ -2,6 +2,7 @@ require 'rubygems'
 require 'yaml'
 require 'authorizenet'
 require 'securerandom'
+require 'csv'
 
 class ManagerController < ApplicationController
   layout "admin"
