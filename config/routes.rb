@@ -85,6 +85,7 @@ Rails.application.routes.draw do
     collection do
       get :bus
       get :system_reset_options
+      post :system_reset_options
       post :email_bus
       get :session_conductors
       post :session_conductors
