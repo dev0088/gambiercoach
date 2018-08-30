@@ -6,8 +6,8 @@ class Setting < ActiveRecord::Base
   EXAMPLE_USERNAME = "smithj"
   NAME = "Gambier Coach"
   EMAIL = "@kenyon.edu"
-  ADMIN_EMAIL = "vigd@kenyon.edu"
-  FROM_EMAIL = "vigd@kenyon.edu"
+  ADMIN_EMAIL = "support@gambiercoach.com" #"vigd@kenyon.edu"
+  FROM_EMAIL = "support@gambiercoach.com" #"vigd@kenyon.edu"
   SERVER_URL = "http://www.gambiercoach.com"
 
   validates_numericality_of :max_tickets_purchase, :only_integer => true
