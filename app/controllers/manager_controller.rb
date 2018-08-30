@@ -56,7 +56,7 @@ class ManagerController < ApplicationController
       end
     end
     @subject = "bus list / " + @bus.departure.strftime("%A, %B %d") + " departing " + @bus.starting_point + " for " + @bus.ending_point + " at " + @bus.departure.strftime("%I:%M %p")
-    Notifications.admin_report(@subject, email_txt, params[:email_address]).deliver_now
+    Notifications.admin_report(@subject, email_txt, params[:email_address]).deliver_later
     flash[:success] = "email sent"
     redirect_to :action => "bus", :id => @bus.id
   end
@@ -75,7 +75,7 @@ class ManagerController < ApplicationController
           Notifications.student_conductor_designation(
             reservation_ticket.reservation.user,
             reservation_ticket.bus
-          ).deliver_now
+          ).deliver_later
         end
         reservation_ticket.conductor_status = numbers_of_tickets
         reservation_ticket.save!
@@ -126,7 +126,7 @@ class ManagerController < ApplicationController
 	    if reservation_ticket.conductor_status == 0
 	      Notifications.student_conductor_designation(
           reservation_ticket.reservation.user, reservation_ticket.bus
-        ).deliver_now
+        ).deliver_later
 	    end
             reservation_ticket.conductor_status = 1
           else
@@ -220,7 +220,7 @@ class ManagerController < ApplicationController
             end
 
             r = save_reservation(pay_status, user, conductor_wish, reservation_requests, reservation_price)
-            Notifications.cash_reservation_create_success(user, r).deliver_now
+            Notifications.cash_reservation_create_success(user, r).deliver_later
           end
         # rescue TransportappError => error_msg
         #   error_message = error_msg
@@ -297,7 +297,7 @@ class ManagerController < ApplicationController
             end
           end
           begin
-            Notifications.cc_reservation_create_success(user, r).deliver_now
+            Notifications.cc_reservation_create_success(user, r).deliver_later
           rescue
             error_message = "Transaction complete and reservation saved, but we could not send an email confirmation."
           end
@@ -423,7 +423,7 @@ class ManagerController < ApplicationController
     user = User.find(params[:id])
     key = user.generate_reset_password_token
     url = url_for(:controller => 'user', :action => 'change_forgot_password', :user_id => user.id, :auth_token => key)
-    Notifications.forgot_password(user, url).deliver_now
+    Notifications.forgot_password(user, url).deliver_later
     flash[:success] = "emailed instructions for setting a new password to #{user.email}."
     redirect_to :action => "users"
   end
@@ -518,7 +518,7 @@ class ManagerController < ApplicationController
           res = Reservation.find(reservation_id)
           res.payment_status = Reservation::PD_CASH
           res.save!
-          Notifications.payment_received(res.user, res).deliver_now
+          Notifications.payment_received(res.user, res).deliver_later
           marked_pd += 1
         elsif action_value == "cancel"
           Reservation.destroy(reservation_id)

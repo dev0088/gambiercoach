@@ -53,7 +53,7 @@ class HourlyCron < ActiveRecord::Base
           Notifications.admin_report("NO CONDUCTOR SPECIFIED FOR A BUS WHEN BUS LISTS WERE SENT",
             bus.departure.strftime("%A, %B %d") + " / " + bus.starting_point + " <-> " + bus.ending_point + " / " + bus.departure.strftime("%I:%M %p"),
             Setting::ADMIN_EMAIL
-          ).deliver_now
+          ).deliver_later
         else
           email_txt = "Bus: " + bus.departure.strftime("%A, %B %d") + " departing " + bus.starting_point + " for " + bus.ending_point + " at " + bus.departure.strftime("%I:%M %p") + "\n\n"
           email_txt << " res # -- student login id\n"
@@ -64,7 +64,7 @@ class HourlyCron < ActiveRecord::Base
             end
           end
           subject = "Conductor bus list for " + bus.departure.strftime("%A, %B %d") +" "+ bus.departure.strftime("%I:%M %p") + " / " + bus.starting_point + "<->" + bus.ending_point
-          Notifications.conductor_bus_list(subject, email_txt, bus.conductor.email).deliver_now
+          Notifications.conductor_bus_list(subject, email_txt, bus.conductor.email).deliver_later
         end
       end
     end
@@ -77,7 +77,7 @@ class HourlyCron < ActiveRecord::Base
     buses = Bus.where("departure < ? and departure > ?", now - 1.75.hours, now - 2.25.hours)
     buses.each do |b|
       tr = TripReport.setup(b)
-      Notifications.student_conductor_followup(b.conductor, b).deliver_now
+      Notifications.student_conductor_followup(b.conductor, b).deliver_later
     end
   end
 
@@ -88,7 +88,7 @@ class HourlyCron < ActiveRecord::Base
     rtime = Setting.daily_payment_reminder_time
     if ((rtime.hour == now.hour) && (now.min < 15)) || ((rtime.hour - 1 == now.hour) && (now.min > 45))
       Reservation.all_unpaid.each do |ur|
-        Notifications.payment_reminder(ur.user, ur).deliver_now
+        Notifications.payment_reminder(ur.user, ur).deliver_later
       end
     end
   end

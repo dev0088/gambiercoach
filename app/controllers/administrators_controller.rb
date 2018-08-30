@@ -99,7 +99,7 @@ class AdministratorsController < ApplicationController
     else
       key = admin.generate_reset_password_token
       url = url_for(:action => 'change_password', :admin_id => admin.id, :auth_token => key)
-      # AdminNotify.forgot_password(user, url).deliver_now
+      # AdminNotify.forgot_password(user, url).deliver_later
       flash[:success] = "emailed instructions for setting a new password to #{admin.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return

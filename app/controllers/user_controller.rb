@@ -82,7 +82,7 @@ class UserController < ApplicationController
       # u.save_with_validation(false)
       u.save
       u.generate_reset_password_token
-      Notifications.verify(u.login_id, u.reset_password_token, u.email).deliver_now
+      Notifications.verify(u.login_id, u.reset_password_token, u.email).deliver_later
 
       flash[:email_address] = u.email
       redirect_to :action => "complete_verify"
@@ -135,7 +135,7 @@ class UserController < ApplicationController
     when 'POST'
       @user.change_password(params[:password], params[:repeat_password])
       if @user.errors.empty?
-        Notifications.change_password_success(@user).deliver_now
+        Notifications.change_password_success(@user).deliver_later
         flash[:success] = "saved your new password"
         render
         return
@@ -159,7 +159,7 @@ class UserController < ApplicationController
       if @user.errors.empty?
         @user.reset_password_token = nil
         @user.save
-       Notifications.change_password_success(@user).deliver_now
+       Notifications.change_password_success(@user).deliver_later
         flash[:success] = "saved your new password, please log in"
         redirect_to :action => "login"
         return
@@ -205,7 +205,7 @@ class UserController < ApplicationController
     else
       key = user.generate_reset_password_token
       url = url_for(:action => 'change_forgot_password', :user_id => user.id, :auth_token => key)
-      Notifications.forgot_password(user, url).deliver_now
+      Notifications.forgot_password(user, url).deliver_later
       flash.now[:success] = "emailed instructions for setting a new password to #{user.email}.\nPlease follow the instructions in that email. Thank you."
       render
       return

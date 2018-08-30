@@ -218,7 +218,7 @@ class ReservationsController < ApplicationController
         b = Bus.find(params[:id])
         if b.has_a_wait_list?
           wlr = WaitListReservation.create(:user => @user, :bus => b)
-          Notifications.wait_list_success(@user, wlr).deliver_now
+          Notifications.wait_list_success(@user, wlr).deliver_later
           flash[:success] = "You successfully reserved a spot on the wait list. You will be notified by email if a spot opens up."
         else
           flash[:error] = "There is no wait list for the specified bus. Please go ahead and buy a ticket."
@@ -272,7 +272,7 @@ class ReservationsController < ApplicationController
         unless refund_amt.zero?
           Notifications.reservation_modified_by_user(
             @user, @reservation.id, refund_amt.to_s
-          ).deliver_now
+          ).deliver_later
         end
         flash[:success] = "Modified your reservation successfully,\n we will refund you #{refund_amt}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
@@ -292,7 +292,7 @@ class ReservationsController < ApplicationController
         @reservation.total = (@reservation.total.to_money - refund_amt).to_s
         @reservation.save!
       end
-      Notifications.reservation_modify_success(@user, @reservation).deliver_now
+      Notifications.reservation_modify_success(@user, @reservation).deliver_later
       redirect_to :action => "my_reservations"
     end
   end
@@ -380,7 +380,7 @@ class ReservationsController < ApplicationController
 
 
         begin
-          Notifications.cc_reservation_create_success(user, r).deliver_now
+          Notifications.cc_reservation_create_success(user, r).deliver_later
         rescue
           return "Transaction complete and reservation saved, but we could not send an email confirmation.\nPlease see your 'My Reservations' and contact a System Administrator if you need more information.", r
         end
@@ -398,7 +398,7 @@ class ReservationsController < ApplicationController
     begin
       User.transaction do
         r = reserve_tickets(Reservation::UNPAID, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
-        Notifications.cash_reservation_create_success(user, r).deliver_now
+        Notifications.cash_reservation_create_success(user, r).deliver_later
       end
     rescue TransportappError => error_message
       return error_message, nil

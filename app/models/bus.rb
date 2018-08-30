@@ -130,7 +130,7 @@ class Bus < ActiveRecord::Base
       for i in 0...number_to_open
         wlrs[i].spot_opened_at = Time.now
         wlrs[i].save!
-        Notifications.wait_list_spot_opened(wlrs[i].user, wlrs[i].bus).deliver_now
+        Notifications.wait_list_spot_opened(wlrs[i].user, wlrs[i].bus).deliver_later
       end
     end
   end
