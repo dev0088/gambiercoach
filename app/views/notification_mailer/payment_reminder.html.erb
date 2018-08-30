@@ -1,0 +1,13 @@
+Hello <%= @user.login_id %>,
+
+This is a friendly reminder that you still owe <%= @reservation.total %> for:
+
+<% @reservation.reservation_tickets.each do |art| -%>
+<%= art.bus.readable_route %>: <%= art.quantity %> ticket(s) for <%= art.bus.departure.strftime("%A, %B %d") %> departing at <%= art.bus.departure.strftime("%I:%M %p") %>
+<% end -%>
+
+Your reservation ticket number is: <%= @reservation.id %>
+
+Please submit your payment of <%= @reservation.total_in_money.to_s %> to <%= @reservation.earliest_session.cash_reservations_information %>
+
+Thank you.

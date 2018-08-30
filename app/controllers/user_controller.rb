@@ -82,7 +82,7 @@ class UserController < ApplicationController
       # u.save_with_validation(false)
       u.save
       u.generate_reset_password_token
-      Notifications.verify(u.login_id, u.reset_password_token, u.email)
+      Notifications.verify(u.login_id, u.reset_password_token, u.email).deliver_now
 
       flash[:email_address] = u.email
       redirect_to :action => "complete_verify"

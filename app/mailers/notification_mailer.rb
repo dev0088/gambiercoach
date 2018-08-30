@@ -1,16 +1,13 @@
-class Notifications < ActionMailer::Base
+class NotificationMailer < ApplicationMailer
 
   def admin_report(report_type, report_body, recipient)
     @subject    = "#{Setting::NAME} / Administrator Report / #{report_type}"
     @body       = {:report_body => report_body}
-    @report_body = @body
     @recipients  = "#{recipient}"
     @from       = Setting::FROM_EMAIL
     @sent_on    = Time.now
     @header     = {}
-    mail(to: @recipients, subject: @subject, from: @from,
-      template_path: 'notifications',
-      template_name: 'admin_report')
+    mail(to: @recipients, subject: @subject, body: @body, from: @from)
   end
 
   def cash_reservation_create_success(user, reservation)
@@ -20,11 +17,7 @@ class Notifications < ActionMailer::Base
     @from       = Setting::FROM_EMAIL
     @sent_on    = Time.now
     @header     = {}
-    @user       = user
-    @reservation = reservation
-    mail(to: @recipients, subject: @subject, from: @from,
-      template_path: 'notifications',
-      template_name: 'cash_reservation_create_success')
+    mail(to: @recipients, subject: @subject, body: @body, from: @from)
   end
 
   def cc_reservation_create_success(user, reservation)
@@ -128,16 +121,16 @@ class Notifications < ActionMailer::Base
   end
 
   def verify(login_id, token, email, sent_at = Time.now)
-    @subject    = "#{Setting::NAME} / account verification"
-    @body       = {:token => token, :login_id => login_id}
-    @recipients = "#{email}"
-    @from       = Setting::FROM_EMAIL
-    @sent_on    = sent_at
-    @headers    = {}
     @login_id = login_id
     @token = token
-    mail(to: @recipients, subject: @subject, from: @from, 
-      template_path: 'notifications',
+    @subject    = "#{Setting::NAME} / account verification"
+    @body       = {:token => @token, :login_id => @login_id}
+    @recipients = email
+    @sent_on    = sent_at
+    @headers    = {}
+    mail(to: @recipients, 
+    	subject: @subject, 
+    	template_path: 'notification_mailer',
       template_name: 'verify')
   end
 
@@ -170,4 +163,5 @@ class Notifications < ActionMailer::Base
     @header = {}
     mail(to: @recipients, subject: @subject, body: @body, from: @from)
   end
-end
+
+ end
