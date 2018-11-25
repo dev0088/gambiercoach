@@ -42,7 +42,7 @@
   		<% if !flash[:success].nil? || !flash[:error].nil? -%>
   		<div id="messaging">
   			<h2 class="<%= flash[:success].nil? ? "error" : "success" %>">
-  				<%= flash[:success].nil? ? flash[:error] : flash[:success] %>
+  				<%= (flash[:success].nil? ? flash[:error] : flash[:success]).html_safe %>
   			</h2>
   		</div>
   		<% end -%>

@@ -44,7 +44,7 @@ class UserController < ApplicationController
         end
         return
       else
-        flash.now[:error] = "please re-check your login id and password<br/>If this is your first time using the service, scroll down and enter your student id in the second box on this page"
+        flash.now[:error] = "Please re-check your login id and password.<br/>If this is your first time using the service, scroll down and enter your student id in the second box on this page."
         render
         return
       end
@@ -82,7 +82,7 @@ class UserController < ApplicationController
       # u.save_with_validation(false)
       u.save
       u.generate_reset_password_token
-      Notifications.verify(u.login_id, u.reset_password_token, u.email).deliver_later
+      Notifications.with(user: u).verify(u.login_id, u.reset_password_token, u.email).deliver_now
 
       flash[:email_address] = u.email
       redirect_to :action => "complete_verify"
@@ -159,7 +159,7 @@ class UserController < ApplicationController
       if @user.errors.empty?
         @user.reset_password_token = nil
         @user.save
-       Notifications.change_password_success(@user).deliver_later
+        Notifications.change_password_success(@user).deliver_later
         flash[:success] = "saved your new password, please log in"
         redirect_to :action => "login"
         return
@@ -188,7 +188,7 @@ class UserController < ApplicationController
     # Handling a POST from here on out...
 
     # Did they not enter an email/username?
-    if params["login_id"].present?
+    if !params["login_id"].present?
       flash.now[:error] = 'please enter an email address or username.'
       render
       return

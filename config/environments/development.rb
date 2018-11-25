@@ -41,7 +41,7 @@ Rails.application.configure do
     port:                 587,
     domain:               'gambiercoach.com',
     user_name:            'support@gambiercoach.com',
-    password:             '',
+    password:             'GambierCoach18#',
     authentication:       'login',
     enable_starttls_auto: true }
 

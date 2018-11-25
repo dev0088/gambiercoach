@@ -141,6 +141,7 @@ Rails.application.routes.draw do
       get :change_forgot_password
       post :change_forgot_password
       get :forgot_password
+      post :forgot_password
       get :sent_forgot_password_link
       get :promote
     end
