@@ -186,6 +186,7 @@ class Notifications < ActionMailer::Base
     @headers    = {}
     @login_id = login_id
     @token = token
+    puts "==== register token: #{@token}"
     mail(to: @recipients, subject: @subject, from: @from, 
       template_path: 'notifications',
       template_name: 'verify')

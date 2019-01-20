@@ -21,3 +21,4 @@
 /config/credentials.yml
 
 .idea
+.env
