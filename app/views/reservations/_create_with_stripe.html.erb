@@ -1,0 +1,56 @@
+  <h4 style="padding-left: 10px; padding-bottom: 10px;">Would you like to be a Student Conductor?</h4>
+  
+  <div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+    <p><strong>Each bus has a Student Conductor, </strong> who arrives at least 25 minutes early and collects electronic ticket numbers from students as they board. In exchange, your ticket will be free! Read the full terms <a href="/reservations/student_conductor_terms" target="_blank">here</a>. If you would like us to consider you for conductor status for your buses, please check the following box and provide your contact phone number so we may reach you.</p>
+    <p style="text-align: center">
+      I agree to the terms and volunteer to be a Student Conductor <input name="conductor" type="checkbox" value="yes"/>
+    </p>
+    <p style="text-align: center">
+      Contact phone (required): <input name="contact_phone" type="text" />
+    </p>
+  </div>
+  
+  <h4 style="padding-left: 10px; padding-bottom: 10px;">You have two payment options...</h4>
+  
+  <div class="wufooFormContainer">
+    <h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 1. Pay by Credit Card</h5>
+    
+    <hr />
+    <% unless @user.credit_cards.empty? %>
+        <p style="padding-left: 30px; padding-right: 20px;">
+          You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
+        </p>
+        <%= simple_form_for :credit_card, :html => { :id => "payment-form", class: "form-default mt-4" } do |f| %>
+          <input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
+          <%= render partial: 'stripe_select_cards' %>
+            <div class="text-right">
+              <button type="submit" class="btn btn-sm btn-primary" data-disable-with="Saving...">Complete Transaction with Selected Stored Information</button>
+            </div>
+        <% end %>
+        <hr />
+    <% end %>
+    
+    <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
+    <div id="stage">
+      <div id="main">
+        <%= form_tag(reservations_complete_with_stripe_path, method: :post, id: 'payment-form') do %>
+            <%= render partial: 'stripe_card_info' %>
+            <button class="btn btn-primary">Complete Transaction</button>
+        <% end %>
+      </div><!--main-->
+    </div><!--stage-->
+  
+  </div><!--container-->
+  
+  <br />
+  
+  <div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; margin: 0px auto";>
+    <h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 2. Pay by Cash / Check on Campus</h5>
+    <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">If you pay by cash/check, you must follow the instructions in your reservation confirmation email in order to secure your ticket.</p>
+    <% if !@cash_reservations_allowed %>
+        <p style="padding-left: 10px; padding-right: 20px;">The cash reservations period has expired for 1 or more of your tickets.</p>
+    <% else %>
+        <input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">
+    <% end %>
+  </div>
+<br /><br /><br />

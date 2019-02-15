@@ -1,0 +1,19 @@
+<% if current_user.card_on_file? %>
+    
+    <p>Please select a card on file to be used for this transaction.</p>
+    
+    <% current_user.credit_cards.each do |card| %>
+        <div class="row mb-3">
+          <div class="col-12">
+            <%= radio_button("credit_card", "id", card.id, {class: 'cc-radio'}) %>
+            <label for="credit_card_id_<%= card.id %>"><%= card.kind %> ending in <%= card.last_4 %> (Expires on <%= card.exp_mo %>/<%= card.exp_year %>)</label>
+          </div>
+        </div>
+    <% end %>
+    
+    <div class="row mb-3">
+      <div class="col-12">
+        <small><a href="javascript:void(0)" id="deselect-card">De-select card</a></small>
+      </div>
+    </div>
+<% end %>

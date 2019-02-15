@@ -37,13 +37,13 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:              'smtp.office365.com',
-    port:                 587,
-    domain:               'gambiercoach.com',
-    user_name:            'support@gambiercoach.com',
-    password:             'GambierCoach18#',
-    authentication:       'login',
-    enable_starttls_auto: true
+    address:              ENV['EMAIL_SERVER_ADDRESS'],
+    port:                 ENV['EMAIL_PORT'],
+    domain:               ENV['EMAIL_DOMAIN'],
+    user_name:            ENV['EMAIL_USER_NAME'],
+    password:             ENV['EMAIL_PASSWORD'],
+    authentication:       ENV['EMAIL_AUTHENTICATION_MODE'],
+    enable_starttls_auto: ENV['EMAIL_ENABLE_START_TLS_AUTO']
   }
 
   # Print deprecation notices to the Rails logger.

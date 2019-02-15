@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Stripe Events</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Stripe event</th>
+      <th>Kind</th>
+      <th>Error</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @stripe_events.each do |stripe_event| %>
+      <tr>
+        <td><%= stripe_event.stripe_event_id %></td>
+        <td><%= stripe_event.kind %></td>
+        <td><%= stripe_event.error %></td>
+        <td><%= link_to 'Show', stripe_event %></td>
+        <td><%= link_to 'Edit', edit_stripe_event_path(stripe_event) %></td>
+        <td><%= link_to 'Destroy', stripe_event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Stripe Event', new_stripe_event_path %>

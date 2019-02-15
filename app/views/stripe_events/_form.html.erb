@@ -1,0 +1,32 @@
+<%= form_with(model: stripe_event, local: true) do |form| %>
+  <% if stripe_event.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(stripe_event.errors.count, "error") %> prohibited this stripe_event from being saved:</h2>
+
+      <ul>
+      <% stripe_event.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :stripe_event_id %>
+    <%= form.text_field :stripe_event_id, id: :stripe_event_stripe_event_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :kind %>
+    <%= form.text_field :kind, id: :stripe_event_kind %>
+  </div>
+
+  <div class="field">
+    <%= form.label :error %>
+    <%= form.text_area :error, id: :stripe_event_error %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

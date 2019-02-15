@@ -22,179 +22,183 @@
 	<% end -%>
 </div>
 
-<form action="<%= reservations_complete_path %>" method="post">
-
-<input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
-
-<h4 style="padding-left: 10px; padding-bottom: 10px;">Would you like to be a Student Conductor?</h4>
-
-<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
-	<p><strong>Each bus has a Student Conductor, </strong> who arrives at least 25 minutes early and collects electronic ticket numbers from students as they board. In exchange, your ticket will be free! Read the full terms <a href="/reservations/student_conductor_terms" target="_blank">here</a>. If you would like us to consider you for conductor status for your buses, please check the following box and provide your contact phone number so we may reach you.</p>
-	<p style="text-align: center">
-		I agree to the terms and volunteer to be a Student Conductor <input name="conductor" type="checkbox" value="yes"/>
-	</p>
-	<p style="text-align: center">
-		Contact phone (required): <input name="contact_phone" type="text" />
-	</p>
-</div>
-
-<h4 style="padding-left: 10px; padding-bottom: 10px;">You have two payment options...</h4>
-
-<div class="wufooFormContainer">
-<h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 1. Pay by Credit Card</h5>
-
-<hr />
-<% if !@user.stored_payment_addresses.empty? %>
-	<p style="padding-left: 30px; padding-right: 20px;">
-		You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
-	</p>
-
-	<% @user.stored_payment_addresses.each_with_index do |spa, index| %>
-		<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
-			<br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" checked="<%= if index == 0 then true else false end %>" /> Use this stored card information.
-			<br />Name on Card: <strong><%= spa.name_on_card %></strong>
-			<br />Billing Address: <strong><%= spa.address_one %> <%= spa.city %>, <%= spa.state %> <%= spa.zip %></strong>
-			<br />Card Number: &nbsp;&nbsp;&nbsp;<input type="text" name="card_number_<%= spa.id %>" />
-			<br />Expiration Date:
-			<select name="expiration_month_<%= spa.id %>">
-				<% for m in 1..12 do -%>
-					<option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
-				<% end -%>
-			</select>
-			<select name="expiration_year_<%= spa.id %>">
-				<option>2018</option>
-				<option>2019</option>
-				<option>2020</option>
-				<option>2021</option>
-				<option>2022</option>
-				<option>2023</option>
-				<option>2024</option>
-				<option>2025</option>
-				<option>2026</option>
-		    <option>2027</option>
-		    <option>2028</option>
-		    <option>2029</option>
-		    <option>2030</option>
-			</select>
-
-			<br />CCV: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="text" name="ccv_<%= spa.id %>" class="field text small" style="width: 15%;"/>
-			<br />
-
-			<a href="<%= edit_stored_address_path(spa.id) %>">edit</a>
-			&nbsp;&nbsp;&nbsp;
-			<%= link_to "delete", stored_address_path(spa.id), :method => :delete %>
-		</p>
-	<% end %>
-
-	<input name="stored_cc_submit" class="button" type="submit" value="Complete Transaction with Selected Stored Information" style="margin-left: 30px;" />
-
-	<hr />
+<% if is_stripe_payment %>
+   
+    <%= render partial: 'create_with_stripe' %>
+    
+<% else %>
+    <form action="<%= reservations_complete_path %>" method="post">
+      
+      <input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
+      
+      <h4 style="padding-left: 10px; padding-bottom: 10px;">Would you like to be a Student Conductor?</h4>
+      
+      <div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; padding: 5px; margin: 0px auto";>
+        <p><strong>Each bus has a Student Conductor, </strong> who arrives at least 25 minutes early and collects electronic ticket numbers from students as they board. In exchange, your ticket will be free! Read the full terms <a href="/reservations/student_conductor_terms" target="_blank">here</a>. If you would like us to consider you for conductor status for your buses, please check the following box and provide your contact phone number so we may reach you.</p>
+        <p style="text-align: center">
+          I agree to the terms and volunteer to be a Student Conductor <input name="conductor" type="checkbox" value="yes"/>
+        </p>
+        <p style="text-align: center">
+          Contact phone (required): <input name="contact_phone" type="text" />
+        </p>
+      </div>
+      
+      <h4 style="padding-left: 10px; padding-bottom: 10px;">You have two payment options...</h4>
+      
+      <div class="wufooFormContainer">
+        <h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 1. Pay by Credit Card</h5>
+        
+        <hr />
+        <% unless @user.stored_payment_addresses.empty? %>
+            <p style="padding-left: 30px; padding-right: 20px;">
+              You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
+            </p>
+            
+            <% @user.stored_payment_addresses.each_with_index do |spa, index| %>
+                <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 20px; border-bottom: 1px dotted gray;">
+                  <br /><input type="radio" name="stored_payment_set" value="<%= spa.id %>" checked="<%= if index == 0 then true else false end %>" /> Use this stored card information.
+                  <br />Name on Card: <strong><%= spa.name_on_card %></strong>
+                  <br />Billing Address: <strong><%= spa.address_one %> <%= spa.city %>, <%= spa.state %> <%= spa.zip %></strong>
+                  <br />Card Number: &nbsp;&nbsp;&nbsp;<input type="text" name="card_number_<%= spa.id %>" />
+                  <br />Expiration Date:
+                  <select name="expiration_month_<%= spa.id %>">
+                    <% for m in 1..12 do -%>
+                        <option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
+                    <% end -%>
+                  </select>
+                  <select name="expiration_year_<%= spa.id %>">
+                    <option>2018</option>
+                    <option>2019</option>
+                    <option>2020</option>
+                    <option>2021</option>
+                    <option>2022</option>
+                    <option>2023</option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                    <option>2027</option>
+                    <option>2028</option>
+                    <option>2029</option>
+                    <option>2030</option>
+                  </select>
+                  
+                  <br />CCV: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <input type="text" name="ccv_<%= spa.id %>" class="field text small" style="width: 15%;"/>
+                  <br />
+                  
+                  <a href="<%= edit_stored_address_path(spa.id) %>">edit</a>
+                  &nbsp;&nbsp;&nbsp;
+                  <%= link_to "delete", stored_address_path(spa.id), :method => :delete %>
+                </p>
+            <% end %>
+            
+            <input name="stored_cc_submit" class="button" type="submit" value="Complete Transaction with Selected Stored Information" style="margin-left: 30px;" />
+            
+            <hr />
+        <% end %>
+        
+        <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
+        <div id="stage">
+          <div id="main">
+            <ul id="formFields">
+              
+              <li>
+                <p class="instruct">Exactly as it appears on your credit card</p>
+                <label class="desc" for="field0">Name on Card</label>
+                <div class="full">
+                  <input id="field0" name="new_cc[name_on_card]" class="field text large" type="text" maxlength="255" value=""/>
+                </div>
+              </li>
+              
+              <li>
+                <div class="full">
+                  <label class="desc" for="field21">Card Number</label>
+                  <input id="field21" name="new_cc[card_number]" class="field text large" type="text" value=""/>
+                </div>
+              </li>
+              <li>
+                <div class="full">
+                  <label class="desc">Expiration Date</label>
+                  <select class="field select small" name="new_cc[expiration_month]">
+                    <% for m in 1..12 do -%>
+                        <option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
+                    <% end -%>
+                  </select>
+                  <select class="field select small" name="new_cc[expiration_year]">
+                    <option>2018</option>
+                    <option>2019</option>
+                    <option>2020</option>
+                    <option>2021</option>
+                    <option>2022</option>
+                    <option>2023</option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                    <option>2027</option>
+                    <option>2028</option>
+                    <option>2029</option>
+                    <option>2030</option>
+                  </select>
+                </div>
+              </li>
+              
+              <li>
+                <div class="full">
+                  <label class="desc" for="field22">CCV</label>
+                  <input id="field22" name="new_cc[ccv]" class="field text medium" type="text" value=""/>
+                </div>
+              </li>
+              
+              <li>
+                <p class="instruct">Make sure you fill this out completely using the exact information on the billing statements you receive from your credit card company.</p>
+                <label class="desc" for="field15">Billing Address</label>
+                <div class="full">
+                  <input id="field15" name="new_cc[address_one]" class="field text large "value=""/>
+                  <p class="field ">Street Address</p>
+                </div>
+                <div class="left">
+                  <input id="field17" name="new_cc[city]" class="field text medium "value=""/>
+                  <p class="field ">City</p>
+                </div>
+                <div class="right">
+                  <select class="field select medium" id="field20" name="new_cc[state]">
+                    <%= render :partial => "states_options" %>
+                  </select>
+                  <p class="field ">State / Province / Region</p>
+                </div>
+                <div class="full">
+                  <input id="field19" name="new_cc[zip]" class="field text small " maxlength="15"value=""/>
+                  <p class="field ">Postal / Zip Code</p>
+                </div>
+                <p></p>
+              </li>
+              <li>
+                <label class="desc" for="field23"></label>
+                <div>
+                  <input name="new_cc[store_cc_info]" value="yes" class="field checkbox" type="checkbox" checked="checked" value="Save name / address information for future purchases"/>
+                  <label class="choice" for="field23">Save name / address information?</label>
+                </div>
+              </li>
+            </ul>
+            <div class="buttons">
+              <input id="submit" name="new_cc_submit" class="button" type="submit" value="Complete Transaction" />
+            </div>
+          </div><!--main-->
+        </div><!--stage-->
+      
+      </div><!--container-->
+      
+      <br />
+      
+      <div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; margin: 0px auto";>
+        <h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 2. Pay by Cash / Check on Campus</h5>
+        <p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">If you pay by cash/check, you must follow the instructions in your reservation confirmation email in order to secure your ticket.</p>
+        <% if !@cash_reservations_allowed %>
+            <p style="padding-left: 10px; padding-right: 20px;">The cash reservations period has expired for 1 or more of your tickets.</p>
+        <% else %>
+            <input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">
+        <% end %>
+      </div>
+    </form>
+    <br /><br /><br />
 <% end %>
-
-<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">Enter your credit card payment information below and click "complete transaction." When you submit this form, we will bill your credit card <%= convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'</p>
-<div id="stage">
-<div id="main">
-
-<ul id="formFields">
-
-<li>
-<p class="instruct">Exactly as it appears on your credit card</p>
-<label class="desc" for="field0">Name on Card</label>
-<div class="full">
-<input id="field0" name="new_cc[name_on_card]" class="field text large" type="text" maxlength="255" value=""/>
-</div>
-</li>
-
-<li>
-<div class="full">
-<label class="desc" for="field21">Card Number</label>
-<input id="field21" name="new_cc[card_number]" class="field text large" type="text" value=""/>
-</div>
-</li>
-<li>
-<div class="full">
-	<label class="desc">Expiration Date</label>
-	<select class="field select small" name="new_cc[expiration_month]">
-	<% for m in 1..12 do -%>
-		<option><%= (m < 10) ? "0#{m}" : "#{m}" %></option>
-	<% end -%>
-	</select>
-  <select class="field select small" name="new_cc[expiration_year]">
-		<option>2018</option>
-		<option>2019</option>
-		<option>2020</option>
-		<option>2021</option>
-		<option>2022</option>
-		<option>2023</option>
-		<option>2024</option>
-		<option>2025</option>
-		<option>2026</option>
-		<option>2027</option>
-		<option>2028</option>
-		<option>2029</option>
-		<option>2030</option>
-	</select>
-</div>
-</li>
-
-<li>
-	<div class="full">
-		<label class="desc" for="field22">CCV</label>
-		<input id="field22" name="new_cc[ccv]" class="field text medium" type="text" value=""/>
-	</div>
-</li>
-
-<li>
-<p class="instruct">Make sure you fill this out completely using the exact information on the billing statements you receive from your credit card company.</p>
-<label class="desc" for="field15">Billing Address</label>
-<div class="full">
-<input id="field15" name="new_cc[address_one]" class="field text large "value=""/>
-<p class="field ">Street Address</p>
-</div>
-<div class="left">
-<input id="field17" name="new_cc[city]" class="field text medium "value=""/>
-<p class="field ">City</p>
-</div>
-<div class="right">
-<select class="field select medium" id="field20" name="new_cc[state]">
-	<%= render :partial => "states_options" %>
-</select>
-<p class="field ">State / Province / Region</p>
-</div>
-<div class="full">
-<input id="field19" name="new_cc[zip]" class="field text small " maxlength="15"value=""/>
-<p class="field ">Postal / Zip Code</p>
-</div>
-<p></p></li>
-<li>
-<label class="desc" for="field23"></label>
-<div>
-<input name="new_cc[store_cc_info]" value="yes" class="field checkbox" type="checkbox" checked="checked" value="Save name / address information for future purchases"/>
-<label class="choice" for="field23">Save name / address information?</label>
-</div>
-</li>
-</ul>
-
-<div class="buttons">
-<input id="submit" name="new_cc_submit" class="button" type="submit" value="Complete Transaction" />
-</div>
-
-</div><!--main-->
-</div><!--stage-->
-
-</div><!--container-->
-
-<br />
-
-<div style="width: 500px; background-color: #FAFFCF; border: 1px dotted #333; margin: 0px auto";>
-	<h5 style="padding: 10px; margin: 0; font-size: 100%;">Option 2. Pay by Cash / Check on Campus</h5>
-	<p style="padding-left: 30px; padding-right: 20px; padding-bottom: 0; margin-bottom: 0;">If you pay by cash/check, you must follow the instructions in your reservation confirmation email in order to secure your ticket.</p>
-	<% if !@cash_reservations_allowed %>
-		<p style="padding-left: 10px; padding-right: 20px;">The cash reservations period has expired for 1 or more of your tickets.</p>
-	<% else %>
-		<input style="margin-left: 30px; margin-top: 20px; margin-bottom: 20px; font-size: 16px;" type="submit" name="pay_by_cash" value="Finish Reservation">
-	<% end %>
-</div>
-</form>
-<br /><br /><br />

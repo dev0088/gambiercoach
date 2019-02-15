@@ -19,5 +19,6 @@ Rails.application.config.assets.version = '1.0'
 # Rails.application.config.assets.precompile += %w( transport_session.js )
 # Add folder with webpack generated assets to assets.paths
 Rails.application.config.assets.paths << Rails.root.join("app", "assets")
-
-# Rails.application.config.assets.precompile += ["application.js", "application.css"]
+Rails.application.config.assets.paths << Rails.root.join("vendor")
+Rails.application.config.assets.precompile += ["application.js", "application.css"]
+Rails.application.config.assets.precompile += %w( checkout.js )

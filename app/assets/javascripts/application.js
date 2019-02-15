@@ -11,6 +11,10 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery_ujs
+//= require bootstrap.bundle.min.js
+//= require jquery.turbolinks
+//= require turbolinks
 //= require rails-ujs
 //= require prototype.js
 //= require ajax_scaffold.js
@@ -20,3 +24,15 @@
 //= require dragdrop.js
 //= require effects.js
 //= require_tree .
+
+var resetForms = function () {
+    // this depends on your use
+    // this is for foundation 6's abide
+    $('form').each(function () {
+        $(this).foundation('destroy');
+    });
+};
+
+document.addEventListener("turbolinks:before-cache", function() {
+    resetForms();
+});

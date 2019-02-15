@@ -1,0 +1,2 @@
+class StripeEvent < ApplicationRecord
+end

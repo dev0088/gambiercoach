@@ -2,13 +2,13 @@
 
 class Setting < ActiveRecord::Base
 
-  SCHOOL = "Kenyon"
-  EXAMPLE_USERNAME = "smithj"
-  NAME = "Gambier Coach"
-  EMAIL = "@kenyon.edu"
-  ADMIN_EMAIL = "support@gambiercoach.com" #"vigd@kenyon.edu"
-  FROM_EMAIL = "support@gambiercoach.com" #"vigd@kenyon.edu"
-  SERVER_URL = "http://www.gambiercoach.com"
+  SCHOOL = ENV['SCHOOL']
+  EXAMPLE_USERNAME = ENV['smithj']
+  NAME = ENV["APP_NAME"]
+  EMAIL = ENV['EMAIL_SUFFIX']
+  ADMIN_EMAIL = ENV['ADMIN_EMAIL']
+  FROM_EMAIL = ENV['FROM_EMAIL']
+  SERVER_URL = ENV['SERVER_URL']
 
   validates_numericality_of :max_tickets_purchase, :only_integer => true
   after_save :update_relevant_fields

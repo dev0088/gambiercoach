@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :stripe_events
+  resources :strips_events
+  resources :credit_cards
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "/", :controller => "index", :action => "index"
   get "/group_tickets", :controller => "index", :action => "group_tickets"
@@ -8,6 +11,8 @@ Rails.application.routes.draw do
   get "/reservations/my_reservations", :controller => "reservations", :action => "my_reservations"
   get "/reservations/my_wait_list_reservations", :controller => "reservations", :action => "my_wait_list_reservations"
   post "/reservations/complete", :controller => "reservations", :action => "complete"
+  post "/reservations/complete_with_stripe", :controller => "reservations", :action => "complete_with_stripe"
+  post "/reservations/complete_with_selected", :controller => "reservations", :action => "complete_with_selected"
   get "/reservations/create", :controller => "reservations", :action => "create"
   post "/reservations/create", :controller => "reservations", :action => "create"
   get "/reservations/modify/:id(.:format)", :controller => "reservations", :action => "modify"
@@ -152,5 +157,10 @@ Rails.application.routes.draw do
   get '500', to:  'application#server_error'
   get '/promote', to: 'user#promote'
   match '*path' => redirect('/promote'), via: :get
+
+  resources :credit_cards, only: [:index, :create, :destroy]
+  post "/stripe/receive"
+  get "/checkout/checkout", to: "checkout#checkout", as: "checkout"
+  post "/checkout/purchase", to: "checkout#purchase", as: "purchase"
 
 end

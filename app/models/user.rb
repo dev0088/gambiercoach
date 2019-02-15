@@ -1,11 +1,17 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
+  include StripeCustomerable
+
   has_many :stored_payment_addresses, :dependent => :destroy
   has_many :reservations
   has_many :wait_list_reservations
   has_many :credit_payment_events
   has_many :trip_reports
+
+  # Stripe integration
+  has_many :credit_cards, as: :owner, dependent: :destroy
+
   attr_accessor :new_password
   after_validation :encrypt_new_password
 
@@ -93,6 +99,10 @@ class User < ActiveRecord::Base
     return !WaitListReservation.where("user_id = ? and bus_id = ?", self.id, bus_id).first.nil?
   end
 
+  def card_on_file?
+    credit_cards.any?
+  end
+
   protected
 
   def self.hashed(str)
@@ -110,4 +120,5 @@ class User < ActiveRecord::Base
       self.new_password = nil
     end
   end
+
 end

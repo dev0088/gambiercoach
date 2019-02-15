@@ -4,6 +4,8 @@ require 'authorizenet'
 require 'securerandom'
 
 class ReservationsController < ApplicationController
+  include ActionView::Helpers::NumberHelper
+  include ActionView::Helpers::TextHelper
 
   before_action :login_required, :except => [:create, :get_on_wait_list]
   before_action :load_user_if_logged_in, :only => [:create, :get_on_wait_list]
@@ -194,6 +196,32 @@ class ReservationsController < ApplicationController
         return
       end
     end
+  end
+
+  def complete_with_selected
+
+  end
+
+  def complete_with_stripe
+
+    # Create new credit card from stripToken param, or retrieve it from Stripe account.
+    handle_token
+
+    unless @credit_card.nil?
+      @stripe_charger = StripeCharger.new(current_user, @credit_card, 5000, "test payment")
+      @stripe_charger.charge!
+      if @stripe_charger.success?
+        amount_str = number_to_currency(@stripe_charger.order_total_in_dollars)
+        redirect_to :action => "my_reservations",
+                    notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
+      else
+        flash[:error] = @stripe_charger.declined_explanation
+      end
+    else
+      # flash[:error] = "Invalid credit card."
+    end
+    # In the case fail, go to origin page.
+    redirect_to :action => "create"
   end
 
   def my_reservations
@@ -452,5 +480,23 @@ class ReservationsController < ApplicationController
     #   raise "Reservation total as calculated did not match what we had in the server session -- possible hack attempt."
     # end
     return r
+  end
+
+  private
+
+  # def credit_card_params
+  #   params.require(:credit_card).permit(:token)
+  # end
+
+  def handle_token
+    @stripe_token = params[:stripeToken]
+    unless @stripe_token.blank?
+      @credit_card = current_user.credit_cards.new(token: @stripe_token)
+      if @credit_card.save
+        # do nothing
+      else
+        # do nothing
+      end
+    end
   end
 end

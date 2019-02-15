@@ -5,9 +5,13 @@
     content="<meta name='google-site-verification' content='bdmdr5uHptHUikbUlbxQQUheLE87J9oub_R_Pi715oM' />" />
     <title><%= Setting::NAME %></title>
     <%= csrf_meta_tags %>
-    <%= javascript_include_tag :application %>
     <link rel="stylesheet" href="/assets/stylesheets/williams.css" type="text/css" media="screen" />
     <script type="text/javascript" src="/assets/javascripts/niftycube.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe('<%=ENV['STRIPE_PUBLISHABLE_KEY'] %>');
+    </script>
+    <%= javascript_include_tag :application %>
   </head>
 
   <body>

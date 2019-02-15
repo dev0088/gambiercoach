@@ -1,0 +1,44 @@
+// Place all the styles related to the credit_cards controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#card-element {
+  clear: both;
+  border-radius: 1em;
+  border: 1px solid #e6e6e6;
+  background-color: #f2f2f2;
+  padding: 1.2em 2em 2em 2em;
+}
+
+.checkout-cart-heading {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #FFFFFF; // #343A3F;
+}
+
+.checkout-cart {
+  width: auto;
+  border-radius: .6em;
+  border: 2px solid #333333;
+  background-color: #f2f2f2;
+  padding: 1em 1em 1em 1em;
+}
+
+.cart-line-item {
+  font-size: 1em;
+  color: #333333;
+}
+
+.bundle-line-item-price {
+  font-size: 1.2em;
+  color: #333333;
+}
+
+.cart-total-label {
+  font-size: 1.6em;
+}
+
+.cart-total {
+  font-weight: bold;
+  font-size: 1.6em;
+}

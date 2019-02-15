@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stripe_event_id: MyString
+  kind: MyString
+  error: MyText
+
+two:
+  stripe_event_id: MyString
+  kind: MyString
+  error: MyText

@@ -7,4 +7,8 @@ module ReservationsHelper
       reservation_price.format
     end
   end
+
+  def is_stripe_payment
+    ENV['PAYMENT_METHOD'] == 'stripe' ? true : false
+  end
 end
