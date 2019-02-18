@@ -208,12 +208,38 @@ class ReservationsController < ApplicationController
     handle_token
 
     unless @credit_card.nil?
-      @stripe_charger = StripeCharger.new(current_user, @credit_card, 5000, "test payment")
+      @charge_amount = session[:reservation_price]['fractional'].to_i
+      @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
       @stripe_charger.charge!
       if @stripe_charger.success?
+
         amount_str = number_to_currency(@stripe_charger.order_total_in_dollars)
+
+        customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+        card_suffix = customer['sources']['data'][0]['last4']
+
+        cc_info = Hash.new
+        cc_info[:customer_id] = current_user.stripe_customer_id
+        cc_info[:card_suffix] = card_suffix
+        if @user.stored_stripes[0].nil?
+          User.transaction do
+
+            sps = StoredStripe.new( :user => @user,
+                                    :customer_id => cc_info[:customer_id],
+                                    :card_suffix => cc_info[:card_suffix]
+                                  )
+            sps.save!
+          end
+        end
+        @user.stored_stripes.reload
+
+        r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
+        session[:reservation_details], @stripe_charger.charge!['id'],
+        session[:reservation_price], session[:wait_list_id])
+
         redirect_to :action => "my_reservations",
                     notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
+        return
       else
         flash[:error] = @stripe_charger.declined_explanation
       end
@@ -278,17 +304,29 @@ class ReservationsController < ApplicationController
       return
     when 'POST'
       refund_amt = "0".to_money
+
+      @charge = @user.stored_stripes
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.where(id: rt).first
         next if reservation_ticket.nil?
         numbers_of_tickets = params[:rt][rt]
         if "0" == numbers_of_tickets
           refund_amt += reservation_ticket.bus.route.to_m * reservation_ticket.quantity
+          refund_amt = (refund_amt * 100).to_i
+          refund = Stripe::Refund.create({
+              charge: @reservation.charge_id,
+              amount: refund_amt,
+          })
           reservation_ticket.destroy
         else
           difference = reservation_ticket.quantity.to_i - numbers_of_tickets.to_i
           refund_amt += reservation_ticket.bus.route.to_m * difference
+          refund_amt = (refund_amt * 100).to_i
           reservation_ticket.quantity = numbers_of_tickets
+          refund = Stripe::Refund.create({
+              charge: @reservation.charge_id,
+              amount: refund_amt,
+          })
           reservation_ticket.save!
         end
       end
@@ -317,7 +355,7 @@ class ReservationsController < ApplicationController
         @reservation.destroy
         killed_whole_reservation = true
       else
-        @reservation.total = (@reservation.total.to_money - refund_amt).to_s
+        @reservation.total = (@reservation.total.to_money - refund_amt.to_f).to_s
         @reservation.save!
       end
       Notifications.reservation_modify_success(@user, @reservation).deliver_later
@@ -434,8 +472,9 @@ class ReservationsController < ApplicationController
     return nil, r
   end
 
-  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
+  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, charger_id, reservation_price, wait_list_id)
     r = Reservation.new(:user => user,
+                        :charge_id => charger_id,
                         :payment_status => pay_type)
     r.save!
 
@@ -499,4 +538,10 @@ class ReservationsController < ApplicationController
       end
     end
   end
+
+  def number_to_currency(number)
+    @amount = number / 100
+    return @amount
+  end
+
 end

@@ -1,0 +1,1561 @@
+/*
+ AjaxScaffoldGenerator version 3.1.0
+ (c) 2006 Richard White <rrwhite@gmail.com>
+
+ AjaxScaffoldGenerator is freely distributable under the terms of an MIT-style license.
+
+ For details, see the AjaxScaffoldGenerator web site: http://www.ajaxscaffold.com/
+*/
+
+
+.ajax-scaffold form,
+.ajax-scaffold table,
+.ajax-scaffold p,
+.ajax-scaffold div,
+.ajax-scaffold fieldset {
+margin: 0;
+padding: 0;
+}
+
+.ajax-scaffold {
+margin: 5px 0;
+}
+
+.ajax-scaffold table {
+width: 100%;
+}
+
+.ajax-scaffold a {
+color: #06c;
+text-decoration: none;
+}
+
+/* Header Styling
+   ======================== */
+
+.ajax-scaffold-header {
+background: #330066;
+position: relative;
+}
+
+.ajax-scaffold-header h2 {
+color: #fff;
+padding: 2px 5px 4px 5px;
+margin: 0;
+font: normal 17px verdana, sans-serif;
+}
+
+.ajax-scaffold-header div.actions a {
+	color: #fff;
+	background: url(/assets/images/add.gif) 1px 50% no-repeat;
+	font: bold 14px arial, sans-serif;
+	letter-spacing: -1px;
+	text-decoration: none;
+	padding: 1px 2px 1px 19px;
+}
+
+.ajax-scaffold-header div.actions a:hover {
+}
+
+.ajax-scaffold-header div.actions {
+position: absolute;
+right: 5px;
+top: 3px;
+width: 120px;
+text-align: right;
+}
+
+.ajax-scaffold-header div.actions img {
+margin-bottom: -3px;
+}
+
+/* Header Styling : Nested
+   ======================== */
+
+.ajax-scaffold .ajax-scaffold {
+margin: 2px 5px;
+}
+
+.ajax-scaffold .ajax-scaffold .ajax-scaffold-header h2 {
+font-size: 13px;
+font-weight: bold;
+}
+
+.ajax-scaffold .ajax-scaffold .ajax-scaffold-header div.actions a {
+font: bold 11px verdana, sans-serif;
+padding: 0 2px 1px 17px;
+}
+
+.ajax-scaffold .ajax-scaffold .ajax-scaffold-header div.actions {
+top: 4px;
+}
+
+/* Table Column Headers
+   ============================= */
+
+.ajax-scaffold th {
+background: #555;
+text-align: left;
+}
+
+.ajax-scaffold th a,
+.ajax-scaffold th p {
+font: bold 11px arial, sans-serif;
+display: block;
+background: #555;
+}
+
+.ajax-scaffold th a {
+color: #fff;
+padding: 2px 15px 2px 5px;
+}
+
+.ajax-scaffold th p {
+color: #eee;
+padding: 2px 5px;
+}
+
+.ajax-scaffold th a:hover {
+background: #000;
+color: #ff8;
+border: none;
+text-decoration: none;
+}
+
+.ajax-scaffold th.sorted {
+background: #333;
+}
+
+.ajax-scaffold th.asc a,
+.ajax-scaffold th.asc a:hover {
+background: #333 url(/images/arrow_up.gif) right 50% no-repeat;
+}
+
+.ajax-scaffold th.desc a,
+.ajax-scaffold th.desc a:hover {
+background: #333 url(/images/arrow_down.gif) right 50% no-repeat;
+}
+
+.ajax-scaffold th.loading a,
+.ajax-scaffold th.loading a:hover {
+background: #333 url(/images/indicator-small.gif) right 50% no-repeat;
+}
+
+/* Table Body Styling
+   ============================= */
+
+.ajax-scaffold td {
+padding: 5px 4px;
+color: #333;
+font-family: Verdana, sans-serif;
+font-size: 11px;
+background-color: #E6F2FF;
+border-bottom: solid 1px #C5DBF7;
+border-left: solid 1px #C5DBF7;
+}
+
+.ajax-scaffold td.actions {
+border-right: solid 1px #ccc;
+}
+
+.ajax-scaffold tr.even td {
+background-color: #fff;
+border-left: solid 1px #ddd;
+}
+
+.ajax-scaffold tr td.sorted {
+background-color: #B9DCFF;
+border-bottom: solid 1px #AFD0F5;
+}
+
+.ajax-scaffold tr.even td.sorted {
+background-color: #E6F2FF;
+border-bottom: solid 1px #AFD0F5;
+}
+
+.ajax-scaffold td.empty {
+color: #999;
+text-align: center;
+}
+
+/* Table Actions (Edit, Delete) Styling
+   ============================= */
+
+.ajax-scaffold td.actions {
+padding: 0;
+width: 1%;
+}
+
+.ajax-scaffold td.actions table {
+float: right;
+width: auto;
+margin-right: 5px;
+}
+
+.ajax-scaffold td.actions table td {
+border: none;
+text-align: right;
+padding: 0 2px;
+}
+
+.ajax-scaffold td.actions a {
+font: bold 11px verdana, sans-serif;
+letter-spacing: -1px;
+padding: 2px;
+line-height: 16px;
+}
+
+/* ajax-scaffold Footer Styling
+   ========================== */
+
+.ajax-scaffold .ajax-scaffold-footer {
+text-align: right;
+background: #330066;
+padding: 3px 5px 2px 5px;
+border-bottom: none;
+color: #ccc;
+font: bold 12px arial, sans-serif;
+}
+
+.ajax-scaffold-footer a {
+color: #fff;
+text-decoration: none;
+letter-spacing: 0;
+padding: 0 2px;
+margin: 0 -2px;
+font: bold 12px arial, sans-serif;
+}
+
+.ajax-scaffold-footer a:hover {
+background: #378CDF;
+}
+
+.ajax-scaffold-footer .next {
+margin-left: 0;
+padding-left: 5px;
+border-left: solid 1px #ccc;
+}
+
+.ajax-scaffold-footer .previous {
+margin-right: 0;
+padding-right: 5px;
+border-right: solid 1px #ccc;
+}
+
+/* Messages
+   ========================= */
+
+.ajax-scaffold .messages-container,
+.ajax-scaffold .ajax-scaffold .messages-container{
+padding: 0;
+margin: 0 7px;
+border: none;
+}
+
+.ajax-scaffold .empty-message {
+background: #e8e8e8;
+padding: 4px;
+text-align: center;
+color: #666;
+}
+
+.ajax-scaffold .message {
+font-size: 11px;
+font-weight: bold;
+padding: 5px 20px 5px 21px;
+color: #333;
+position: relative;
+margin: 2px 7px;
+line-height: 12px;
+}
+
+.ajax-scaffold td .message a {
+position: absolute;
+right: 10px;
+top: 4px;
+padding: 0;
+font: bold 11px verdana, sans-serif;
+letter-spacing: -1px;
+}
+
+.ajax-scaffold .messages-container .message {
+margin: 0;
+}
+
+.ajax-scaffold .error-message {
+border-left: solid 5px #f66;
+background: #fbb url(/images/error.gif) 2px 3px no-repeat;
+}
+
+.ajax-scaffold .warning-message {
+border-left: solid 5px #ff6;
+background: #ffb url(/images/warning.gif) 2px 3px no-repeat;
+}
+
+.ajax-scaffold .info-message {
+border-left: solid 5px #66f;
+background: #bbf url(/images/information.gif) 2px 3px no-repeat;
+}
+
+* html .ajax-scaffold .messages-container .message {
+background-position: 7px 3px;
+}
+
+/* Error Styling
+   ========================== */
+
+.ajax-scaffold #errorExplanation {
+background: #fcc;
+margin: 2px 7px;
+border: solid 1px #f66;
+float: left;
+}
+
+.ajax-scaffold fieldset {
+clear: both;
+}
+
+.ajax-scaffold #errorExplanation h2 {
+padding: 2px 5px 3px 20px;
+color: #333;
+font-size: 11px;
+margin: 0;
+letter-spacing: 0;
+font-family: Verdana;
+background: #f66 url(/images/error.gif) 2px 1px no-repeat;
+}
+
+.ajax-scaffold #errorExplanation ul {
+margin: 0;
+padding: 0 2px 4px 25px;
+list-style: disc;
+}
+
+.ajax-scaffold #errorExplanation p {
+font-size: 11px;
+padding: 2px 5px;
+font-family: Verdana;
+margin: 0;
+}
+
+.ajax-scaffold #errorExplanation ul li {
+font: bold 11px verdana;
+letter-spacing: -1px;
+margin: 0;
+padding: 0;
+background: transparent;
+}
+
+.ajax-scaffold .fieldWithErrors input {
+border: solid 1px #f00;
+}
+
+/* Loading Indicators
+   ============================== */
+
+.ajax-scaffold .loading-indicator {
+vertical-align: bottom;
+margin: 0;
+}
+
+.ajax-scaffold .ajax-scaffold-header .loading-indicator,
+.ajax-scaffold .update .loading-indicator,
+.ajax-scaffold .create .loading-indicator {
+vertical-align: bottom;
+margin-bottom: 3px;
+}
+
+/* Form Styling
+   ============================== */
+
+.ajax-scaffold td.update,
+.ajax-scaffold td.create {
+background: #DAFFCD;
+padding: 4px;
+border: solid 1px #7FcF00;
+border-top: none;
+}
+
+.ajax-scaffold .ajax-scaffold td.update,
+.ajax-scaffold .ajax-scaffold td.create {
+background: #ffb;
+border: solid 1px #DDDF37;
+border-top: none;
+}
+
+.ajax-scaffold .submit {
+font-weight: bold;
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.ajax-scaffold fieldset {
+border: none;
+}
+
+.ajax-scaffold label.required{
+font-weight: bold;
+}
+
+.ajax-scaffold label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.ajax-scaffold h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px arial;
+}
+
+.ajax-scaffold p.form-footer a {
+font: bold 14px arial, sans-serif;
+letter-spacing: 0;
+}
+
+.ajax-scaffold p {
+clear: both;
+}
+
+.ajax-scaffold div.row {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+}
+
+.ajax-scaffold div.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.ajax-scaffold label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.ajax-scaffold input.text-input,
+.ajax-scaffold select {
+font-size: 16px;
+font-weight: bold;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.ajax-scaffold .form-element input {
+padding: 1px;
+}
+
+.ajax-scaffold textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
+
+/* IE hacks
+   ==================================== */
+
+* html .ajax-scaffold-header {
+height: 1%;
+}
+
+* html .ajax-scaffold td .messages-container {
+border-top: solid 1px #DAFFCD;
+}
+/* line 5, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+#card-element {
+  clear: both;
+  border-radius: 1em;
+  border: 1px solid #e6e6e6;
+  background-color: #f2f2f2;
+  padding: 1.2em 2em 2em 2em;
+}
+
+/* line 13, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.checkout-cart-heading {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+/* line 19, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.checkout-cart {
+  width: auto;
+  border-radius: .6em;
+  border: 2px solid #333333;
+  background-color: #f2f2f2;
+  padding: 1em 1em 1em 1em;
+}
+
+/* line 27, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.cart-line-item {
+  font-size: 1em;
+  color: #333333;
+}
+
+/* line 32, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.bundle-line-item-price {
+  font-size: 1.2em;
+  color: #333333;
+}
+
+/* line 37, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.cart-total-label {
+  font-size: 1.6em;
+}
+
+/* line 41, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/credit_cards.scss */
+.cart-total {
+  font-weight: bold;
+  font-size: 1.6em;
+}
+/*Nifty Corners Cube CSS by Alessandro Fulciniti
+The following classes are added dinamically by javascript,
+and their use should be avoided in the markup */
+
+
+b.niftycorners,b.niftyfill{display:block}
+b.niftycorners *{display:block;height: 1px;line-height:1px;font-size: 1px;
+    overflow:hidden;border-style:solid;border-width: 0 1px}
+/*normal*/
+b.r1{margin: 0 3px;border-width: 0 2px}
+b.r2{margin: 0 2px}
+b.r3{margin: 0 1px}
+b.r4{height: 2px}
+b.rb1{margin: 0 8px;border-width:0 2px}
+b.rb2{margin: 0 6px;border-width:0 2px}
+b.rb3{margin: 0 5px}
+b.rb4{margin: 0 4px}
+b.rb5{margin: 0 3px}
+b.rb6{margin: 0 2px}
+b.rb7{margin: 0 1px;height:2px}
+b.rb8{margin: 0;height:2px}
+b.rs1{margin: 0 1px}
+/*transparent inside*/
+b.t1{border-width: 0 5px}
+b.t2{border-width: 0 3px}
+b.t3{border-width: 0 2px}
+b.t4{height: 2px}
+b.tb1{border-width: 0 10px}
+b.tb2{border-width: 0 8px}
+b.tb3{border-width: 0 6px}
+b.tb4{border-width: 0 5px}
+b.tb5{border-width: 0 4px}
+b.tb6{border-width: 0 3px}
+b.tb7{border-width: 0 2px;height:2px}
+b.tb8{border-width: 0 1px;height:2px}
+b.ts1{border-width: 0 2px}
+/* line 1, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+body {
+  background-color: #fff;
+  color: #333;
+  margin: 33px;
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* line 10, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* line 16, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+/* line 22, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+a {
+  color: #000;
+}
+/* line 25, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+a:visited {
+  color: #666;
+}
+/* line 29, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+a:hover {
+  color: #fff;
+  background-color: #000;
+}
+
+/* line 35, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+th {
+  padding-bottom: 5px;
+}
+
+/* line 39, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+td {
+  padding: 0 5px 7px;
+}
+
+/* line 44, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+div.field, div.actions {
+  margin-bottom: 10px;
+}
+
+/* line 49, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+#notice {
+  color: green;
+}
+
+/* line 53, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+/* line 59, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px 7px 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+/* line 66, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px -7px 0;
+  background-color: #c00;
+  color: #fff;
+}
+/* line 76, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+/* line 82, /Volumes/Project/Upwork Tasks/gambier/app/assets/stylesheets/scaffolds.scss */
+label {
+  display: block;
+}
+/* begin : primary layout */
+
+body {
+	margin:10px 10px 0px 10px;
+	padding:0px;
+	font: 11px verdana, lucida, sans-serif;
+}
+
+a:hover {
+	color: #62993E;
+	text-decoration: underline;
+}
+
+/* banner text style */
+h1 {
+	color: #fff;
+	padding-top: 20px;
+	padding-left: 20px;
+}
+
+#banner {
+	background: white url(/assets/images/bannerkenyon.gif) no-repeat top left;
+	height:50px;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	height:49px;
+}
+
+html>body #banner {
+	height:59px;
+}
+
+#leftSidebar {
+	position: absolute;
+	left:10px;
+	top:50px;
+	width:200px;
+	margin-top: 40px;
+	background: #fff;
+}
+
+#content {
+	width: 700px;
+	margin-left: 199px;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	margin-left: 201px;
+}
+
+html>body #content {
+	margin-left: 201px;
+}
+
+#messaging {
+	width: 450px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border: 1px solid #660066;
+	text-align: center;
+	background: #FFF8C6;
+}
+
+#messaging .error {
+	color: red;
+}
+
+#messaging .success {
+	color: #660066;
+}
+
+#messaging h2 {
+	font-size: 120%;
+}
+
+#contentBody {
+	margin-top: 0px;
+	padding-top: 0px;
+	padding-left: 20px;
+}
+
+#contentBody p{
+	color: #383838;
+}
+
+#footer {
+	margin-top: 50px;
+	clear:both;
+	text-align: center;
+	font-size: 70%;
+	color: #737373;
+}
+/* end : primary layout */
+
+
+/* begin : main nav bar styling */
+#navcontainer {
+	margin: 0 0 0 0;
+	padding-top: 20px;
+	padding-left: 300px;
+	height: 20px;
+}
+
+#navcontainer ul {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	text-align: center;
+}
+
+#navcontainer ul li {
+	display: block;
+	float: left;
+	text-align: center;
+}
+
+#navcontainer ul li a {
+	width: 135px;
+	height: 18px;
+	padding: 0;
+	margin: 0 0 10px 0;
+	color: white;
+	display: block;
+	text-decoration: none;
+	text-align: center;
+	font: 16px Verdana;
+}
+
+#navcontainer ul li a:hover {
+	text-decoration: underline;
+}
+/* end : main nav bar styling */
+
+/* begin : side nav bar styling */
+#leftSidebar ul {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border: 1px solid #660066;
+	background: #8299CE;
+	padding-left:30px;
+	margin-left:0;
+}
+
+#leftSidebar li {
+	padding-bottom: 10px;
+	list-style-type: square;
+}
+
+#leftSidebar li a {
+	color: #660066;
+	text-decoration: none;
+}
+#leftSidebar li a:hover {
+	text-decoration: underline;
+}
+/* end : side nav bar styling */
+
+/* begin : body content styling */
+h3 {
+	font-size: 120%;
+	font-weight: bold;
+	border-bottom: 1px dotted black;
+	margin-top: 10px;
+}
+
+h4 {
+	font-size: 120%;
+	font-weight: bold;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.activeSession {
+	padding-left: 10px;
+	list-style-type: none;
+}
+
+.route {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.direction {
+	padding-top: 5px;
+	padding-bottom: 4px;
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+.activeSessionBuses {
+	font-size: 90%;
+	font-weight: normal;
+}
+
+.futureSessionHeader {
+	color: #778899;
+}
+
+.futureSession {
+	padding-left: 10px;
+	list-style-type: none;
+	color: #778899;
+}
+
+.futureSessionRoute {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.futureSessionDirection {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.futureSessionBuses {
+	font-size: 90%;
+	font-weight: normal;
+}
+
+div.row {
+	font-size: 120%;
+  clear: both;
+  padding-top: 10px;
+}
+
+div.row span.label {
+  float: left;
+  width: 200px;
+  text-align: right;
+}
+
+div.row span.formw {
+  float: right;
+  width: 300px;
+  text-align: left;
+}
+
+div.row span.helpText {
+	font-size: 70%;
+	color: #666666;
+}
+
+div.spacer {
+	clear: both;
+}
+
+/* end : body content styling */
+
+/* begin : form styling for top-label forms */
+.tForm .submit {
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.tForm fieldset {
+border: none;
+}
+
+.tForm label.required{
+font-weight: bold;
+}
+
+.tForm label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.tForm h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px;
+}
+
+.tForm p.form-footer a {
+font: bold 14px;
+letter-spacing: 0;
+}
+
+.tForm p {
+clear: both;
+}
+
+.tForm div.row {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+}
+
+.tForm div.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.tForm label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.tForm input.text-input,
+.tForm select {
+font-size: 16px;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.tForm .form-element input {
+padding: 1px;
+}
+
+.tForm textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
+/* end : form styling for top-label forms */
+
+/* - - - - - - - - - - - - - - - - - - - - -
+
+ Title : Wufoo Form CSS
+ Author : Infinity Box Inc.
+ URL : http://wufoo.com
+
+ Last Updated : July 18, 2006
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+
+
+/* ----- IDS ----- */
+
+.wufooFormContainer{
+	padding: 0;
+	margin:0 auto;
+	text-align:left;
+	width:500px;
+	font-size:small;
+	font-family:"Lucida Grande", Arial, "Trebuchet MS", Verdana, sans-serif;
+	background-color: #8299CE;
+	border: 1px dotted #333;
+}
+.wufooFormContainer #stage{
+	margin: 0;
+	padding:20px 20px 0 20px;
+}
+.wufooFormContainer #stage[id]{
+	margin: 0;
+	padding-bottom:7px;
+}
+/* ----- CLASSES ----- */
+
+.wufooFormContainer .inline{
+	display:inline !important;
+}
+.wufooFormContainer .center{
+	text-align:center !important;
+}
+.wufooFormContainer .left{
+	float:left;
+}
+.wufooFormContainer .right{
+	float:right;
+}
+.wufooFormContainer .hide{
+	display:none !important;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - -
+FORM
+- - - - - - - - - - - - - - - - - - - - - */
+
+.wufooFormContainer ul{
+	padding: 0;
+	margin: 0;
+	position:relative;
+	list-style-type:none;
+	width:100%;
+}
+.wufooFormContainer li{
+	line-height:2em;
+	margin:0;
+	padding:1px 4px 6px 9px;
+	display: inline-block;
+}
+.wufooFormContainer li:after{
+	margin: 0;
+	padding: 0;
+	content:".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+}
+/* Holly Hack Targets IE Win only \*/
+	* html .wufooFormContainer li {height: 1%;}
+	.wufooFormContainer li {display: block;}
+/* End Holly Hack */
+
+.wufooFormContainer li div{
+	padding: 0;
+	float:left;
+	display:inline;
+	margin-right:5px;
+}
+.wufooFormContainer li.focused{
+	background-color:#fff7c0;
+}
+.wufooFormContainer li p{
+	margin: 0;
+	padding: 0;
+	clear:both;
+	font-size:9px;
+	line-height:13px;
+	color:#444;
+}
+
+.wufooFormContainer li div.left{
+	width:48%;
+}
+.wufooFormContainer li div.right{
+	width:48%;
+}
+.wufooFormContainer li div.left .medium, .wufooFormContainer li div.right .medium{
+	width:100%;
+}
+
+.wufooFormContainer .clear{
+	clear:both;
+}
+
+.wufooFormContainer li div p{
+	margin-bottom:3px;
+}
+.wufooFormContainer li img.icon{
+	float:left;
+	margin:.35em 5px 0 0;
+}
+
+/* ----- BUTTONS ----- */
+
+.wufooFormContainer .buttons{
+	clear:both;
+	margin:10px 0 20px 7px;
+}
+.wufooFormContainer .buttons .button{
+	font-size:120%;
+	margin:0 5px 0 0;
+}
+.wufooFormContainer .button{
+	cursor:pointer !important;
+}
+
+/* ----- FIELDS AND LABELS ----- */
+
+.wufooFormContainer label.desc{
+	line-height:125%;
+	padding:4px 4px 1px 0;
+	border:none;
+	color:#444;
+	display:block;
+	font-weight:bold;
+	font-size:95%;
+}
+.wufooFormContainer input.text, .wufooFormContainer textarea.textarea, .wufooFormContainer select.select{
+	font-size:100%;
+	border-top:1px solid #7c7c7c;
+	border-left:1px solid #c3c3c3;
+	border-right:1px solid #c3c3c3;
+	border-bottom:1px solid #ddd;
+	color:#333;
+}
+.wufooFormContainer input.text{
+	padding:2px 0 2px 0;
+}
+.wufooFormContainer input.currency{
+	text-align:right;
+}
+
+.wufooFormContainer input.checkbox, .wufooFormContainer input.radio{
+	display:block;
+	line-height:1.4em;
+	margin:8px 0 0 3px;
+	width:13px;
+	height:13px;
+}
+.wufooFormContainer label.choice{
+	font-size:100%;
+	display:block;
+	line-height:1.4em;
+	margin:-19px 0 0 25px;
+	padding:4px 0 5px 0;
+	color:#444;
+	width:90%;
+}
+
+.wufooFormContainer textarea.textarea{
+	margin-top:1px;
+	font-family:"Lucida Grande", Arial, "Trebuchet MS", Verdana, sans-serif;
+}
+.wufooFormContainer select.select{
+	margin:1px 0 1px 0;
+	padding:1px 0 0 0;
+}
+.wufooFormContainer select.select[class]{
+	margin:0;
+	padding:1px 0 1px 0;
+}
+
+/* ----- SIZES ----- */
+
+.wufooFormContainer .third{
+	width:32% !important;
+}
+.wufooFormContainer .half{
+	width:48% !important;
+}
+.wufooFormContainer .full{
+	width:100% !important;
+}
+
+.wufooFormContainer input.small, .wufooFormContainer select.small{
+	width:25%;
+}
+.wufooFormContainer input.medium, .wufooFormContainer select.medium{
+	width:50%;
+}
+.wufooFormContainer input.large, .wufooFormContainer select.large, .wufooFormContainer textarea.textarea{
+	width:99%;
+}
+.wufooFormContainer input.tags{
+	width:315px;
+}
+
+.wufooFormContainer textarea.small{
+	height:5.5em;
+}
+.wufooFormContainer textarea.medium{
+	height:10em;
+}
+.wufooFormContainer textarea.large{
+	height:20em;
+}
+
+/* ----- ERRORS ----- */
+
+.wufooFormContainer li.error{
+	background-color: #FFDFDF;
+	margin:3px 0;
+}
+.wufooFormContainer li.error h3{
+	margin-top:3px;
+	font-size:110%;
+	line-height:130%;
+	color:red;
+}
+.wufooFormContainer #liError{
+	border-bottom:1px solid #EACBCC;
+	border-right:1px solid #EACBCC;
+}
+.wufooFormContainer #liError p{
+	color:#222;
+	font-size:85%;
+}
+.wufooFormContainer input.error, .wufooFormContainer textarea.error{
+	border:1px solid #EF5959;
+	border-left:1px solid #FF8F8F;
+	border-top:1px solid #FF8F8F;
+	background:#fff;
+}
+.wufooFormContainer p.error, .wufooFormContainer li.error label.desc{
+	color:red !important;
+	clear:both;
+}
+
+/* ----- INSTRUCTIONS ----- */
+
+.wufooFormContainer .instruct{
+	display:none;
+	position:absolute;
+	left:100%;
+	width:40%;
+	margin:-1px 0 0 10px;
+	padding:8px 7px 9px 10px;
+	border:1px solid #e6e6e6;
+	background:#f5f5f5;
+	line-height:130%;
+	font-size:80%;
+	color:#444;
+}
+.wufooFormContainer li:hover .instruct, .wufooFormContainer li.focused .instruct{
+	display:block;
+}
+.wufooFormContainer #main ul{
+	width:100%;
+}
+.wufooFormContainer #main li{
+	width:62%;
+}
+.wufooFormContainer .instruct{
+	left:62%;
+	margin-left:20px
+}
+.wufooFormContainer .instruct[class]{
+	width:29%
+}
+/* begin : primary layout */
+
+body {
+	margin:10px 10px 0px 10px;
+	padding:0px;
+	font: 14px "Lucida Grande", "Lucida Sans Unicode", verdana, lucida, sans-serif;
+}
+
+a:hover {
+	color: #62993E;
+	border-bottom:1px dotted #330066;
+	background-color:#FAFFCF;
+}
+
+/* banner text style */
+h1 {
+	color: #fff;
+	padding-top: 20px;
+	padding-left: 20px;
+}
+
+#banner {
+	display: none;
+}
+	
+html>body #banner {
+}
+
+#leftSidebar {
+	display: none;
+}
+
+#content {
+	width: 700px;
+	background:#fff;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+}
+	
+html>body #content {
+}
+
+#messaging {
+	display: none;
+}
+
+#messaging .error {
+	color: red;
+}
+
+#messaging .success {
+	color: blue;	
+}
+
+#messaging h2 {
+	font-size: 120%;
+}
+
+#contentBody {
+	padding-left: 20px;
+}
+
+#contentBody p{
+	color: #383838;	
+}
+
+#footer {
+	display: none;
+}
+/* end : primary layout */
+
+
+/* begin : main nav bar styling */
+#navcontainer {
+	display: none;
+}
+/* end : main nav bar styling */
+
+/* begin : side nav bar styling */
+#leftSidebar ul {
+	display: none;
+}
+
+/* end : side nav bar styling */
+
+/* begin : body content styling */
+h3 {
+	font-size: 140%;
+	font-weight: bold;
+	border-bottom: 1px dotted black;
+	padding-left: 5px;
+}
+
+h4 {
+	font-size: 120%;
+	font-weight: bold;
+}
+
+.activeSession {
+	padding-left: 10px;
+	list-style-type: none;
+}
+
+.route {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.direction {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.activeSessionBuses {
+	font-size: 90%;
+}
+
+.futureSessionHeader {
+	color: #778899;
+}
+
+.futureSession {
+	padding-left: 10px;
+	list-style-type: none;
+	color: #778899;
+}
+
+.futureSessionRoute {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.futureSessionDirection {
+	padding-left: 5px;
+	font-style: italic;
+}
+
+.futureSessionBuses {
+	font-size: 90%;
+}
+
+div.row {
+	font-size: 120%;
+  clear: both;
+  padding-top: 10px;
+}
+
+div.row span.label {
+  float: left;
+  width: 200px;
+  text-align: right;
+}
+
+div.row span.formw {
+  float: right;
+  width: 300px;
+  text-align: left;
+}
+
+div.row span.helpText {
+	font-size: 70%;
+	color: #666666;
+}
+
+div.spacer {
+	clear: both;
+}
+
+/* end : body content styling */
+
+/* begin : form styling for top-label forms */
+.tForm .submit {
+font-size: 14px;
+font-family: Arial, sans-serif;
+letter-spacing: 0;
+margin: 0;
+margin-top: 5px;
+}
+
+.tForm fieldset {
+border: none;
+}
+
+.tForm label.required{
+font-weight: bold;
+}
+
+.tForm label.example {
+font-size: 11px;
+font-family: arial;
+color: #888;
+}
+
+.tForm h4 {
+padding: 2px;
+margin: 0;
+text-transform: none;
+color: #1F7F00;
+letter-spacing: -1px;
+font: bold 16px arial;
+}
+
+.tForm p.form-footer a {
+font: bold 14px arial, sans-serif;
+letter-spacing: 0;
+}
+
+.tForm p {
+clear: both;
+}
+
+.tForm div.row {
+clear: both;
+float: none;
+padding: 2px;
+margin-left: 5px;
+}
+
+.tForm div.form-element {
+float: left;
+margin-right: 10px;
+margin-bottom: 2px;
+}
+
+.tForm label {
+display: block;
+font-family: Verdana, sans-serif;
+color: #555;
+font-size: 11px;
+padding-bottom: 1px;
+}
+
+.tForm input.text-input,
+.tForm select {
+font-size: 16px;
+font-family: Arial, sans-serif;
+letter-spacing: -1px;
+border: solid 1px #1F7F00;
+}
+
+.tForm .form-element input {
+padding: 1px;
+}
+
+.tForm textarea {
+height: 65px;
+font-family: Arial, sans-serif;
+font-size: 12px;
+padding: 1px;
+border: solid 1px #1F7F00;
+}
+/* end : form styling for top-label forms */
+
+/* - - - - - - - - - - - - - - - - - - - - -
+
+ Title : Wufoo Form CSS
+ Author : Infinity Box Inc.
+ URL : http://wufoo.com
+
+ Last Updated : July 18, 2006
+
+- - - - - - - - - - - - - - - - - - - - - */
+
+
+
+/* ----- IDS ----- */
+
+.wufooFormContainer{
+	display: none;
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+
+
+ */
+

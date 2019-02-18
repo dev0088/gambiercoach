@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190121021104) do
+ActiveRecord::Schema.define(version: 20190218135104) do
 
   create_table "administrators", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string "username", default: "", null: false
@@ -86,11 +86,12 @@ ActiveRecord::Schema.define(version: 20190121021104) do
 
   create_table "reservations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.integer "user_id", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "last_modified_at", null: false
+    t.datetime "created_at", default: "2019-02-01 00:00:00", null: false
+    t.datetime "last_modified_at", default: "2020-12-21 00:00:00", null: false
     t.integer "payment_status", default: 0, null: false
     t.string "payment_note", limit: 100
     t.string "total"
+    t.string "charge_id"
   end
 
   create_table "routes", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
@@ -127,6 +128,14 @@ ActiveRecord::Schema.define(version: 20190121021104) do
     t.string "city", limit: 100
     t.string "state", limit: 100
     t.string "zip", limit: 100
+  end
+
+  create_table "stored_stripes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "user_id"
+    t.string "customer_id"
+    t.integer "card_suffix"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "stripe_events", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
