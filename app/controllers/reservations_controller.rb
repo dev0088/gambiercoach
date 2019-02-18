@@ -208,6 +208,7 @@ class ReservationsController < ApplicationController
     handle_token
 
     unless @credit_card.nil?
+     
       @charge_amount = session[:reservation_price]['fractional'].to_i
       @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
       @stripe_charger.charge!
@@ -217,7 +218,6 @@ class ReservationsController < ApplicationController
 
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         card_suffix = customer['sources']['data'][0]['last4']
-
         cc_info = Hash.new
         cc_info[:customer_id] = current_user.stripe_customer_id
         cc_info[:card_suffix] = card_suffix
@@ -355,7 +355,7 @@ class ReservationsController < ApplicationController
         @reservation.destroy
         killed_whole_reservation = true
       else
-        @reservation.total = (@reservation.total.to_money - refund_amt.to_f).to_s
+        @reservation.total = (@reservation.total.to_money - refund_amt).to_s
         @reservation.save!
       end
       Notifications.reservation_modify_success(@user, @reservation).deliver_later

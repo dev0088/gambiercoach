@@ -11,11 +11,10 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery_ujs
-//= require bootstrap.bundle.min.js
+//= require rails-ujs
 //= require jquery.turbolinks
 //= require turbolinks
-//= require rails-ujs
+//= require bootstrap.bundle.min.js
 //= require prototype.js
 //= require ajax_scaffold.js
 //= require niftycube.js
