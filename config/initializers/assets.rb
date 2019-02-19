@@ -22,3 +22,4 @@ Rails.application.config.assets.paths << Rails.root.join("app", "assets")
 Rails.application.config.assets.paths << Rails.root.join("vendor")
 Rails.application.config.assets.precompile += ["application.js", "application.css"]
 Rails.application.config.assets.precompile += %w( checkout.js )
+Rails.application.config.assets.precompile += %w( stripe.css )
