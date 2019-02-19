@@ -9,12 +9,14 @@ class CreditCard < ApplicationRecord
   before_destroy :destroy_stripe_card!
 
   def self.create_from_stripe(stripe_id)
+    puts "create"
     resource = Stripe::Card.retrieve(stripe_id)
     record = CreditCard.find_by_stripe_card_id(resource.id)
     record.save!
   end
 
   def self.update_from_stripe(stripe_id)
+  puts "update"
     create_from_stripe(stripe_id)
   end
 

@@ -199,25 +199,45 @@ class ReservationsController < ApplicationController
   end
 
   def complete_with_selected
+    @charge_amount = session[:reservation_price]['fractional'].to_i
+    charge = Stripe::Charge.create({
+        amount: @charge_amount, 
+        currency: 'usd',
+        customer: current_user.credit_cards[0]['stripe_card_id'], # Previously stored, then retrieved
+    })
+    r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
+        session[:reservation_details], charge['id'],
+        session[:reservation_price], session[:wait_list_id])
 
+        redirect_to :action => "my_reservations",
+                    notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
   end
 
   def complete_with_stripe
-
     # Create new credit card from stripToken param, or retrieve it from Stripe account.
     handle_token
-
+    
     unless @credit_card.nil?
      
       @charge_amount = session[:reservation_price]['fractional'].to_i
       @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
       @stripe_charger.charge!
+     
       if @stripe_charger.success?
 
         amount_str = number_to_currency(@stripe_charger.order_total_in_dollars)
 
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
         card_suffix = customer['sources']['data'][0]['last4']
+        ccard = current_user.credit_cards.update(
+            :last_4 => card_suffix,
+            :kind => customer['sources']['data'][0]['brand'],
+            :exp_mo => customer['sources']['data'][0]['exp_month'],
+            :exp_year => customer['sources']['data'][0]['exp_year'],
+            :stripe_card_id => customer['id'],
+            :token => params[:stripeToken]
+          )
+  
         cc_info = Hash.new
         cc_info[:customer_id] = current_user.stripe_customer_id
         cc_info[:card_suffix] = card_suffix
