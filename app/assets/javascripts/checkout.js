@@ -21,7 +21,7 @@
         invalid: {
             color: '#fa755a',
             iconColor: '#fa755a'
-        }
+        },
     };
 
     // Create an instance of the card Element.
@@ -79,4 +79,5 @@ function stripeTokenHandler(token) {
     // Submit the form
     form.submit();
 }
+
 

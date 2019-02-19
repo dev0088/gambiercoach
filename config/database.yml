@@ -14,7 +14,7 @@ default: &default
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
-  password: 123456
+  password: [1]
   socket: /tmp/mysql.sock
 
 development:
@@ -51,4 +51,4 @@ production:
   <<: *default
   database: kenyon_development # kenyon_production
   username: root
-  password: 123456 # <%= ENV['KENYON_DATABASE_PASSWORD'] %>
+  password: [1] # <%= ENV['KENYON_DATABASE_PASSWORD'] %>

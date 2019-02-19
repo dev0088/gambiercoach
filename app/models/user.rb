@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   include StripeCustomerable
 
   has_many :stored_payment_addresses, :dependent => :destroy
+  has_many :stored_stripes, :dependent => :destroy
   has_many :reservations
   has_many :wait_list_reservations
   has_many :credit_payment_events

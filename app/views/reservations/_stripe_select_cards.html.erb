@@ -9,11 +9,18 @@
             <label for="credit_card_id_<%= card.id %>"><%= card.kind %> ending in <%= card.last_4 %> (Expires on <%= card.exp_mo %>/<%= card.exp_year %>)</label>
           </div>
         </div>
+        <div class="row mb-3">
+          <div class="col-12">
+            <small><a href="javascript:void(0)" id="deselect-card" onclick="unchecked(<%= card.id %>)">De-select card</a></small>
+          </div>
+        </div>
     <% end %>
     
-    <div class="row mb-3">
-      <div class="col-12">
-        <small><a href="javascript:void(0)" id="deselect-card">De-select card</a></small>
-      </div>
-    </div>
+    
 <% end %>
+
+<script>
+    function unchecked(id) {
+      document.getElementById("credit_card_id_"+id).checked = false;
+    }
+</script>

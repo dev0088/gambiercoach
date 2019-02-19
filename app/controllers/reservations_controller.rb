@@ -199,21 +199,67 @@ class ReservationsController < ApplicationController
   end
 
   def complete_with_selected
+    @charge_amount = session[:reservation_price]['fractional'].to_i
+    charge = Stripe::Charge.create({
+        amount: @charge_amount, 
+        currency: 'usd',
+        customer: current_user.credit_cards[0]['stripe_card_id'], # Previously stored, then retrieved
+    })
+    r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
+        session[:reservation_details], charge['id'],
+        session[:reservation_price], session[:wait_list_id])
 
+        redirect_to :action => "my_reservations",
+                    notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
   end
 
   def complete_with_stripe
-
     # Create new credit card from stripToken param, or retrieve it from Stripe account.
     handle_token
-
+    
     unless @credit_card.nil?
-      @stripe_charger = StripeCharger.new(current_user, @credit_card, 5000, "test payment")
+     
+      @charge_amount = session[:reservation_price]['fractional'].to_i
+      @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
       @stripe_charger.charge!
+     
       if @stripe_charger.success?
+
         amount_str = number_to_currency(@stripe_charger.order_total_in_dollars)
+
+        customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+        card_suffix = customer['sources']['data'][0]['last4']
+        ccard = current_user.credit_cards.update(
+            :last_4 => card_suffix,
+            :kind => customer['sources']['data'][0]['brand'],
+            :exp_mo => customer['sources']['data'][0]['exp_month'],
+            :exp_year => customer['sources']['data'][0]['exp_year'],
+            :stripe_card_id => customer['id'],
+            :token => params[:stripeToken]
+          )
+  
+        cc_info = Hash.new
+        cc_info[:customer_id] = current_user.stripe_customer_id
+        cc_info[:card_suffix] = card_suffix
+        if @user.stored_stripes[0].nil?
+          User.transaction do
+
+            sps = StoredStripe.new( :user => @user,
+                                    :customer_id => cc_info[:customer_id],
+                                    :card_suffix => cc_info[:card_suffix]
+                                  )
+            sps.save!
+          end
+        end
+        @user.stored_stripes.reload
+
+        r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
+        session[:reservation_details], @stripe_charger.charge!['id'],
+        session[:reservation_price], session[:wait_list_id])
+
         redirect_to :action => "my_reservations",
                     notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
+        return
       else
         flash[:error] = @stripe_charger.declined_explanation
       end
@@ -277,21 +323,30 @@ class ReservationsController < ApplicationController
       render
       return
     when 'POST'
-      refund_amt = "0".to_money
+      refund_amt = "0".to_money.fractional
+
+      @charge = @user.stored_stripes
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.where(id: rt).first
         next if reservation_ticket.nil?
         numbers_of_tickets = params[:rt][rt]
+
         if "0" == numbers_of_tickets
-          refund_amt += reservation_ticket.bus.route.to_m * reservation_ticket.quantity
+          refund_amt += reservation_ticket.bus.route.to_m.fractional * reservation_ticket.quantity
+          
           reservation_ticket.destroy
         else
           difference = reservation_ticket.quantity.to_i - numbers_of_tickets.to_i
-          refund_amt += reservation_ticket.bus.route.to_m * difference
+          refund_amt += reservation_ticket.bus.route.to_m.fractional * difference
           reservation_ticket.quantity = numbers_of_tickets
           reservation_ticket.save!
         end
       end
+      refund_amt = (refund_amt).to_i
+      refund = Stripe::Refund.create({
+          charge: @reservation.charge_id,
+          amount: refund_amt,
+      })
       @reservation.reload
 
       if @reservation.payment_status == Reservation::UNPAID
@@ -302,11 +357,11 @@ class ReservationsController < ApplicationController
             @user, @reservation.id, refund_amt.to_s
           ).deliver_later
         end
-        flash[:success] = "Modified your reservation successfully,\n we will refund you #{refund_amt}"
+        flash[:success] = "Modified your reservation successfully,\n we will refund you #{refund_amt/100}"
       elsif @reservation.payment_status == Reservation::PD_CREDIT
         error_message = @reservation.cc_refund(refund_amt)
         if error_message.nil?
-          flash[:success] = "Modified your reservation successfully,\n your credit card was refunded #{refund_amt}"
+          flash[:success] = "Modified your reservation successfully,\n your credit card was refunded #{refund_amt/100}"
         else
           flash[:error] = "Modified your reservation successfully,\n but we had trouble refunding your credit card.\n\n Please contact a system administrator\nand reference transaction id ##{@reservation.charge_payment_event.transaction_id}."
         end
@@ -317,7 +372,7 @@ class ReservationsController < ApplicationController
         @reservation.destroy
         killed_whole_reservation = true
       else
-        @reservation.total = (@reservation.total.to_money - refund_amt).to_s
+        @reservation.total = (@reservation.total.to_money.fractional - refund_amt).to_s
         @reservation.save!
       end
       Notifications.reservation_modify_success(@user, @reservation).deliver_later
@@ -434,8 +489,9 @@ class ReservationsController < ApplicationController
     return nil, r
   end
 
-  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, reservation_price, wait_list_id)
+  def reserve_tickets(pay_type, user, cond_wishes, cond_phone, reservation_details, charger_id, reservation_price, wait_list_id)
     r = Reservation.new(:user => user,
+                        :charge_id => charger_id,
                         :payment_status => pay_type)
     r.save!
 
@@ -499,4 +555,10 @@ class ReservationsController < ApplicationController
       end
     end
   end
+
+  def number_to_currency(number)
+    @amount = number / 100
+    return @amount
+  end
+
 end
