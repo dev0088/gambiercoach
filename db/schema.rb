@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190220144341) do
+ActiveRecord::Schema.define(version: 20190220184939) do
 
   create_table "administrators", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string "username", default: "", null: false
@@ -37,14 +37,13 @@ ActiveRecord::Schema.define(version: 20190220144341) do
     t.string "kind"
     t.integer "exp_mo"
     t.integer "exp_year"
-    t.string "stripe_card_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "owner_type"
     t.string "token"
+    t.string "stripe_card_id"
     t.index ["owner_id", "owner_type"], name: "index_credit_cards_on_owner_id_and_owner_type"
     t.index ["owner_id"], name: "index_credit_cards_on_owner_id"
-    t.index ["stripe_card_id"], name: "index_credit_cards_on_stripe_card_id"
   end
 
   create_table "credit_payment_events", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
