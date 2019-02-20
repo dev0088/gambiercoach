@@ -20,11 +20,12 @@
         <p style="padding-left: 30px; padding-right: 20px;">
           You have billing name(s) / address(es) already on file. For security reasons, we do not store full credit card information. If you would like to use the stored information, input your card number and expiration date and click "complete transaction".<br /><br /> When you submit this form, we will bill your credit card <%=  convert_reservation_price(@reservation_price) %>. The charge will appear on your credit card with the merchant name 'Motor Coach.'
         </p>
-        <%= simple_form_for :credit_card, url:reservations_complete_with_selected_path, method: :post,  :html => { :id => "payment-form", class: "form-default mt-4" } do |f| %>
+        <%= simple_form_for :credit_card, url:reservations_complete_with_selected_path, method: :post,  :html => { :id => "payment-form-selected", class: "form-default mt-4" } do |f| %>
           <input type="hidden" name="wait_list_id" value="<%= @wait_list_id %>" />
           <%= render partial: 'stripe_select_cards' %>
             <div class="text-right">
-              <button type="submit" class="btn btn-sm btn-primary" data-disable-with="Saving...">Complete Transaction with Selected Stored Information</button>
+              <div id='no-selected'></div>
+              <button id="btnSubmit" type="submit" class="btn btn-sm btn-primary">Complete Transaction with Selected Stored Information</button>
             </div>
         <% end %>
         <hr />

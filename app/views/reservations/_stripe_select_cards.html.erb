@@ -6,7 +6,7 @@
         <div class="row mb-3">
           <div class="col-12">
             <%= radio_button("credit_card", "id", card.id, {class: 'cc-radio'}) %>
-            <label for="credit_card_id_<%= card.id %>"><%= card.kind %> ending in <%= card.last_4 %> (Expires on <%= card.exp_mo %>/<%= card.exp_year %>)</label>
+            <label for="credit_card_id_<%= card.id %>"><%= card.kind %> ending in ***<%= card.last_4 %> (Expires on <%= card.exp_mo %>/<%= card.exp_year %>)</label>
           </div>
         </div>
         <div class="row mb-3">
