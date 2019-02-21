@@ -24,7 +24,7 @@
     background-color: #fefde5 !important;
   }
 
-  form#payment-form {
+  form#payment-form-selected {
       margin-left: 30px;
       margin-right: 20px;
       .text-right {
@@ -70,6 +70,8 @@
           &:hover {
             cursor: pointer;
           }
+
+          width: 70%;
         }
       }
   }
@@ -123,7 +125,7 @@
       cursor: pointer;
     }
 
-    width: 100%;
+
   }
 
   .wufooFormContainer #stage {
