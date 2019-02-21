@@ -42,8 +42,9 @@
 
     // Handle form submission.
     var form = document.getElementById('payment-form');
-    var formSelected = document.getElementById('payment-form-selected');
+    // var formSelected = document.getElementById('payment-form-selected');
     form.addEventListener('submit', function(event) {
+        event.preventDefault();
             stripe.createToken(card).then(function(result) {
                 if (result.error) {
                     console.log('==== stripe create token error: ', result.error);
@@ -86,7 +87,6 @@ function stripeTokenHandler(token) {
     hiddenInput.setAttribute('name', 'stripeToken');
     hiddenInput.setAttribute('value', token.id);
     form.appendChild(hiddenInput);
-
     // Submit the form
     form.submit();
 }

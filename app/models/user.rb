@@ -50,7 +50,6 @@ class User < ActiveRecord::Base
     u = where("id = ? AND reset_password_token = ?", id, token).first
     return nil if u.nil? or u.token_expired?
     return nil if false == u.update_expiry
-    u
   end
 
   def User.authenticate_by_remember_me(id, token)

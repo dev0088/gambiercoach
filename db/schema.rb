@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190220184939) do
+ActiveRecord::Schema.define(version: 20190221041207) do
 
   create_table "administrators", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string "username", default: "", null: false
@@ -37,13 +37,13 @@ ActiveRecord::Schema.define(version: 20190220184939) do
     t.string "kind"
     t.integer "exp_mo"
     t.integer "exp_year"
+    t.string "stripe_card_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "owner_type"
-    t.string "token"
-    t.string "stripe_card_id"
     t.index ["owner_id", "owner_type"], name: "index_credit_cards_on_owner_id_and_owner_type"
     t.index ["owner_id"], name: "index_credit_cards_on_owner_id"
+    t.index ["stripe_card_id"], name: "index_credit_cards_on_stripe_card_id"
   end
 
   create_table "credit_payment_events", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
@@ -86,8 +86,8 @@ ActiveRecord::Schema.define(version: 20190220184939) do
 
   create_table "reservations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.integer "user_id", default: 0, null: false
-    t.datetime "created_at", default: "2019-02-01 00:00:00", null: false
-    t.datetime "last_modified_at", default: "2020-12-21 00:00:00", null: false
+    t.datetime "created_at", null: false
+    t.datetime "last_modified_at", null: false
     t.integer "payment_status", default: 0, null: false
     t.string "payment_note", limit: 100
     t.string "total"
@@ -178,8 +178,6 @@ ActiveRecord::Schema.define(version: 20190220184939) do
     t.string "salt", limit: 40, default: "", null: false
     t.integer "verified", default: 0
     t.string "stripe_customer_id"
-    t.string "charge_id"
-    t.string "stripe_card_id"
     t.index ["stripe_customer_id"], name: "index_users_on_stripe_customer_id"
   end
 
