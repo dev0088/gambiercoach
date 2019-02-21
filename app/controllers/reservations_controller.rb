@@ -221,6 +221,7 @@ class ReservationsController < ApplicationController
      
       @charge_amount = session[:reservation_price]['fractional'].to_i
       @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
+      @asdasd.sdas
       @stripe_charger.charge!
      
       if @stripe_charger.success?
@@ -540,15 +541,14 @@ class ReservationsController < ApplicationController
     @stripe_token = params[:stripeToken]
     unless @stripe_token.blank?
       customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-      card_suffix = customer['sources']['data'][0]['last4']
+      # card_suffix = customer['sources']['data'][0]['last4']
       @credit_card = current_user.credit_cards.new(
-          :last_4 => card_suffix,
-            :kind => customer['sources']['data'][0]['brand'],
-            :exp_mo => customer['sources']['data'][0]['exp_month'],
-            :exp_year => customer['sources']['data'][0]['exp_year'],
-            :stripe_card_id => customer['sources']['data'][0]['id'],
-            :token => params[:stripeToken],
-            token: @stripe_token)
+          # :last_4 => card_suffix,
+          #   :kind => customer['sources']['data'][0]['brand'],
+          #   :exp_mo => customer['sources']['data'][0]['exp_month'],
+          #   :exp_year => customer['sources']['data'][0]['exp_year'],
+          #   :stripe_card_id => customer['sources']['data'][0]['id'],
+            :token => params[:stripeToken])
       if @credit_card.save
         # do nothing
       else
