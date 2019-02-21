@@ -69,11 +69,15 @@ class UserController < ApplicationController
       end
       u = User.find_by_login_id(params[:login_id])
       if u.nil?
+        
         u = User.new(:login_id => params[:login_id],
                      :verified => 0)
+                   
       elsif u.verified == 0
+      
         # do nothing here, but generate a new verification token and email it to them
       else
+   
         flash[:error] = "The login id you gave was already registered with us. Please just click 'forgot password' or log in."
         redirect_to :action => "login"
         return
@@ -81,6 +85,9 @@ class UserController < ApplicationController
 
       # u.save_with_validation(false)
       u.save
+      u.update(
+        :stripe_customer_id => nil
+      )
       u.generate_reset_password_token
       Notifications.with(user: u).verify(u.login_id, u.reset_password_token, u.email).deliver_now
 

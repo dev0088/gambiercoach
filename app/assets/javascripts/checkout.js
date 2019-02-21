@@ -59,21 +59,21 @@
             });
     });
 
-    // formSelected.addEventListener('submit', function(event) {
-    //     event.preventDefault();
-    //     var noSelectMsg = document.getElementById('no-selected');
-    //     var btnSubmit = document.getElementById('btnSubmit');
-    //     if ($(".cc-radio:checked").length > 0) {
-    //         btnSubmit.disable = true;
-    //         btnSubmit.innerHTML = "Saving..."
-    //         noSelectMsg.innerHTML = "";
-    //         console.log('==== .cc-radio:checked: ', $(".cc-radio:checked").length);
-    //         document.getElementById('payment-form-selected').submit();
-    //     } else {
-    //         noSelectMsg.innerHTML = "Select the Stored Information";
-    //         btnSubmit.disable = false;
-    //     }
-    // });
+    formSelected.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var noSelectMsg = document.getElementById('no-selected');
+        var btnSubmit = document.getElementById('btnSubmit');
+        if ($(".cc-radio:checked").length > 0) {
+            btnSubmit.disable = true;
+            btnSubmit.innerHTML = "Saving..."
+            noSelectMsg.innerHTML = "";
+            console.log('==== .cc-radio:checked: ', $(".cc-radio:checked").length);
+            document.getElementById('payment-form-selected').submit();
+        } else {
+            noSelectMsg.innerHTML = "Select the Stored Information";
+            btnSubmit.disable = false;
+        }
+    });
 // });
 })(jQuery);
 
@@ -87,7 +87,6 @@ function stripeTokenHandler(token) {
     hiddenInput.setAttribute('name', 'stripeToken');
     hiddenInput.setAttribute('value', token.id);
     form.appendChild(hiddenInput);
-
     // Submit the form
     form.submit();
 }
