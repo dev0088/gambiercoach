@@ -252,7 +252,7 @@ class ReservationsController < ApplicationController
         @point_a = @bus_route.point_a
         @point_b = @bus_route.point_b
         @bus_ticket = bus_detail[1]
-        @transition_history +=  @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b + " departing " + @bus_time_date + " at " + @bus_time_time + " "
+        @transition_history +=  @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b + " departing " + @bus_time_date + " at " + @bus_time_time + ", "
         
       end 
       @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, @transition_history)
