@@ -200,17 +200,20 @@ class ReservationsController < ApplicationController
 
   def complete_with_selected
     @charge_amount = session[:reservation_price]['fractional'].to_i
-    @transition_history = ''
+    @transition_history = @user.login_id + " bought "
     @bus_detail = session[:reservation_details]
       
     @bus_detail.each do |bus_detail|
       @route_id = bus_detail[0]["route_id"]
       @ticket_id = bus_detail[0]["id"]
+      @bus_time_date = bus_detail[0]["departure"].to_datetime.strftime("%A, %B %d")
+      @bus_time_time = bus_detail[0]["departure"].to_datetime.strftime("%I:%M %p")
       @bus_route = Route.where(id: @route_id).first
       @point_a = @bus_route.point_a
       @point_b = @bus_route.point_b
       @bus_ticket = bus_detail[1]
-      @transition_history += @user.login_id + " bought " + @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b
+      @transition_history += @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b + " departing " + @bus_time_date + " at " + @bus_time_time + " "
+     
     end 
 
     charge = Stripe::Charge.create({
@@ -235,22 +238,27 @@ class ReservationsController < ApplicationController
      
       @charge_amount = session[:reservation_price]['fractional'].to_i
 
-      @transition_history = '';
+      @transition_history = @user.login_id + " bought ";
       @bus_detail = session[:reservation_details]
 
       @bus_detail.each do |bus_detail|
        
 
         @route_id = bus_detail[0]["route_id"]
+        @bus_time_date = bus_detail[0]["departure"].to_datetime.strftime("%A, %B %d")
+        @bus_time_time = bus_detail[0]["departure"].to_datetime.strftime("%I:%M %p")
         @ticket_id = bus_detail[0]["id"]
         @bus_route = Route.where(id: @route_id).first
         @point_a = @bus_route.point_a
         @point_b = @bus_route.point_b
         @bus_ticket = bus_detail[1]
-        @transition_history += @user.login_id + " bought " + @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b
+        @transition_history +=  @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b + " departing " + @bus_time_date + " at " + @bus_time_time + " "
+        
       end 
       @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, @transition_history)
-      @stripe_charger.charge!
+      @stripe_charger_data = @stripe_charger.charge!
+
+      
       
       if @stripe_charger.success?
 
@@ -276,7 +284,7 @@ class ReservationsController < ApplicationController
         @user.stored_stripes.reload
         
         r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
-        session[:reservation_details], @stripe_charger.charge!['id'],
+        session[:reservation_details], @stripe_charger_data['id'],
         session[:reservation_price], session[:wait_list_id])
         redirect_to :action => "my_reservations",
                     notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
