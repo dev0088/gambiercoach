@@ -200,9 +200,24 @@ class ReservationsController < ApplicationController
 
   def complete_with_selected
     @charge_amount = session[:reservation_price]['fractional'].to_i
+    @transition_history = ''
+    @bus_detail = session[:reservation_details]
+      
+    @bus_detail.each do |bus_detail|
+      @route_id = bus_detail[0]["route_id"]
+      @ticket_id = bus_detail[0]["id"]
+      @bus_route = Route.where(id: @route_id).first
+      @point_a = @bus_route.point_a
+      @point_b = @bus_route.point_b
+      @bus_ticket = bus_detail[1]
+      @transition_history += @user.login_id + " bought " + @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b
+      @asd.asd
+    end 
+
     charge = Stripe::Charge.create({
         amount: @charge_amount, 
         currency: 'usd',
+        description: @transition_history,
         customer: current_user.stored_stripes[0]['customer_id'] # Previously stored, then retrieved
     })
     r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
@@ -220,14 +235,30 @@ class ReservationsController < ApplicationController
     unless @credit_card.nil?
      
       @charge_amount = session[:reservation_price]['fractional'].to_i
-      @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, "test payment")
+
+      @transition_history = '';
+      @bus_detail = session[:reservation_details]
+
+      @bus_detail.each do |bus_detail|
+       
+
+        @route_id = bus_detail[0]["route_id"]
+        @ticket_id = bus_detail[0]["id"]
+        @bus_route = Route.where(id: @route_id).first
+        @point_a = @bus_route.point_a
+        @point_b = @bus_route.point_b
+        @bus_ticket = bus_detail[1]
+        @transition_history += @user.login_id + " bought " + @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b
+      end 
+      @stripe_charger = StripeCharger.new(current_user, @credit_card, @charge_amount, @transition_history)
       @stripe_charger.charge!
-     
+      
       if @stripe_charger.success?
 
         amount_str = number_to_currency(@stripe_charger.order_total_in_dollars)
 
         customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+
         card_suffix = customer['sources']['data'][0]['last4']
   
         cc_info = Hash.new
@@ -244,11 +275,10 @@ class ReservationsController < ApplicationController
           end
         end
         @user.stored_stripes.reload
-
+        
         r = reserve_tickets(Reservation::PD_CREDIT, @user, @conductor_wish, @contact_phone,
         session[:reservation_details], @stripe_charger.charge!['id'],
         session[:reservation_price], session[:wait_list_id])
-
         redirect_to :action => "my_reservations",
                     notice: "Thank you for making a reservation with #{Setting::NAME}!\nYou will receive an e-mail confirmation shortly. Make sure to submit your cash/check payment to reservation.earliest_session.cash_reservations_information"
         return
@@ -258,6 +288,7 @@ class ReservationsController < ApplicationController
     else
       # flash[:error] = "Invalid credit card."
     end
+
     # In the case fail, go to origin page.
     redirect_to :action => "create"
   end
@@ -539,9 +570,9 @@ class ReservationsController < ApplicationController
   def handle_token
     @stripe_token = params[:stripeToken]
     unless @stripe_token.blank?
-     
       @credit_card = current_user.credit_cards.new(
             :token => params[:stripeToken])
+            
       if @credit_card.save
         # do nothing
       else
