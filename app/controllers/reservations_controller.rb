@@ -211,7 +211,6 @@ class ReservationsController < ApplicationController
       @point_b = @bus_route.point_b
       @bus_ticket = bus_detail[1]
       @transition_history += @user.login_id + " bought " + @bus_ticket.to_s + " tickets from " + @point_a + " to " +@point_b
-      @asd.asd
     end 
 
     charge = Stripe::Charge.create({
