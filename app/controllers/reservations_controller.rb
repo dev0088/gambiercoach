@@ -355,6 +355,8 @@ class ReservationsController < ApplicationController
     when 'POST'
       refund_amt = "0".to_money.fractional
 
+      @charge = @user.stored_stripes
+      
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.where(id: rt).first
         next if reservation_ticket.nil?
