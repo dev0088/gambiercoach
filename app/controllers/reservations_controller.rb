@@ -293,7 +293,7 @@ class ReservationsController < ApplicationController
         flash[:error] = @stripe_charger.declined_explanation
       end
     else
-      # flash[:error] = "Invalid credit card."
+      flash[:error] = "Your card has insufficient funds."
     end
 
     # In the case fail, go to origin page.
@@ -355,15 +355,14 @@ class ReservationsController < ApplicationController
     when 'POST'
       refund_amt = "0".to_money.fractional
 
-      @charge = @user.stored_stripes
       params[:rt].each do |rt|
         reservation_ticket = ReservationTicket.where(id: rt).first
         next if reservation_ticket.nil?
         numbers_of_tickets = params[:rt][rt]
 
         if "0" == numbers_of_tickets
-          refund_amt += reservation_ticket.bus.route.to_m.fractional * reservation_ticket.quantity
           
+          refund_amt += reservation_ticket.bus.route.to_m.fractional * reservation_ticket.quantity
           reservation_ticket.destroy
         else
           difference = reservation_ticket.quantity.to_i - numbers_of_tickets.to_i
@@ -375,7 +374,7 @@ class ReservationsController < ApplicationController
       refund_amt = (refund_amt).to_i
       refund = Stripe::Refund.create({
           charge: @reservation.charge_id,
-          amount: refund_amt,
+          amount: refund_amt
       })
       @reservation.reload
 
