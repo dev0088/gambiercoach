@@ -373,6 +373,13 @@ class ReservationsController < ApplicationController
           reservation_ticket.save!
         end
       end
+
+      if refund_amt  == 0
+        flash[:error] = "Select the number of tickets to refund."
+        redirect_to :action => "modify"
+        return
+      end
+
       refund_amt = (refund_amt).to_i
       refund = Stripe::Refund.create({
           charge: @reservation.charge_id,
